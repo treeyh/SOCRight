@@ -1,0 +1,107 @@
+{% extends "../../base.html" %} {% block head %} {% end %} {% block body %}
+<div class="titlediv">
+    <h1>
+        {{ title }}</h1>
+</div>
+<div class="inputdiv">
+    <table class="inputtable">
+        <tr>
+            <td style="width:100px">
+                所属用户组：
+            </td>
+            <td style="width: 200px;">
+                <select id="userGroupID" name="userGroupID">
+                    {% for userGroup in userGroups %}
+                    <option value="{{ userGroup['id'] }}" {% if userGroupID == userGroup['id'] %} selected {% end %}>{{ userGroup['name']}}</option>
+                    {% end %}
+                </select>
+            </td>
+            <td colspan="2" style="text-align: right">
+                <a href="{{siteDomain}}Admin/UserGroup/RoleBind?userGroupID={{userGroupID}}" style="margin-right:20px;">新增角色绑定</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="showdiv">
+    <table class="showtable">
+        <tr class="head">
+            <td style="width:40px">
+                编号
+            </td>
+            <td style="width:40px">
+                用户组编号
+            </td>
+            <td style="width:60px">
+                用户编号
+            </td>
+            <td style="width:70px">
+                用户姓名
+            </td>
+            <td style="width:60px">
+                绑定人
+            </td>
+            <td style="width:50px">
+                绑定时间
+            </td>
+            <td style="width:50px">
+                操作
+            </td>
+        </tr>
+        {% for r in pagedata['data'] %}
+        <tr>
+            <td>
+                {{ r['id'] }}
+            </td>
+            <td>
+                {{ r['userGroupID'] }}
+            </td>
+            <td>
+                {{ r['roleID'] }}
+            </td>
+            <td>
+                {{ r['roleName'] }}
+            </td>
+            <td>
+                {{ r['creater'] }}
+            </td>
+            <td>
+                {{ str(r['createTime'])[0:-3] }}
+            </td>
+            <td>
+                <a href="{{siteDomain}}Admin/Role/Detail?id={{ r['roleID'] }}">角色详情</a>
+                <a href="javascript:" onclick="UserGroupRole.del('{{r['id']}}')">删除</a>
+            </td>
+        </tr>
+        {% end %}
+    </table>
+    {% raw pager %}
+</div>
+<script type="text/javascript" language="javascript">
+    <!--
+
+    var UserGroupRole = {
+        del: function (id) {
+            if (!confirm("确定删除该记录吗？")) return false;
+
+            $.post('{{siteDomain}}Admin/UserGroup/RoleDel', { 'id': id, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', window.location.href);
+                     } else {
+                         Common.alert('操作失败' + data.msg);
+                     }
+                 }, "json");
+        }
+    };
+
+    $(document).ready(function () {
+        $('#btFlush').bind('click', function () {
+            window.location.href = '{{siteDomain}}Admin/UserGroup/RoleList?userGroupID=' + $('#userGroups').val();
+        });
+        $('#userGroups').bind('change', function () {
+            window.location.href = '{{siteDomain}}Admin/UserGroup/RoleList?userGroupID=' + $('#userGroups').val();
+        });
+    });
+    //-->
+</script>
+{% end %}

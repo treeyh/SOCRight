@@ -1,0 +1,79 @@
+{% extends "../../base.html" %} {% block head %} {% end %} {% block body %}
+<div class="titlediv">
+    <h1>
+        {{ title }}</h1>
+</div>
+<div class="inputdiv">
+        <table class="inputtable">
+            <tr>
+                <td style="width: 100px;">
+                    编号：<span class="red">*</span>
+                </td>
+                <td>
+                    {{ role['id'] }}
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 100px;">
+                    名称：<span class="red">*</span>
+                </td>
+                <td>
+                    {{ role['name'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    状态：<span class="red">*</span>
+                </td>
+                <td>
+                    {{ role['statusname'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    备注：
+                </td>
+                <td>
+                    {{ role['remark'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    创建人：
+                </td>
+                <td>
+                    {{ role['creater'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    创建时间：
+                </td>
+                <td>
+                    {{ role['createTime'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    最后更新人：
+                </td>
+                <td>
+                    {{ role['lastUpdater'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    最后更新时间：
+                </td>
+                <td>
+                    {{ role['lastUpdateTime'] }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-left:120px; height:40px;">
+                    <input type="button" style="width:100px; height:30px;line-height:18px; cursor:pointer; margin-right:3px;" onclick="window.history.go(-1);" value="返回" />
+                </td>
+            </tr>
+        </table>
+</div>
+{% end %}

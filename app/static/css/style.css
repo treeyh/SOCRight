@@ -1,0 +1,63 @@
+body
+{
+    margin: 0;
+    background-color:##F5F5F5;
+}
+body, table, input, textarea, select
+{
+    font-family: 微软雅黑,Verdana,sans-serif,宋体;
+    font-size:12px;
+}
+
+.red{color:red;}
+.g{ color: #D25900;}
+
+.linetable{border-collapse: collapse;border: none;width: 400px;}
+.linetable td{border: solid #B9B9B9 1px;}
+.linetable .head{height: 45px;padding:0;}
+.linetable .head .title{font-size:24px; margin:0; padding:0; padding-left:10px; float:left;}
+.linetable .head .funcs{float:left; width:400px; height:40px; line-height:40px;font-size:14px; padding-left:250px;}
+.linetable .head .userinfo{float:right;width:250px; height:40px; line-height:40px;font-size:14px; }
+.linetable .head .userinfo .logout{float:right; margin-right:15px;}
+.linetable .menumain{width: 150px; vertical-align:top; overflow:hidden;}
+.linetable .menucon{width: 5px; cursor: pointer; font-size: 8px;}
+.linetable .foot{height: 20px;}
+
+
+
+
+.titlediv{height: 22px; width: 100%; border-bottom: solid #B9B9B9 1px;}
+.titlediv h1{font-size: 14px; font-weight: bolder; margin: 5px 0 0 3px;}
+.titlediv .userinfo{float:right;width:250px; height:40px; line-height:40px;font-size:14px; }
+.titlediv .userinfo .logout{float:right; margin-right:15px;}
+
+.inputdiv{width: 100%; text-align:center;}
+.inputtable{border-collapse: collapse;border: none;width:99%;margin:auto; margin-top:3px; margin-bottom:2px;}
+.inputtable td{border: solid #B9B9B9 1px;height: 25px;padding: 3px 0 3px 2px;text-align: left; font-size:12px;}
+.inputtable td input{width:150px;height:22px; line-height:20px;}
+
+.cbtable{border-collapse: collapse;border: none;width:99%;margin:auto; margin-top:3px; margin-bottom:2px;}
+.cbtable td{border: solid #B9B9B9 1px;height: 25px;padding: 3px 0 3px 2px;text-align: left; font-size:12px;}
+.cbtable td input{width:15px;height:18px; float:left;}
+.cbtable td label{ margin-right:10px; line-height:22px; float:left;}
+.cbtable .td{border: solid #B9B9B9 1px; text-align: left; font-size:12px;padding: 0;}
+.cbtable tr.head{background:#03468F;color:#FFFFFF;}
+.cbtable tr.alt{ background: #B8DDF3;}
+.cbtable tr.over{background:#9DE6A3;color:#000;}/*color:#FC3646;*/
+
+.cb2table{border-collapse: collapse;border: none;width:100%;margin:auto;}
+.cb2table td{height: 20px;text-align: left; font-size:12px;}
+.cb2table td input{width:15px;height:18px; float:left;}
+.cb2table td label{ margin-right:10px; line-height:22px; float:left;}
+
+
+.showdiv{width: 100%; text-align:center; border-top: dashed #B9B9B9 1px;}
+.showtable{border-collapse: collapse;border: none;width:99%;margin:auto; margin-top:3px;}
+.showtable td{border: solid #B9B9B9 1px;height: 25px; text-align: left;}
+.showtable tr.head{background:#03468F;color:#FFFFFF; text-align: center;}
+.showtable tr.head td{text-align: center;}
+.showtable tr.alt{background:#B8DDF3;}
+.showtable tr.over{background:#9DE6A3;color:#000;}/*color:#FC3646;*/
+
+
+

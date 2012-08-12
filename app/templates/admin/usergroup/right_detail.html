@@ -1,0 +1,132 @@
+{% extends "../../base.html" %} {% block head %} {% end %} {% block body %}
+<div class="titlediv">
+    <h1>
+        {{ title }}</h1>
+</div>
+<div class="inputdiv">
+    <table class="inputtable">
+        <tr>
+            <td style="width: 100px;">
+                用户组：
+            </td>
+            <td>
+                <label id="userGroupName" class="red">{{userGroupName}}</label>
+                <input type="hidden" id="userID" name="userGroupID" value="{{userGroupID}}" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                应用：
+            </td>
+            <td>
+                <select id="apps" name="apps">
+                    {% for app in apps %}
+                    <option value="{{ app['code'] }}" {% if appCode == app['code'] %} selected {% end %}>{{ app['name']}}</option>
+                    {% end %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 100px;">
+                已绑定角色：
+            </td>
+            <td>
+                {% if None != roles %}
+                {% for role in roles %}
+                <a href="{{siteDomain}}Admin/Role/RightDetail?roleID={{role['roleID']}}&appCode={{appCode}}">{{role['roleName']}}</a><br />
+                    {% end %}
+                {% end %}
+            </td>
+        </tr>
+    </table>
+    <table class="cbtable" id="funcrightinfo">
+        <tr class="head">
+            <td style="width: 300px;">
+                功能
+            </td>
+            <td>
+                <label>功能权限</label>
+            </td>
+        </tr>
+        {% if None != funcs %}
+        {% for func in funcs %}
+        <tr>
+            <td>
+                {% set c = func['path'].count('.') %}
+                {% for i in range(c-1) %}██{% end %}{{ func['name'] }}-Lv{{c}}
+            </td>
+            {% if func['customJson'] == None %}
+            <td>
+                <label><input type="checkbox" disabled alue="1" id="right_{{func['id']}}_1" {% if func['right'] & 1 == 1 %} checked {% end %} name="right_{{func['id']}}_1" />浏览</label>
+                <label><input type="checkbox" disabled value="2" id="right_{{func['id']}}_2" {% if func['right'] & 2 == 2 %} checked {% end %} name="right_{{func['id']}}_2" />新增</label>
+                <label><input type="checkbox" disabled value="4" id="right_{{func['id']}}_4" {% if func['right'] & 4 == 4 %} checked {% end %} name="right_{{func['id']}}_4" />编辑</label>
+                <label><input type="checkbox" disabled value="8" id="right_{{func['id']}}_8" {% if func['right'] & 8 == 8 %} checked {% end %} name="right_{{func['id']}}_8" />删除</label>
+            </td>
+            {% else %}
+            <td class="td">
+                <table class="cb2table">
+                    <tr>
+                        <td>
+                            <label><input type="checkbox" disabled value="1" id="right_{{func['id']}}_1" {% if func['right'] & 1 == 1 %} checked {% end %} name="right_{{func['id']}}_1" />浏览</label>
+                            <label><input type="checkbox" disabled value="2" id="right_{{func['id']}}_2" {% if func['right'] & 2 == 2 %} checked {% end %} name="right_{{func['id']}}_2" />新增</label>
+                            <label><input type="checkbox" disabled value="4" id="right_{{func['id']}}_4" {% if func['right'] & 4 == 4 %} checked {% end %} name="right_{{func['id']}}_4" />编辑</label>
+                            <label><input type="checkbox" disabled value="8" id="right_{{func['id']}}_8" {% if func['right'] & 8 == 8 %} checked {% end %} name="right_{{func['id']}}_8" />删除</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% for j in func['customJson'] %}
+                            <label><input type="checkbox" disabled value="{{j['id']}}" id="rightcustom_{{func['id']}}_j['id']" {% if j['right'] %} checked {% end %} name="rightcustom_{{func['id']}}_{{j['id']}}" />{{j['name']}}</label>
+                            {% end %}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            {% end %}
+        </tr>
+        {% end %}
+        {% end %}
+        <tr>
+            <td colspan="2" style="padding-left: 120px; height: 40px;">
+                <input type="button" style="width: 100px; height: 30px; line-height: 18px; cursor: pointer;margin-right: 3px;" onclick="window.history.go(-1);" value="返回" />
+            </td>
+        </tr>
+    </table>
+</div>
+<script language="javascript" type="text/javascript">
+    <!--
+
+    var RoleRight = {
+        selectRoleApp: function () {
+            var userID = $('#userID').val();
+            var appCode = $('#apps').val();
+            window.location.href = '{{siteDomain}}Admin/User/RightDetail?userID=' + userID + '&appCode=' + appCode;
+        }
+    };
+
+    $(document).ready(function () {
+        $(".cbtable tr").each(function (index) {
+            if ((index % 2 == 1) && (this.parentNode.parentNode.className == "cbtable")) {
+                $(this).addClass('alt');
+            }
+        }).mouseover(function () {
+            $(this).addClass("over");
+        }).mouseout(function () {
+            $(this).removeClass("over");
+        }); //移除该行的class  
+        $(':checkbox').each(function () {
+            if (this.checked) {
+                this.parentNode.className = 'g';
+            }
+        });
+        $('#roles').bind('change', function () {
+            RoleRight.selectRoleApp();
+        });
+        $('#apps').bind('change', function () {
+            RoleRight.selectRoleApp();
+        });
+    });
+
+    //-->
+</script>
+{% end %}

@@ -1,0 +1,414 @@
+{% extends "../../base.html" %} {% block head %}
+<link rel="stylesheet" href="{{ jsDomain }}js/zTree/zTreeStyle/zTreeStyle.css?{{ version }}" type="text/css" />
+<script type="text/javascript" src="{{ jsDomain }}js/zTree/jquery.ztree.core-3.2.min.js?{{ version }}"></script>
+{% end %} {% block body %}
+<div class="titlediv">
+    <h1>
+        {{ title }}</h1>
+</div>
+<div class="inputdiv">
+    <table class="inputtable">
+        <tr>
+            <td style="width: 200px; vertical-align:top">
+                <style type="text/css">
+                    .ztree li span.button.switch.level0
+                    {
+                        visibility: hidden;
+                        width: 1px;
+                    }
+                    .ztree li ul.level0
+                    {
+                        padding: 0;
+                        background: none;
+                    }
+                    div#rMenu
+                    {
+                        position: absolute;
+                        visibility: hidden;
+                        top: 0;
+                        background-color: #555;
+                        text-align: left;
+                        padding: 2px;
+                    }
+                    div#rMenu li
+                    {
+                        margin: 1px 0;
+                        padding: 0 5px;
+                        cursor: pointer;
+                        list-style: none outside none;
+                        background-color: #DFDFDF;
+                        vertical-align: baseline;
+                    }
+                </style>
+                <div style="border: solid #ccc 1px; height:400px; width:98%; overflow:auto;">
+                    <ul id="menu" class="ztree">
+                    </ul>
+                </div>
+                <input type="button" disabled id="btAddFunc" style="width:90px; height:24px; float:left; cursor:pointer;" value="创建同级功能" />
+                <input type="button" disabled id="btAddSonFunc" style="width:90px; height:24px; float:left; cursor:pointer;" value="创建子功能" />
+                <input type="button" disabled id="btDelFunc" style="width:90px; height:24px; float:left; cursor:pointer;" value="删除功能" />
+            </td>
+            <td>
+                <table class="inputtable">
+                    <tr>
+                        <td style="width:100px">
+                            所属应用：
+                        </td>
+                        <td style="width: 200px;">
+                            <select id="apps" name="apps">
+                                {% for app in apps %}
+                                <option value="{{ app['code'] }}" {% if appCode == app['code'] %} selected {% end %}>{{ app['name']}}</option>
+                                {% end %}
+                            </select>
+                            <input type="hidden" id="appCode" name="appCode" value="{{appCode}}" />
+                        </td>
+                        <td colspan="2">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <label id="func_oper" style="font-weight:bolder;">
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 80px;">
+                            名称：<span class="red">*</span>
+                        </td>
+                        <td style="width: 200px;">
+                            <input type="text" id="name" name="name" />
+                            <input type="hidden" id="parentID" value="" />
+                            <input type="hidden" id="id" value="" />
+                        </td>
+                        <td style="width: 60px;">
+                            排序：<span class="red">*</span>
+                        </td>
+                        <td>
+                            <input type="text" id="sort" name="sort" style="width:50px;" />(只允许数字，越大越前)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            编号：<span class="red">*</span>
+                        </td>
+                        <td colspan="3">
+                            <input type="text" id="code" name="code" style="ime-mode:Disabled" />(允许输入英文字母、数字和下划线)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            PATH：<span class="red">*</span>
+                        </td>
+                        <td colspan="3">
+                            <input type="text" id="path" disabled name="path" style="width: 420px" />
+                            <input type="hidden" id="basePath" value="" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            自定义json配置：
+                        </td>
+                        <td colspan="2">
+                            <textarea rows="6" cols="50" id="customJson" name="customJson"></textarea>
+                        </td>
+                        <td>
+                            (用户自定义权限json，格式为：[{"id":1,"name":"xxx可编辑"},{"id":2,"name":"xxx可删除"}])
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            备注：
+                        </td>
+                        <td colspan="3">
+                            <textarea rows="6" cols="50" id="remark" name="remark"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="padding-left: 120px; height: 40px;">
+                            <input type="button" id="btAddOrUpdate" style="width: 100px; height: 30px; line-height: 18px; cursor: pointer;
+                                margin-right: 3px;" value="提交" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 80px;">
+                            创建人：
+                        </td>
+                        <td style="width: 200px;">
+                            <input type="text" id="creater" name="creater" disabled />
+                        </td>
+                        <td style="width: 60px;">
+                            创建时间：
+                        </td>
+                        <td>
+                            <input type="text" id="createTime" name="createTime" disabled />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 80px;">
+                            最后更新人：
+                        </td>
+                        <td style="width: 200px;">
+                            <input type="text" id="lastUpdater" name="lastUpdater" disabled />
+                        </td>
+                        <td style="width: 60px;">
+                            更新时间：
+                        </td>
+                        <td>
+                            <input type="text" id="lastUpdateTime" name="lastUpdateTime" disabled />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="rMenu">
+    <ul style="margin: 1px 0; padding: 0 5px; cursor: pointer; list-style: none outside none;
+        background-color: #DFDFDF;">
+        <li id="m_add" onclick="Func.addFuncNode();">创建同级功能</li>
+        <li id="m_addson" onclick="Func.addFuncSonNode();">创建子功能</li>
+        <li id="m_del" onclick="Func.removeFuncNode();">删除功能</li>
+    </ul>
+</div>
+<script type="text/javascript" language="javascript">
+    <!--
+    var Func = {
+        clearFuncInfo:function() {
+            $('#func_oper').html('');
+            $('#name').val('');
+            $('#id').val('');
+            $('#parentID').val('');
+            $('#sort').val('');
+            $('#code').val('');
+            $('#code')[0].disabled = false;
+            $('#path').val('');
+            $('#basePath').val('');
+            $('#customJson').val('');
+            $('#remark').val('');
+            $('#creater').val('');
+            $('#createTime').val('');
+            $('#lastUpdater').val('');
+            $('#lastUpdateTime').val('');
+        },
+        clearFuncButton:function() {
+            $('#btAddFunc')[0].disabled = false;
+            $('#btAddSonFunc')[0].disabled = false;
+            $('#btDelFunc')[0].disabled = false;
+        },
+        addOrUpdate: function () {
+            var appCode = $('#appCode').val();
+            var name = $('#name').val();
+            var id = $('#id').val();
+            var parentID = $('#parentID').val();
+            var sort = $('#sort').val();
+            var code = $('#code').val();
+            var path = $('#path').val();
+            var customJson = $('#customJson').val();
+            var remark = $('#remark').val();
+            $.post('/Admin/Func/AddOrUpdate', { 'appCode': appCode, 'code': code, 'name': name, 'id': id, 'parentID': parentID, 'sort': sort, 'path': path, 'customJson': customJson, 'remark': remark , 'ajax': 'ajax'},
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', '/Admin/Func/List?appCode=' + appCode);
+                     } else {
+                         Common.alert('操作失败,'+data.msg);
+                     }
+                 }, "json"
+            );
+        },
+        setAddFuncInfo : function(id) {
+            $.get('/Admin/Func/Get', { 'id': id , 'random': Math.random(), 'ajax': 'ajax'},
+                 function (data) {
+                     if (0 == data.code) {
+                         Func._setAddFuncInfo(data.data.path, data.data.id);
+                     } else {
+                         Common.alert('操作失败,'+data.msg);
+                     }
+                 }, "json"
+            );
+        },
+        _setAddFuncInfo : function(path, parentID) {
+            $('#basePath').val(path);
+            $('#path').val(path+'.');
+            $('#sort').val('0');
+            $('#parentID').val(parentID);
+        },
+        loadFuncInfo : function(id) {
+            Func.clearFuncInfo();
+            $.get('/Admin/Func/Get', { 'id': id, 'random': Math.random() , 'ajax': 'ajax'},
+                 function (data) {
+                     if (0 == data.code) {
+                        $('#func_oper').html(zTree.getSelectedNodes()[0].name);
+                        $('#name').val(data.data.name);
+                        $('#id').val(data.data.id);
+                        $('#parentID').val(data.data.parentID);
+                        $('#sort').val(data.data.sort);
+                        $('#code').val(data.data.code);
+                        $('#code')[0].disabled = true;
+                        $('#path').val(data.data.path);
+                        //$('#basePath').val(data.data.path.substr(0,data.data.path.lastIndexOf('.')));
+                        $('#customJson').val(data.data.customJson);
+                        $('#remark').val(data.data.remark);
+                        $('#creater').val(data.data.creater);
+                        $('#createTime').val(data.data.createTime);
+                        $('#lastUpdater').val(data.data.lastUpdater);
+                        $('#lastUpdateTime').val(data.data.lastUpdateTime);
+                     } else {
+                         Common.alert('操作失败,'+data.msg);
+                     }
+                 }, "json"
+            );
+        },
+        
+        addFuncNode : function(type) {
+            if(1 != type) {
+                Tree.hideRMenu();
+            }
+            Func.clearFuncInfo();
+            var pid = zTree.getSelectedNodes()[0].pId;
+            $('#func_oper').html('创建同级功能 -- '+zTree.getSelectedNodes()[0].name);
+            if(pid != null) {
+                if(pid > 0) {
+                    Func.setAddFuncInfo(pid);    
+                }else {
+                    Func._setAddFuncInfo($('#appCode').val(), 0);
+                }
+            }
+        },
+        addFuncSonNode : function(type) {
+            if(1 != type) {
+                Tree.hideRMenu();
+            }
+            Func.clearFuncInfo();
+            $('#func_oper').html('创建子功能 -- '+zTree.getSelectedNodes()[0].name);
+            var id = zTree.getSelectedNodes()[0].id;
+            if(id > 0) {
+                Func.setAddFuncInfo(id);    
+            }else {
+                Func._setAddFuncInfo($('#appCode').val(), 0);
+            }
+        },
+        removeFuncNode: function(type) {
+			if(1 != type) {
+                Tree.hideRMenu();
+            }
+			var nodes = zTree.getSelectedNodes();
+			if (nodes && nodes.length>0) {
+				var msg = "如果要删除的功能有子功能，那么将连同子节点一起删掉。\n\n请确认是否删除！";
+				if (confirm(msg)==true) {
+					$.post('/Admin/Func/Del', { 'id': nodes[0].id , 'ajax': 'ajax'},
+                         function (data) {
+                             if (0 == data.code) {
+                                 Common.alert('操作成功', window.location.href);
+                             } else {
+                                 Common.alert('操作失败,' + data.msg);
+                             }
+                         }, "json"
+                    );
+				}
+			}
+		}
+    };
+
+    
+
+    var zTree, rMenu;
+    var Tree = {
+        initZTree : function() {
+            $.fn.zTree.init($("#menu"), zTreesetting, zTreeNodes);
+            zTree = $.fn.zTree.getZTreeObj("menu");
+		    rMenu = $("#rMenu");
+        },
+        zTreeOnClick : function(e, treeId, treeNode) {
+            Func.clearFuncButton();
+            if (treeNode.id > 0) {
+                //zTree.expandNode(treeNode);
+                Func.loadFuncInfo(treeNode.id);
+            }else {
+                $('#btAddFunc')[0].disabled = true;
+                $('#btDelFunc')[0].disabled = true;
+            }
+        },
+        OnRightClick : function(event, treeId, treeNode) {
+			if (!treeNode && event.target.tagName.toLowerCase() != "button" 
+    			&& $(event.target).parents("a").length == 0) {
+				zTree.cancelSelectedNode();
+				Tree.showRMenu("root", event.clientX, event.clientY);
+			} else if (treeNode && !treeNode.noR) {
+				zTree.selectNode(treeNode);
+			    Tree.zTreeOnClick(event, treeId, treeNode);
+				Tree.showRMenu("node", event.clientX, event.clientY);
+			}
+		},
+        showRMenu : function(type, x, y) {
+            if (type=="root") {
+                return;
+            }
+            $("#rMenu ul").show();
+			$("#m_add").show();
+			$("#m_addson").show();
+			$("#m_del").show();
+            
+            var node = zTree.getSelectedNodes()[0];
+            if(node.id == 0) {
+                $("#m_del").hide();
+                $("#m_add").hide();
+            }
+            
+			rMenu.css({"top":y+"px", "left":x+"px", "visibility":"visible"});
+
+			$("body").bind("mousedown", Tree.onBodyMouseDown);
+		},
+        hideRMenu : function(){
+			if (rMenu) rMenu.css({"visibility": "hidden"});
+			$("body").unbind("mousedown", Tree.onBodyMouseDown);
+		},
+        onBodyMouseDown : function(event){
+			if (!(event.target.id == "rMenu" || $(event.target).parents("#rMenu").length>0)) {
+				rMenu.css({"visibility" : "hidden"});
+			}
+		}
+    };
+
+
+    var zTreesetting = {
+        view: {
+            dblClickExpand: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            onClick: Tree.zTreeOnClick,
+            onRightClick: Tree.OnRightClick
+        }
+    };
+    var zTreeNodes = {% raw tree %};
+    $(document).ready(function () {
+        Tree.initZTree();
+        $('#code').bind('keyup', function() {
+            var basePath = $('#basePath').val();
+            if('' != basePath) {
+                $('#path').val(basePath +'.'+$('#code').val());
+            }
+        });
+        $('#btAddOrUpdate').bind('click',function() {
+            Func.addOrUpdate();
+        });
+        $('#apps').bind('change', function() {
+            window.location.href = '/Admin/Func/Edit?appCode=' + $('#apps').val();
+        });
+        $('#btAddFunc').bind('click', function() {
+            Func.addFuncNode(1);
+        });
+        $('#btAddSonFunc').bind('click', function() {
+            Func.addFuncSonNode(1);
+        });
+        $('#btDelFunc').bind('click', function() {
+            Func.removeFuncNode(1);
+        });
+    });
+    //-->
+</script>
+{% end %}

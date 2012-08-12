@@ -1,0 +1,81 @@
+{% extends "../../base.html" %} {% block head %}
+<link rel="stylesheet" href="{{ jsDomain }}js/zTree/zTreeStyle/zTreeStyle.css?{{ version }}" type="text/css" />
+<script type="text/javascript" src="{{ jsDomain }}js/zTree/jquery.ztree.core-3.2.min.js?{{ version }}"></script>
+{% end %} {% block body %}
+<div class="titlediv">
+    <h1>
+        {{ title }}</h1>
+</div>
+<div class="inputdiv">
+    <table class="inputtable">
+        <tr>
+            <td style="100px;">
+                应用：
+            </td>
+            <td style="400px;">
+                <select id="apps" name="apps">
+                    {% for app in apps %}
+                    <option value="{{ app['code'] }}" {% if appCode == app['code'] %} selected {% end %}>{{ app['name']}}</option>
+                    {% end %}
+                </select>
+            </td>
+            <td style="text-align: right">
+                <a href="{{siteDomain}}Admin/Func/Edit?appCode={{appCode}}" style="margin-right:20px;">编辑该应用功能</a>
+            </td>
+        </tr>
+    </table>
+    
+</div>
+    <div class="showdiv">
+        <table class="showtable">
+            <tr class="head">
+                <td style="width: 60px;">
+                    编号
+                </td>
+                <td style="width: 250px;">
+                    名称
+                </td>
+                <td style="width: 100px;">
+                    编号
+                </td>
+                <td style="width: 60px;">
+                    排序编号
+                </td>
+                <td>
+                    PATH
+                </td>
+            </tr>
+            {% if None != funcs %}
+            {% for func in funcs %}
+            <tr>
+                <td>
+                    {{ func['id'] }}
+                </td>
+                <td>
+                    {% set c = func['path'].count('.') %}
+                    {% for i in range(c-1) %}██{% end %}{{ func['name'] }}-Lv{{c}}
+                </td>
+                <td>
+                    {{ func['code'] }}
+                </td>
+                <td>
+                    {{ func['sort'] }}
+                </td>
+                <td>
+                    {{ func['path'] }}
+                </td>
+            </tr>
+            {% end %}
+            {% end %}
+        </table>
+    </div>
+<script type="text/javascript" language="javascript">
+    <!--
+    $(document).ready(function () {
+        $('#apps').bind('change', function() {
+            window.location.href = '/Admin/Func/List?appCode=' + $('#apps').val();
+        });
+    });
+    //-->
+</script>
+{% end %}

@@ -1,0 +1,89 @@
+{% extends "../../base.html" %} {% block head %} {% end %} {% block body %}
+<div class="titlediv">
+    <h1>
+        {{ title }}</h1>
+</div>
+<div class="inputdiv">
+    <table class="inputtable">
+        <tr>
+            <td style="width:100px">
+                用户信息：
+            </td>
+            <td style="width: 200px;">
+                <label class="red">{{userName}}--{{userRealName}}</label>
+            </td>
+            <td style="text-align: right">
+                <a href="{{siteDomain}}Admin/UserGroup/UserBind?userID={{userID}}" style="margin-right:20px;">新增用户组绑定</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="showdiv">
+    <table class="showtable">
+        <tr class="head">
+            <td style="width:40px">
+                编号
+            </td>
+            <td style="width:40px">
+                角色组编号
+            </td>
+            <td style="width:60px">
+                角色组名称
+            </td>
+            <td style="width:60px">
+                绑定人
+            </td>
+            <td style="width:50px">
+                绑定时间
+            </td>
+            <td style="width:50px">
+                操作
+            </td>
+        </tr>
+        {% for r in pagedata['data'] %}
+        <tr>
+            <td>
+                {{ r['id'] }}
+            </td>
+            <td>
+                {{ r['userGroupID'] }}
+            </td>
+            <td>
+                {{ r['userGroupName'] }}
+            </td>
+            <td>
+                {{ r['creater'] }}
+            </td>
+            <td>
+                {{ str(r['createTime'])[0:-3] }}
+            </td>
+            <td>
+                <a href="{{siteDomain}}Admin/UserGroup/Detail?id={{ r['userGroupID'] }}">用户组详情</a>
+                <a href="javascript:" onclick="UserGroupUser.del('{{r['id']}}')">删除</a>
+            </td>
+        </tr>
+        {% end %}
+    </table>
+    {% raw pager %}
+</div>
+<script type="text/javascript" language="javascript">
+    <!--
+
+    var UserGroupUser = {
+        del: function (id) {
+            if (!confirm("确定删除该记录吗？")) return false;
+
+            $.post('{{siteDomain}}Admin/UserGroup/UserDel', { 'id': id, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', window.location.href);
+                     } else {
+                         Common.alert('操作失败,' + data.msg);
+                     }
+                 }, "json");
+        }
+    };
+
+    //-->
+</script>
+{% end %}

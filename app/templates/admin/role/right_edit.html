@@ -1,0 +1,202 @@
+{% extends "../../base.html" %} {% block head %} {% end %} {% block body %}
+<div class="titlediv">
+    <h1>
+        {{ title }}</h1>
+</div>
+<div class="inputdiv">
+    <table class="inputtable">
+        <tr>
+            <td style="width: 100px;">
+                角色：
+            </td>
+            <td>
+                <select id="roles" name="roles">
+                    {% for role in roles %}
+                    <option value="{{ role['id'] }}" {% if roleID == role['id'] %} selected {% end %}>{{ role['name']}}</option>
+                    {% end %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                应用：
+            </td>
+            <td>
+                <select id="apps" name="apps">
+                    {% for app in apps %}
+                    <option value="{{ app['code'] }}" {% if appCode == app['code'] %} selected {% end %}>{{ app['name']}}</option>
+                    {% end %}
+                </select>
+            </td>
+        </tr>
+    </table>
+    <form action="{{ request.uri }}" method="post">
+        <table class="cbtable" id="funcrightinfo">
+            <tr class="head">
+                <td style="width: 300px;">
+                    功能
+                </td>
+                <td>
+                    <label>功能权限</label><label><input type="checkbox" id="selectAllView" />浏览全选</label>
+                    <label><input type="checkbox" id="selectAllAdd" />新增全选</label><label><input type="checkbox" id="selectAllEdit" />编辑全选</label>
+                    <label><input type="checkbox" id="selectAllDel" />删除全选</label><label><input type="checkbox" id="selectall" />全选</label>
+                    <label id="fanxuan" style="cursor:pointer;">反选</label> 
+                <input type="hidden" id="roleID" name="roleID" value="{{roleID}}" />
+                <input type="hidden" id="appCode" name="appCode" value="{{appCode}}" />
+                </td>
+            </tr>
+            {% for func in funcs %}
+            <tr>
+                <td>
+                    {% set c = func['path'].count('.') %}
+                    {% for i in range(c-1) %}██{% end %}{{ func['name'] }}-Lv{{c}}
+                </td>
+                {% if func['customJson'] == None %}
+                <td>
+                    <label><input type="checkbox" value="1" id="right_{{func['id']}}_1" {% if func['right'] & 1 == 1 %} checked {% end %} name="right_{{func['id']}}_1" />浏览</label>
+                    <label><input type="checkbox" value="2" id="right_{{func['id']}}_2" {% if func['right'] & 2 == 2 %} checked {% end %} name="right_{{func['id']}}_2" />新增</label>
+                    <label><input type="checkbox" value="4" id="right_{{func['id']}}_4" {% if func['right'] & 4 == 4 %} checked {% end %} name="right_{{func['id']}}_4" />编辑</label>
+                    <label><input type="checkbox" value="8" id="right_{{func['id']}}_8" {% if func['right'] & 8 == 8 %} checked {% end %} name="right_{{func['id']}}_8" />删除</label>
+                </td>
+                {% else %}
+                <td class="td">
+                    <table class="cb2table">
+                        <tr>
+                            <td>
+                                <label><input type="checkbox" value="1" id="right_{{func['id']}}_1" {% if func['right'] & 1 == 1 %} checked {% end %} name="right_{{func['id']}}_1" />浏览</label>
+                                <label><input type="checkbox" value="2" id="right_{{func['id']}}_2" {% if func['right'] & 2 == 2 %} checked {% end %} name="right_{{func['id']}}_2" />新增</label>
+                                <label><input type="checkbox" value="4" id="right_{{func['id']}}_4" {% if func['right'] & 4 == 4 %} checked {% end %} name="right_{{func['id']}}_4" />编辑</label>
+                                <label><input type="checkbox" value="8" id="right_{{func['id']}}_8" {% if func['right'] & 8 == 8 %} checked {% end %} name="right_{{func['id']}}_8" />删除</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {% for j in func['customJson'] %}
+                                <label><input type="checkbox" value="{{j['id']}}" id="rightcustom_{{func['id']}}_j['id']" {% if j['right'] %} checked {% end %} name="rightcustom_{{func['id']}}_{{j['id']}}" />{{j['name']}}</label>
+                                {% end %}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                {% end %}
+            </tr>
+            {% end %}
+            <tr>
+                <td colspan="2" style="padding-left: 120px; height: 40px;">
+                    <input type="submit" style="width: 100px; height: 30px; line-height: 18px; cursor: pointer;margin-right: 3px;" {% if len(funcs) == 0%}disabled{% end %}  value="提交" />
+                    <input type="button" style="width: 100px; height: 30px; line-height: 18px; cursor: pointer;margin-right: 3px;" onclick="window.history.go(-1);" value="返回" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script type="text/javascript" language="javascript">
+    <!--
+    var RoleRight = {
+        selectAll: function () {
+            $('#funcrightinfo input:checkbox').each(function (index) {
+                var id = this.id;
+                if (id.indexOf('right') == 0) {
+                    this.checked = $('#selectall')[0].checked;
+                }
+            });
+        },
+        selectAllView: function () {
+            $('#funcrightinfo input:checkbox').each(function (index) {
+                var id = this.id;
+                if (id.indexOf('right_') == 0) {
+                    var ss = id.split('_');
+                    if (ss[ss.length - 1] == '1') {
+                        this.checked = $('#selectAllView')[0].checked;
+                    }
+                }
+            });
+        },
+        selectAllAdd: function () {
+            $('#funcrightinfo input:checkbox').each(function (index) {
+                var id = this.id;
+                if (id.indexOf('right_') == 0) {
+                    var ss = id.split('_');
+                    if (ss[ss.length - 1] == '2') {
+                        this.checked = $('#selectAllAdd')[0].checked;
+                    }
+                }
+            });
+        },
+        selectAllEdit: function () {
+            $('#funcrightinfo input:checkbox').each(function (index) {
+                var id = this.id;
+                if (id.indexOf('right_') == 0) {
+                    var ss = id.split('_');
+                    if (ss[ss.length - 1] == '4') {
+                        this.checked = $('#selectAllEdit')[0].checked;
+                    }
+                }
+            });
+        },
+        selectAllDel: function () {
+            $('#funcrightinfo input:checkbox').each(function (index) {
+                var id = this.id;
+                if (id.indexOf('right_') == 0) {
+                    var ss = id.split('_');
+                    if (ss[ss.length - 1] == '8') {
+                        this.checked = $('#selectAllDel')[0].checked;
+                    }
+                }
+            });
+        },
+        fanXuan: function () {
+            $('#funcrightinfo input:checkbox').each(function (index) {
+                var id = this.id;
+                if (id.indexOf('right') == 0) {
+                    this.checked = !this.checked;
+                }
+            });
+        },
+        selectRoleApp: function () {
+            var roleID = $('#roles').val();
+            var appCode = $('#apps').val();
+            window.location.href = '{{siteDomain}}Admin/Role/RightEdit?roleID=' + roleID + '&appCode=' + appCode;
+        }
+    };
+
+    $(document).ready(function () {
+        $(".cbtable tr").each(function (index) {
+            if ((index % 2 == 1) && (this.parentNode.parentNode.className == "cbtable")) {
+                $(this).addClass('alt');
+            }
+        }).mouseover(function () {
+            $(this).addClass("over");
+        }).mouseout(function () {
+            $(this).removeClass("over");
+        }); //移除该行的class  
+        $('#selectall').bind('click', function () {
+            RoleRight.selectAll();
+        });
+        $('#fanxuan').bind('click', function () {
+            RoleRight.fanXuan();
+        });
+        $('#selectAllView').bind('click', function () {
+            RoleRight.selectAllView();
+        });
+        $('#selectAllAdd').bind('click', function () {
+            RoleRight.selectAllAdd();
+        });
+        $('#selectAllEdit').bind('click', function () {
+            RoleRight.selectAllEdit();
+        });
+        $('#selectAllDel').bind('click', function () {
+            RoleRight.selectAllDel();
+        });
+        $('#roles').bind('change', function () {
+            RoleRight.selectRoleApp();
+        });
+        $('#apps').bind('change', function () {
+            RoleRight.selectRoleApp();
+        });
+    });
+
+    
+    //-->
+</script>
+{% end %}

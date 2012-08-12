@@ -1,0 +1,136 @@
+{% extends "../../base.html" %} {% block head %} {% end %} {% block body %}
+<div class="titlediv">
+    <h1>
+        {{ title }}</h1>
+</div>
+<div class="inputdiv">
+        <table class="inputtable">
+            <tr>
+                <td style="width: 100px;">
+                    编号：<span class="red">*</span>
+                </td>
+                <td>
+                    {{ user['id'] }}
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 100px;">
+                    用户名：<span class="red">*</span>
+                </td>
+                <td>
+                    {{ user['name'] }}
+                    <input type="hidden" name="parentID" value="0" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 100px;">
+                    用户姓名：<span class="red">*</span>
+                </td>
+                <td>
+                    {{ user['realName'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    电子邮箱：<span class="red">*</span>
+                </td>
+                <td>
+                    {{ user['email'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    手机：<span class="red">*</span>
+                </td>
+                <td>
+                    {{ user['mobile'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    电话：
+                </td>
+                <td>
+                    {{ user['tel'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    状态：<span class="red">*</span>
+                </td>
+                <td>
+                    {{ user['statusname'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    备注：
+                </td>
+                <td>
+                    {{ user['remark'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    最后登录时间：
+                </td>
+                <td>
+                    {{ user['lastLoginTime'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    最后登录应用：
+                </td>
+                <td>
+                    {{ user['lastLoginApp'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    最后更新IP：
+                </td>
+                <td>
+                    {{ user['lastLoginIp'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    创建人：
+                </td>
+                <td>
+                    {{ user['creater'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    创建时间：
+                </td>
+                <td>
+                    {{ user['createTime'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    最后更新人：
+                </td>
+                <td>
+                    {{ user['lastUpdater'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    最后更新时间：
+                </td>
+                <td>
+                    {{ user['lastUpdateTime'] }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-left:120px; height:40px;">
+                    <input type="button" style="width:100px; height:30px;line-height:18px; cursor:pointer; margin-right:3px;" onclick="window.history.go(-1);" value="返回" />
+                </td>
+            </tr>
+        </table>
+</div>
+{% end %}

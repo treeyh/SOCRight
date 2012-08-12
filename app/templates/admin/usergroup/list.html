@@ -1,0 +1,122 @@
+{% extends "../../base.html" %} {% block head %} {% end %} {% block body %}
+<div class="titlediv">
+    <h1>
+        {{ title }}</h1>
+</div>
+<div class="inputdiv">
+    <form action="{{ request.path }}" method="get">
+    <table class="inputtable">
+        <tr>
+            <td style="width: 60px;">
+                编号：
+            </td>
+            <td style="width: 200px;">
+                <input type="text" name="id" value="{{ userGroup['id'] }}" />
+            </td>
+            <td style="width: 60px;">
+                姓名：
+            </td>
+            <td style="width: 200px;">
+                <input type="text" name="name" value="{{ userGroup['name'] }}" />
+            </td>
+            <td style="width: 60px;">
+                状态：
+            </td>
+            <td style="width: 80px;"> 
+                <select name="status">
+                    <option value="0" {% if userGroup['status'] == 0 %} selected{% end %}>全部</option>
+                    <option value="1" {% if userGroup['status'] == 1 %} selected{% end %}>可用</option>
+                    <option value="2" {% if userGroup['status'] == 2 %} selected{% end %}>不可用</option>
+                </select>
+            </td>
+            <td style="text-align: right">
+                <a href="{{siteDomain}}Admin/UserGroup/Add" style="margin-right:20px;">创建用户组</a>
+                <input type="submit" style="width:100px; height:26px;line-height:18px; cursor:pointer; margin-right:3px;" value="查询" />
+            </td>
+        </tr>
+    </table>
+    </form>
+</div>
+<div class="showdiv">
+    <table class="showtable">
+        <tr class="head">
+            <td style="width:40px">
+                编号
+            </td>
+            <td style="width:60px">
+                名称
+            </td>
+            <td style="width:60px">
+                状态
+            </td>
+            <td style="width:50px">
+                创建人
+            </td>
+            <td style="width:60px">
+                创建时间
+            </td>
+            <td style="width:50px">
+                最后更新人
+            </td>
+            <td style="width:60px">
+                最后更新时间
+            </td>
+            <td style="width:100px">
+                操作
+            </td>
+        </tr>
+        {% for r in pagedata['data'] %}
+        <tr>
+            <td>
+                {{ r['id'] }}
+            </td>
+            <td>
+                {{ r['name'] }}
+            </td>
+            <td>
+                {{ r['statusname'] }}
+            </td>
+            <td>
+                {{ r['creater'] }}
+            </td>
+            <td>
+                {{ str(r['createTime'])[0:-3] }}
+            </td>
+            <td>
+                {{ r['lastUpdater'] }}
+            </td>
+            <td>
+                {{ str(r['lastUpdateTime'])[0:-3] }}
+            </td>
+            <td>
+                <a href="{{siteDomain}}Admin/UserGroup/RightDetail?id={{ r['id'] }}">权限预览</a>
+                <a href="{{siteDomain}}Admin/UserGroup/UserList?id={{ r['id'] }}">用户列表</a>
+                <a href="{{siteDomain}}Admin/UserGroup/RoleList?id={{ r['id'] }}">角色列表</a>
+                <a href="{{siteDomain}}Admin/UserGroup/Detail?id={{ r['id'] }}">详情</a>
+                <a href="{{siteDomain}}Admin/UserGroup/Edit?id={{ r['id'] }}">编辑</a>
+                <a href="javascript:" onclick="UserGroup.del('{{r['id']}}')">删除</a>
+            </td>
+        </tr>
+        {% end %}
+    </table>
+    {% raw pager %}
+</div>
+<script type="text/javascript" language="javascript">
+    <!--
+    var UserGroup = {
+        del: function (id) {
+            if (!confirm("确定删除该记录吗？")) return false;
+
+            $.post('/Admin/UserGroup/Del', { 'id': id, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', window.location.href);
+                     } else {
+                         Common.alert('操作失败,'+data.msg);
+                     }
+                 }, "json");
+        }
+    };
+    //-->
+</script>
+{% end %}
