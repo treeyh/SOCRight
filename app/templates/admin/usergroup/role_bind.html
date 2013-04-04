@@ -99,8 +99,6 @@
             $.post('/Admin/UserGroup/RoleBind', { 'userGroupID': userGroupID, 'roleID': roleID, 'ajax': 'ajax' },
                  function (data) {
                      if (0 == data.code) {
-                         $('#roleinfo').html('');
-                         $('#roleID').val('');
                          Common.alert('操作成功');
                      } else {
                          Common.alert('操作失败,' + data.msg);

@@ -9,7 +9,7 @@ SOCRightConfig = {
     'jsDomain' : '/static/',
     'cssDomain' : '/static/',
     'siteDomain' : 'http://ssoadmin.kanchene.com/',
-    'serviceSiteDomain' : 'http://ssoservice.kanchene.com/',
+    'serviceSiteDomain' : 'http://sso.kanchene.com/',
 
     'size' : 15,
     'appCode' : 'SOCRight',

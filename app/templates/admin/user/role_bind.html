@@ -96,8 +96,8 @@
             $.post('/Admin/User/RoleBind', { 'userID': userID, 'roleID': roleID, 'ajax': 'ajax'},
                  function (data) {
                      if (0 == data.code) {
-                         $('#userinfo').html('');
-                         $('#userID').val('');
+                         $('#roleInfo').html('');
+                         $('#roleID').val('');
                          Common.alert('操作成功');
                      } else {
                          Common.alert('操作失败,' + data.msg);

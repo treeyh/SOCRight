@@ -117,8 +117,6 @@
             $.post('/Admin/UserGroup/UserBind', { 'userGroupID': userGroupID, 'userID': userID, 'ajax': 'ajax' },
                  function (data) {
                      if (0 == data.code) {
-                         $('#userinfo').html('');
-                         $('#userID').val('');
                          Common.alert('操作成功');
                      } else {
                          Common.alert('操作失败,' + data.msg);
