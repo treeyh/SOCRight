@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <title>Tree权限管理平台</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link rel="stylesheet" href="../app/static/css/style.css" type="text/css" />
+    <script type="text/javascript" src="../app/static/js/jquery.min.1.7.2.js"></script>
+    <link rel="stylesheet" href="../app/static/js/zTree/zTreeStyle/zTreeStyle.css" type="text/css" />
+    <script type="text/javascript" src="../app/static/js/zTree/jquery.ztree.core-3.2.min.js"></script>
+</head>
+<body>
+    <table style="height: 100%; width: 100%;" class="linetable">
+        <tr>
+            <td id="head" class="head" colspan="3">
+                <h1 class="title" onclick="alert($('#head').height());">Tree平台</h1>
+                <div class="userinfo">欢迎您：余海<a href="" class="logout">退出登录</a></div>
+            </td>
+        </tr>
+        <tr>
+            <td id="menumain" class="menumain">
+                <ul id="menu" class="ztree">
+                </ul>
+            </td>
+            <td id="menucon" class="menucon">
+                》<br />
+                《
+            </td>
+            <td id="body" style="width: auto; padding:0;">
+                <iframe name="content" src="c.html" height="100%" width="100%" border="0" frameborder="0">
+                    浏览器不支持嵌入式框架，或被配置为不显示嵌入式框架。</iframe>
+            </td>
+        </tr>
+        <tr>
+            <td id="foot" class="foot" colspan="3">
+                1
+            </td>
+        </tr>
+    </table>
+    <script type="text/javascript">
+            <!--
+        function initWindow() {
+            var height = $(window).height();
+            var head = $('#head').height();
+            //alert(head);
+            var foot = $('#foot').height();
+            var h = height - head - foot - 7;
+            if (h > 300) {
+                $('#body').height(h);
+            } else {
+                $('#body').height(300);
+            }
+        }
+
+        function close_show_menu() {
+            $('#menumain').toggle();
+        }
+
+        var zTreesetting = {
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            }
+        };
+
+        var zTreeNodes = [
+            { id: 2, pId: 1, name: "应用功能管理", open: true },
+			{ id: 3, pId: 2, name: "应用列表", url: "http://www.baby666.cn/", target: "content" },
+			{ id: 4, pId: 2, name: "应用添加", url: "http://www.baby666.cn/", target: "content" },
+			{ id: 5, pId: 2, name: "功能列表", url: "http://www.baby666.cn/", target: "content" },
+			{ id: 6, pId: 1, name: "xxxx", url: "http://code.google.com/p/jquerytree/", target: "content" }
+		];
+
+
+		$(document).ready(function () {
+			initWindow();
+			$.fn.zTree.init($("#menu"), zTreesetting, zTreeNodes);
+			$(window).resize(function () {
+			    initWindow();
+			});
+			$('#menucon').click(function () {
+			    close_show_menu();
+			});
+		});
+        //-->
+    </script>
+</body>
+</html>
