@@ -1,3 +1,3 @@
 #!/bin/sh
 
-killall -9 python_ssoservice
+killall -9 python_sso
