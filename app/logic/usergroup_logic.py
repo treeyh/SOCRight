@@ -1,7 +1,7 @@
 #-*- encoding: utf-8 -*-
 
 from helper import str_helper
-from common import mysql, ssostatus, ssoerror
+from common import mysql, state, error
 
 from logic import func_logic, role_logic
 
@@ -25,7 +25,7 @@ class UserGroupLogic():
     _query_col = str_helper.format_str_to_list_filter_empty('id, name, status, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
     def query_page(self, id = '', name = '', status = 0, page = 1, size = 12):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         ps = [isdelete]
         if '' != id:
             sql = sql + ' and id = %s '
@@ -41,22 +41,22 @@ class UserGroupLogic():
         usergroups = mysql.find_page(sql, yz, self._query_col, page, size)
         if None != usergroups['data']:
             for r in usergroups['data']:
-                r['statusname'] = ssostatus.Status.get(r['status'])
+                r['statusname'] = state.Status.get(r['status'])
         return usergroups
 
     def query_all_by_active(self):
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         sql = self._query_sql + ' and status = %s order by id desc '
-        yz = (isdelete, ssostatus.statusActive)
+        yz = (isdelete, state.statusActive)
         usergroups = mysql.find_all(sql, yz, self._query_col)
         if None != usergroups:
             for r in usergroups:
-                r['statusname'] = ssostatus.Status.get(r['status'])
+                r['statusname'] = state.Status.get(r['status'])
         return usergroups
 
     def query_one(self, id = 0):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         ps = [isdelete]        
         if 0 != id:
             sql = sql + ' and id = %s '
@@ -66,18 +66,18 @@ class UserGroupLogic():
         yz = tuple(ps)
         usergroup = mysql.find_one(sql, yz, self._query_col)
         if None != usergroup:
-            usergroup['statusname'] = ssostatus.Status.get(usergroup['status'])
+            usergroup['statusname'] = state.Status.get(usergroup['status'])
         return usergroup
 
 
     def query_one_by_name(self, name = ''):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         sql = sql + ' and name = %s '
         yz = (isdelete, name)
         usergroup = mysql.find_one(sql, yz, self._query_col)
         if None != usergroup:
-            usergroup['statusname'] = ssostatus.Status.get(usergroup['status'])
+            usergroup['statusname'] = state.Status.get(usergroup['status'])
         return usergroup
 
 
@@ -88,9 +88,9 @@ class UserGroupLogic():
     def add(self, name, status, remark, user):
         obj = self.query_one_by_name(name = name)
         if None != obj:
-            raise  ssoerror.SsoError(code = 105001)
+            raise  error.RightError(code = 105001)
 
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         yz = (name, status, remark, isdelete, user, user)
         ugid = mysql.insert_or_update_or_delete(self._add_sql, yz, True)
         return ugid
@@ -101,9 +101,9 @@ class UserGroupLogic():
     def update(self, id, name, status, remark, user):
         obj = self.query_one_by_name(name = name)
         if None != obj and str(obj['id']) == str(id):
-            raise  ssoerror.SsoError(code = 105001)
+            raise  error.RightError(code = 105001)
 
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         yz = (name, status, remark, user, id)
         result = mysql.insert_or_update_or_delete(self._update_sql, yz)
         return 0 == result
@@ -112,7 +112,7 @@ class UserGroupLogic():
     _delete_sql = '''   update sso_user_group set isDelete = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where id = %s  '''
     def delete(self, id, user):
-        isdelete = ssostatus.Boole['true']
+        isdelete = state.Boole['true']
         yz = (isdelete, user, id)
         result = mysql.insert_or_update_or_delete(self._delete_sql, yz)
         return 0 == result
@@ -126,14 +126,14 @@ class UserGroupLogic():
     _query_group_users_col = str_helper.format_str_to_list_filter_empty(
             'id, userGroupID, userID, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, userName, userEmail, userRealName', ',')
     def query_page_group_users(self, userGroupID, page = 1, size = 12):
-        isdelete = ssostatus.Boole['false']
-        yz = (userGroupID, isdelete, ssostatus.statusActive)
+        isdelete = state.Boole['false']
+        yz = (userGroupID, isdelete, state.statusActive)
         users = mysql.find_page(self._query_group_users_sql, yz, self._query_group_users_col, page, size)
         return users
 
     def query_all_group_users(self, userGroupID):
-        isdelete = ssostatus.Boole['false']
-        yz = (userGroupID, isdelete, ssostatus.statusActive)
+        isdelete = state.Boole['false']
+        yz = (userGroupID, isdelete, state.statusActive)
         users = mysql.find_all(self._query_group_users_sql, yz, self._query_group_users_col)
         return users
     
@@ -146,14 +146,14 @@ class UserGroupLogic():
     _query_user_groups_col = str_helper.format_str_to_list_filter_empty(
             'id, userGroupID, userID, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, userGroupName', ',')
     def query_all_user_groups(self, userID):
-        isdelete = ssostatus.Boole['false']
-        yz = (userID, isdelete, ssostatus.statusActive)
+        isdelete = state.Boole['false']
+        yz = (userID, isdelete, state.statusActive)
         users = mysql.find_all(self._query_user_groups_sql, yz, self._query_user_groups_col)
         return users
 
     def query_page_user_groups(self, userID, page = 1, size = 12):
-        isdelete = ssostatus.Boole['false']
-        yz = (userID, isdelete, ssostatus.statusActive)
+        isdelete = state.Boole['false']
+        yz = (userID, isdelete, state.statusActive)
         users = mysql.find_page(self._query_user_groups_sql, yz, self._query_user_groups_col, page, size)
         return users
 
@@ -167,7 +167,7 @@ class UserGroupLogic():
             for u in users:
                 if u['userID'] == userID:
                     return True
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         yz = (userGroupID, userID, '', isdelete, user, user)
         result = mysql.insert_or_update_or_delete(self._bind_group_user_sql, yz, True)
         return result > 0
@@ -175,7 +175,7 @@ class UserGroupLogic():
 
     _del_group_user_sql = '''  update sso_user_group_user set isDelete = %s , lastUpdater = %s , lastUpdateTime = now() WHERE id = %s '''
     def del_group_user(self, id, user):
-        isdelete = ssostatus.Boole['true']
+        isdelete = state.Boole['true']
         yz = (isdelete, user, id)
         result = mysql.insert_or_update_or_delete(self._del_group_user_sql, yz)
         return result == 0
@@ -190,14 +190,14 @@ class UserGroupLogic():
     _query_group_roles_col = str_helper.format_str_to_list_filter_empty(
             'id, userGroupID, roleID, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, roleName', ',')
     def query_page_group_roles(self, userGroupID, page = 1, size = 12):
-        isdelete = ssostatus.Boole['false']
-        yz = (userGroupID, isdelete, ssostatus.statusActive)
+        isdelete = state.Boole['false']
+        yz = (userGroupID, isdelete, state.statusActive)
         roles = mysql.find_page(self._query_group_roles_sql, yz, self._query_group_roles_col, page, size)
         return roles
 
     def query_all_group_roles(self, userGroupID):
-        isdelete = ssostatus.Boole['false']
-        yz = (userGroupID, isdelete, ssostatus.statusActive)
+        isdelete = state.Boole['false']
+        yz = (userGroupID, isdelete, state.statusActive)
         roles = mysql.find_all(self._query_group_roles_sql, yz, self._query_group_roles_col)
         return roles
 
@@ -210,7 +210,7 @@ class UserGroupLogic():
             for r in roles:
                 if r['roleID'] == roleID:
                     return True
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         yz = (userGroupID, roleID, '', isdelete, user, user)
         result = mysql.insert_or_update_or_delete(self._bind_group_role_sql, yz)
         return 0 == result
@@ -218,7 +218,7 @@ class UserGroupLogic():
 
     _del_group_role_sql = '''  update sso_user_group_role set isDelete = %s , lastUpdater = %s , lastUpdateTime = now() WHERE id = %s '''
     def del_group_role(self, id, user):
-        isdelete = ssostatus.Boole['true']
+        isdelete = state.Boole['true']
         yz = (isdelete, user, id)
         result = mysql.insert_or_update_or_delete(self._del_group_role_sql, yz)
         return 0 == result

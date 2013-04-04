@@ -8,7 +8,7 @@ import config
 from helper import str_helper, http_helper
 from datetime import datetime, timedelta
 import admin_base_handler
-from common import redis_cache, ssostatus
+from common import redis_cache, state
 from proxy import soc_right_proxy
 
 
@@ -17,7 +17,7 @@ from proxy import soc_right_proxy
 class MainHandler(admin_base_handler.AdminBaseHandler):
 
     _rightKey = config.SOCRightConfig['appCode'] + '.Login'
-    _right = ssostatus.operView
+    _right = state.operView
 
     def get(self):
         ps = self.get_page_config('后台')

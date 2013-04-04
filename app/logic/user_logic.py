@@ -1,7 +1,7 @@
 #-*- encoding: utf-8 -*-
 
 from helper import str_helper
-from common import mysql, ssostatus, redis_cache, ssoerror
+from common import mysql, state, redis_cache, error
 
 import config
 
@@ -30,7 +30,7 @@ class UserLogic():
     _login_col = str_helper.format_str_to_list_filter_empty('id, realName, email, mobile, tel , name', ',')
     def login(self, name, password):
         password = UserLogic._format_user_password_md5(password)        
-        user = mysql.find_one(self._login_sql, (name, password, ssostatus.User['leave'], ssostatus.Boole['false']), self._login_col)
+        user = mysql.find_one(self._login_sql, (name, password, state.User['leave'], state.Boole['false']), self._login_col)
         return user
 
 
@@ -74,7 +74,7 @@ class UserLogic():
                 if func['customJson'] != None:
                     for j in func['customJson']:
                         if j['right']:
-                            cr.append(j['id'])
+                            cr.append(j['k'])
                 right['customRight'] = cr
                 rights.append(right)
         
@@ -97,7 +97,7 @@ class UserLogic():
     _query_col = str_helper.format_str_to_list_filter_empty('id , name, realName, parentID, mobile, tel, email, status, lastLoginTime, lastLoginApp, lastLoginIp, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
     def query_page(self, id = '', name = '', realName = '', tel = '', mobile = '', email = '', status = 0, page = 1, size = 12):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         ps = [isdelete]
         if '' != id:
             sql = sql + ' and id = %s '
@@ -125,13 +125,13 @@ class UserLogic():
         users = mysql.find_page(sql, yz, self._query_col, page, size)
         if None != users['data']:
             for r in users['data']:
-                r['statusname'] = ssostatus.UserStatus.get(r['status'])
+                r['statusname'] = state.UserStatus.get(r['status'])
         return users
 
 
     def query_one(self, id = 0):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         ps = [isdelete]        
         if 0 != id:
             sql = sql + ' and id = %s '
@@ -141,31 +141,31 @@ class UserLogic():
         yz = tuple(ps)
         user = mysql.find_one(sql, yz, self._query_col)
         if None != user:
-            user['statusname'] = ssostatus.UserStatus.get(user['status'])
+            user['statusname'] = state.UserStatus.get(user['status'])
         return user
 
 
     def query_one_by_email(self, email = ''):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         sql = sql + ' and email = %s '        
         yz = (isdelete, email)
 
         user = mysql.find_one(sql, yz, self._query_col)
         if None != user:
-            user['statusname'] = ssostatus.UserStatus.get(user['status'])
+            user['statusname'] = state.UserStatus.get(user['status'])
         return user
 
 
     def query_one_by_name(self, name = ''):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         sql = sql + ' and name = %s '        
         yz = (isdelete, name)
 
         user = mysql.find_one(sql, yz, self._query_col)
         if None != user:
-            user['statusname'] = ssostatus.UserStatus.get(user['status'])
+            user['statusname'] = state.UserStatus.get(user['status'])
         return user
 
     _add_sql = '''  INSERT INTO sso_user(name, passWord, realName, parentID, mobile, tel, email, status, lastLoginTime, 
@@ -174,12 +174,12 @@ class UserLogic():
     def add(self, name, passWord, realName, mobile, tel, email, status, remark, parentID, user):
         u = self.query_one_by_email(email)               #判断用户邮箱是否已存在        
         if None != u:
-            raise ssoerror.SsoError(code = 103001)
+            raise error.RightError(code = 103001)
         u = self.query_one_by_name(name)               #判断用户名是否已存在
         if None != u:
-            raise ssoerror.SsoError(code = 103008)
+            raise error.RightError(code = 103008)
 
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         passWord = self._format_user_password_md5(passWord)
         yz = (name, passWord, realName, parentID, mobile, tel, email, status, remark, isdelete, user, user)
         uid = mysql.insert_or_update_or_delete(self._add_sql, yz, True)
@@ -192,9 +192,9 @@ class UserLogic():
     def update(self, id, realName, parentID, mobile, tel, email, status, remark, user):
         u = self.query_one_by_email(email)               #判断用户邮箱是否已存在     
         if None != u and str(u['id']) != str(id):
-            raise ssoerror.SsoError(code = 103001)
+            raise error.RightError(code = 103001)
 
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         yz = (realName, parentID, mobile, tel, email, status, remark, user, id)
         result = mysql.insert_or_update_or_delete(self._update_sql, yz)
         return 0 == result
@@ -203,7 +203,7 @@ class UserLogic():
     _delete_sql = '''   update sso_user set isDelete = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where id = %s  '''
     def delete(self, id, user):
-        isdelete = ssostatus.Boole['true']
+        isdelete = state.Boole['true']
         yz = (isdelete, user, id)
         result = mysql.insert_or_update_or_delete(self._delete_sql, yz)
         return 0 == result
@@ -214,12 +214,12 @@ class UserLogic():
     _update_password_sql = '''   update sso_user set  `passWord` = %s where  `name` = %s and isDelete = %s '''
     def update_password(self, name , oldPassWord, newPassWord1, newPassWord2):
         if newPassWord1 != newPassWord2:
-            raise ssoerror.SsoError(code = 103010)
+            raise error.RightError(code = 103010)
         u = self.login(name, oldPassWord)               #旧密码是否正确     
         if None == u:
-            raise ssoerror.SsoError(code = 103009)
+            raise error.RightError(code = 103009)
 
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         pw = self._format_user_password_md5(newPassWord1)
         yz = (pw, name, isdelete)
         result = mysql.insert_or_update_or_delete(self._update_password_sql, yz)
@@ -230,7 +230,7 @@ class UserLogic():
     _update_goto_app_sql = '''   update sso_user set  `lastLoginTime` = now(), `lastLoginApp` = %s, `lastLoginIp` = %s where  `name` = %s and isDelete = %s '''
     def update_goto_app(self, name , appCode, ip):
         
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         yz = (appCode, ip, name, isdelete)
         result = mysql.insert_or_update_or_delete(self._update_goto_app_sql, yz)
         return 0 == result
@@ -243,14 +243,14 @@ class UserLogic():
     _query_user_roles_col = str_helper.format_str_to_list_filter_empty(
             'id, userID, roleID, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, roleName', ',')
     def query_page_user_roles(self, userID, page = 1, size = 12):
-        isdelete = ssostatus.Boole['false']
-        yz = (userID, isdelete, ssostatus.statusActive)
+        isdelete = state.Boole['false']
+        yz = (userID, isdelete, state.statusActive)
         roles = mysql.find_page(self._query_user_roles_sql, yz, self._query_user_roles_col, page, size)
         return roles
 
     def query_all_user_roles(self, userID):
-        isdelete = ssostatus.Boole['false']
-        yz = (userID, isdelete, ssostatus.statusActive)
+        isdelete = state.Boole['false']
+        yz = (userID, isdelete, state.statusActive)
         roles = mysql.find_all(self._query_user_roles_sql, yz, self._query_user_roles_col)
         return roles
 
@@ -263,7 +263,7 @@ class UserLogic():
             for role in roles:
                 if role['roleID'] == roleID:
                     return True
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         yz = (userID, roleID, '', isdelete, user, user)
         result = mysql.insert_or_update_or_delete(self._bind_group_role_sql, yz)
         return 0 == result
@@ -271,7 +271,7 @@ class UserLogic():
 
     _del_user_role_sql = '''  update sso_user_role set isDelete = %s , lastUpdater = %s , lastUpdateTime = now() WHERE id = %s '''
     def del_user_role(self, id, user):
-        isdelete = ssostatus.Boole['true']
+        isdelete = state.Boole['true']
         yz = (isdelete, user, id)
         result = mysql.insert_or_update_or_delete(self._del_user_role_sql, yz)
         return 0 == result

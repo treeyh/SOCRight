@@ -9,13 +9,13 @@ import config
 
 from datetime import datetime, timedelta
 import admin_base_handler
-from common import redis_cache, ssostatus, ssoerror
+from common import redis_cache, state, error
 from helper import str_helper, http_helper
 from logic import application_logic
 
 class ApplicationListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.AppManager'
-    _right = ssostatus.operView
+    _right = state.operView
 
     def get(self):
         ps = self.get_page_config('应用列表')
@@ -35,17 +35,17 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config('创建应用')
         if ps['isedit']:
-            self.check_oper_right(right = ssostatus.operEdit)
+            self.check_oper_right(right = state.operEdit)
 
             ps['title'] = self.get_page_title('编辑应用')
             code = self.get_arg('code', '')
             app = application_logic.ApplicationLogic.instance().query_one(code)
             if None == app:
-                ps['msg'] = ssostatus.ResultInfo.get(1002, '')
+                ps['msg'] = state.ResultInfo.get(1002, '')
                 ps['gotoUrl'] = ps['siteDomain'] + 'Admin/Application/List'
                 app = {'code':'','name':'','developer':'','url':'','remark':'','status':1,'creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         else:
-            self.check_oper_right(right = ssostatus.operAdd)
+            self.check_oper_right(right = state.operAdd)
             app = self.get_args(['code', 'name', 'developer', 'url', 'remark'], '')
             app['status'] = int(self.get_arg('status', '0'))        
         ps['app'] = app
@@ -66,12 +66,12 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             return
         codeType = str_helper.check_num_abc__(app['code'])
         if codeType == False:
-            ps['msg'] = ssostatus.ResultInfo.get(101006, '')
+            ps['msg'] = state.ResultInfo.get(101006, '')
             self.render('admin/application/add_or_edit.html', **ps)
             return
         app['user'] = self.get_oper_user()
         if ps['isedit']:
-            self.check_oper_right(right = ssostatus.operEdit)
+            self.check_oper_right(right = state.operEdit)
             try:
                 info = application_logic.ApplicationLogic.instance().update(name = app['name'], code = app['code'], 
                         developer = app['developer'], url = app['url'], status = app['status'], remark = app['remark'], user = app['user'])
@@ -79,11 +79,11 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                     self.redirect(ps['siteDomain'] + 'Admin/Application/List')
                     return
                 else:
-                    ps['msg'] = ssostatus.ResultInfo.get(101, '')
-            except ssoerror.SsoError as e:
+                    ps['msg'] = state.ResultInfo.get(101, '')
+            except error.RightError as e:
                 ps['msg'] = e.msg
         else:
-            self.check_oper_right(right = ssostatus.operAdd)
+            self.check_oper_right(right = state.operAdd)
             try:
                 info = application_logic.ApplicationLogic.instance().add(name = app['name'], code = app['code'], 
                     developer = app['developer'], url = app['url'], status = app['status'], remark = app['remark'], user = app['user'])
@@ -91,8 +91,8 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                     self.redirect(ps['siteDomain'] + 'Admin/Application/List')
                     return
                 else:
-                    ps['msg'] = ssostatus.ResultInfo.get(101, '')
-            except ssoerror.SsoError as e:
+                    ps['msg'] = state.ResultInfo.get(101, '')
+            except error.RightError as e:
                 ps['msg'] = e.msg
         ps = self.format_none_to_empty(ps)
         self.render('admin/application/add_or_edit.html', **ps)
@@ -101,7 +101,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
 
 class ApplicationDelHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.AppManager'
-    _right = ssostatus.operDel
+    _right = state.operDel
     def post(self):
         code = self.get_arg('code', '')
         user = self.get_oper_user()
@@ -113,13 +113,13 @@ class ApplicationDelHandler(admin_base_handler.AdminRightBaseHandler):
 
 class ApplicationDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.AppManager'
-    _right = ssostatus.operView
+    _right = state.operView
     def get(self):
         ps = self.get_page_config('应用详情')
         code = self.get_arg('code', '')
         app = application_logic.ApplicationLogic.instance().query_one(code)
         if None == app:
-            ps['msg'] = ssostatus.ResultInfo.get(1002, '')
+            ps['msg'] = state.ResultInfo.get(1002, '')
             ps['gotoUrl'] = ps['siteDomain'] + 'Admin/Application/List'
             app = {'code':'','name':'','developer':'','url':'','remark':'','status':1,'creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         

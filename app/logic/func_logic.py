@@ -1,7 +1,7 @@
 #-*- encoding: utf-8 -*-
 
 from helper import str_helper
-from common import mysql, ssostatus, ssoerror
+from common import mysql, state, error
 
 class FuncLogic():
 
@@ -22,7 +22,7 @@ class FuncLogic():
     _query_all_by_app_col = str_helper.format_str_to_list_filter_empty('id, name, code, parentID, path, sort, customJson', ',')
     def query_all_by_app(self, appCode):
         sql = self._query_all_by_app_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         sql = sql + ' and appCode = %s  order by sort desc'  
         yz = (isdelete, appCode)
         funcs = mysql.find_all(sql, yz, self._query_all_by_app_col)
@@ -37,7 +37,7 @@ class FuncLogic():
     _query_col = str_helper.format_str_to_list_filter_empty('id, appCode, name, code, parentID, path, customJson, sort, status, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
     def query_one_by_path(self, path):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         sql = sql + ' and path = %s '        
         yz = (isdelete, path)
 
@@ -46,7 +46,7 @@ class FuncLogic():
 
     def query_one_by_id(self, id):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         sql = sql + ' and id = %s '        
         yz = (isdelete, id)
         func = mysql.find_one(sql, yz, self._query_col)
@@ -61,8 +61,8 @@ class FuncLogic():
     def add(self, appCode, name, code, parentID, path, customJson,
                         sort, status, remark, user):
         if not self._check_customJson(customJson):
-            raise ssoerror.SsoError(code = 102001)
-        isdelete = ssostatus.Boole['false']
+            raise error.RightError(code = 102001)
+        isdelete = state.Boole['false']
         yz = (appCode, name, code, parentID, path, customJson,
                         sort, status, remark, isdelete, user, user)
         result = mysql.insert_or_update_or_delete(self._add_sql, yz, True)
@@ -74,7 +74,7 @@ class FuncLogic():
                             lastUpdateTime = now() where id = %s  '''
     def update(self, id, name, sort, customJson, remark, user):
         if not self._check_customJson(customJson):
-            raise ssoerror.SsoError(code = 102001)
+            raise error.RightError(code = 102001)
         yz = (name, sort, customJson, remark, user, id)
         result = mysql.insert_or_update_or_delete(self._update_sql, yz)
         return 0 == result
@@ -84,10 +84,10 @@ class FuncLogic():
                             lastUpdateTime = now() where id = %s; update sso_func set isDelete = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where path like %s;   '''
     def delete(self, id, user):
-        isdelete = ssostatus.Boole['true']
+        isdelete = state.Boole['true']
         func = self.query_one_by_id(id)
         if None == func:
-            raise ssoerror.SsoError(code=102002)
+            raise error.RightError(code=102002)
         path = func['path'] + '.%'
         yz = (isdelete, user, id, isdelete, user, path)
         result = mysql.insert_or_update_or_delete(self._delete_sql, yz)
@@ -97,10 +97,10 @@ class FuncLogic():
         if None == customJson or '' == customJson:
             return True
         try:
-            map = str_helper.json_decode(customJson)            
-            for i in map:
-                keys = i.keys()
-                if 'id' not in keys or 'name' not in keys:
+            ls = str_helper.json_decode(customJson)            
+            for m in ls:
+                keys = m.keys()
+                if ('k' not in keys) or ('v' not in keys) or (not isinstance(m['k'], str) and not isinstance(m['k'], unicode)) or (not str_helper.check_num_abc_port__(m['k'])):
                     return False
         except:
             return False

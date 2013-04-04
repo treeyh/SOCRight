@@ -7,7 +7,7 @@ import config
 
 from datetime import datetime, timedelta
 import admin_base_handler
-from common import redis_cache, ssostatus, ssoerror
+from common import redis_cache, state, error
 from helper import str_helper, http_helper
 from logic import application_logic, func_logic
 
@@ -16,13 +16,13 @@ from logic import application_logic, func_logic
 
 class FuncListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.FuncManager'
-    _right = ssostatus.operView
+    _right = state.operView
 
     def get(self):
         ps = self.get_page_config('应用功能列表')
         apps = application_logic.ApplicationLogic.instance().query_all_by_active()
         if None == apps or len(apps) <= 0:
-            ps['msg'] = ssostatus.ResultInfo.get(101004, '')
+            ps['msg'] = state.ResultInfo.get(101004, '')
             ps['gotoUrl'] = ps['siteDomain'] + 'Admin/Application/Add'
             ps['apps'] = []
             ps['funcs'] = []
@@ -47,7 +47,7 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         ps = self.get_page_config('应用功能编辑')
         apps = application_logic.ApplicationLogic.instance().query_all_by_active()
         if None == apps or len(apps) <= 0:
-            ps['msg'] = ssostatus.ResultInfo.get(101004, '')
+            ps['msg'] = state.ResultInfo.get(101004, '')
             ps['gotoUrl'] = ps['siteDomain'] + 'Admin/Application/Add'
             ps['apps'] = []
             ps['funcs'] = []
@@ -97,25 +97,25 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             return
         func['user'] = self.get_oper_user()
         if func['id'] <= 0:
-            self.check_oper_right(right = ssostatus.operAdd)
+            self.check_oper_right(right = state.operAdd)
             if func['parentID'] <= 0:
                 func['path'] = '%s.%s' % (func['appCode'], func['code'])
             else:
                 func['path'] = '%s.%s' % ((func_logic.FuncLogic.instance().query_one_by_id(func['parentID'])).get('path'), func['code'])
-            func['status'] = ssostatus.Boole['true']
+            func['status'] = state.Boole['true']
             try:
                 func_logic.FuncLogic.instance().add(appCode = func['appCode'], name = func['name'], code = func['code'], 
                             parentID = func['parentID'], path = func['path'], customJson = func['customJson'], sort = func['sort'], 
                             status = func['status'], remark = func['remark'], user = func['user'])
-            except ssoerror.SsoError as e:
+            except error.RightError as e:
                 self.out_fail(code=e.code)
                 return
         else:
-            self.check_oper_right(right = ssostatus.operEdit)
+            self.check_oper_right(right = state.operEdit)
             try:
                 func_logic.FuncLogic.instance().update(id = func['id'], name = func['name'],sort = func['sort'], 
                                 customJson = func['customJson'],remark = func['remark'],user = func['user'])
-            except ssoerror.SsoError as e:
+            except error.RightError as e:
                 self.out_fail(code=e.code)
                 return
         self.out_ok()
@@ -124,7 +124,7 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
 
 class FuncDelHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.FuncManager'
-    _right = ssostatus.operDel
+    _right = state.operDel
     def post(self):
         id = int(self.get_arg('id', '0'))
         user = self.get_oper_user()
@@ -134,13 +134,13 @@ class FuncDelHandler(admin_base_handler.AdminRightBaseHandler):
                 self.out_ok()
             else:
                 self.out_fail(code = 101)
-        except ssoerror.SsoError as e:
+        except error.RightError as e:
             self.out_fail(code=e.code)
 
 
 class FuncGetHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.FuncManager'
-    _right = ssostatus.operView
+    _right = state.operView
     def get(self):
         id = int(self.get_arg('id', '0'))
         func = func_logic.FuncLogic.instance().query_one_by_id(id)

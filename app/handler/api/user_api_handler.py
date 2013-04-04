@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 import config
-from common import ssostatus, redis_cache
+from common import state, redis_cache
 from helper import str_helper
 from handler import base_handler
 from logic import usergroup_logic, user_logic
@@ -43,7 +43,7 @@ class UserByUserGroupHandler(base_handler.BaseHandler):
             return
         us = []
         for u in users:
-            u1 = {'userName':u['userName'], 'userRealName':u['userRealName']}
+            u1 = {'userName':u['userName'], 'userRealName':u['userRealName'], 'userID':u['userID']}
             us.append(u1)
         json = str_helper.json_encode(us)
         self.out_ok(data = json)

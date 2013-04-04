@@ -6,7 +6,7 @@ from tornado.escape import url_escape
 from datetime import datetime
 
 import config
-from common import ssostatus, redis_cache
+from common import state, redis_cache
 from helper import str_helper
 
 
@@ -37,7 +37,7 @@ class BaseHandler(tornado.web.RequestHandler):
         code = int(self.get_arg('msg', '0'))
         ps['gotoUrl'] = ''
         if code > 0:
-            ps['msg'] = ssostatus.ResultInfo.get(code, '')
+            ps['msg'] = state.ResultInfo.get(code, '')
         else:
             ps['msg'] = ''
         return ps
@@ -59,9 +59,9 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def out_fail(self, code, msg = None, jsoncallback= None):
         if None != msg and '' != msg:
-            msg = '%s,%s' % (ssostatus.ResultInfo.get(code, ''), msg)
+            msg = '%s,%s' % (state.ResultInfo.get(code, ''), msg)
         else:
-            msg = ssostatus.ResultInfo.get(code, '')
+            msg = state.ResultInfo.get(code, '')
         j = '{"code":%d,"msg":"%s"}' % (code, msg.replace('"', '\\"'))
         if jsoncallback == None or jsoncallback == '':
             self.write(j)
@@ -84,7 +84,7 @@ class BaseHandler(tornado.web.RequestHandler):
             if str_helper.is_null_or_empty(map[l]):
                 error = '%s %s,' % (error, l)
         if str_helper.is_null_or_empty(error) == False:
-            error = error + ssostatus.ResultInfo.get(1001, '')
+            error = error + state.ResultInfo.get(1001, '')
         return error
 
 

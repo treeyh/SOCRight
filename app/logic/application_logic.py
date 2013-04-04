@@ -1,7 +1,7 @@
 #-*- encoding: utf-8 -*-
 
 from helper import str_helper
-from common import mysql, ssostatus, ssoerror
+from common import mysql, state, error
 
 class ApplicationLogic():
 
@@ -22,7 +22,7 @@ class ApplicationLogic():
     _query_col = str_helper.format_str_to_list_filter_empty('code, name, developer, url, status, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
     def query_page(self, name = '', code = '', status = 0, page = 1 , size = 12):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         ps = [isdelete]
         if 0 != status:
             sql = sql + ' and status = %s '
@@ -38,12 +38,12 @@ class ApplicationLogic():
         apps = mysql.find_page(sql, yz, self._query_col, page, size)
         if None != apps['data']:
             for r in apps['data']:
-                r['statusname'] = ssostatus.Status.get(r['status'])
+                r['statusname'] = state.Status.get(r['status'])
         return apps
  
     def query_one(self, code = ''):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         ps = [isdelete]        
         if '' != code:
             sql = sql + ' and code = %s '
@@ -53,18 +53,18 @@ class ApplicationLogic():
         yz = tuple(ps)
         app = mysql.find_one(sql, yz, self._query_col)
         if None != app:
-            app['statusname'] = ssostatus.Status.get(app['status'])
+            app['statusname'] = state.Status.get(app['status'])
         return app
 
 
     def query_one_by_name(self, name = ''):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         sql = sql + ' and name = %s '
         yz = (isdelete, name)
         app = mysql.find_one(sql, yz, self._query_col)
         if None != app:
-            app['statusname'] = ssostatus.Status.get(app['status'])
+            app['statusname'] = state.Status.get(app['status'])
         return app
 
     _query_all_by_active_sql = '''  select code, name from sso_application  where isDelete = %s   '''
@@ -72,9 +72,9 @@ class ApplicationLogic():
     def query_all_by_active(self):
         sql = self._query_all_by_active_sql
 
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         sql = sql + ' and status = %s order by createTime asc '        
-        yz = (isdelete, ssostatus.statusActive)
+        yz = (isdelete, state.statusActive)
         apps = mysql.find_all(sql, yz, self._query_all_by_active_col)
         return apps
 
@@ -85,12 +85,12 @@ class ApplicationLogic():
     def add(self, name, code, developer, url, status, remark, user):
         obj = self.query_one_by_name(name = name)
         if None != obj:
-            raise ssoerror.SsoError(code = 101001)
+            raise error.RightError(code = 101001)
         obj = self.query_one(code = code)
         if None != obj:
-            raise ssoerror.SsoError(code = 101005)
+            raise error.RightError(code = 101005)
             
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         yz = (code, name, developer, url, status, remark, isdelete, user, user)
         result = mysql.insert_or_update_or_delete(self._add_sql, yz)
         return 0 == result
@@ -102,9 +102,9 @@ class ApplicationLogic():
     def update(self, name, code, developer, url, status, remark, user):
         obj = self.query_one_by_name(name = name)
         if None != obj and obj['code'] != str(code):
-            raise ssoerror.SsoError(code = 101001)
+            raise error.RightError(code = 101001)
 
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         yz = (name, developer, url, status, remark, user, code)
         result = mysql.insert_or_update_or_delete(self._update_sql, yz)
         return 0 == result
@@ -113,7 +113,7 @@ class ApplicationLogic():
     _delete_sql = '''   update sso_application set isDelete = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where code = %s  '''
     def delete(self, code, user):
-        isdelete = ssostatus.Boole['true']
+        isdelete = state.Boole['true']
         yz = (isdelete, user, code)
         result = mysql.insert_or_update_or_delete(self._delete_sql, yz)
         return 0 == result

@@ -4,7 +4,7 @@ import tornado.web
 from datetime import datetime
 
 import config
-from common import ssostatus, redis_cache
+from common import state, redis_cache
 from helper import str_helper
 from handler import base_handler
 

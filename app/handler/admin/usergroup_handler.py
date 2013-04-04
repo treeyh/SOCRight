@@ -7,13 +7,13 @@ import config
 
 from datetime import datetime, timedelta
 import admin_base_handler
-from common import redis_cache, ssostatus, ssoerror
+from common import redis_cache, state, error
 from helper import str_helper, http_helper
 from logic import usergroup_logic, user_logic, role_logic, application_logic
 
 class UserGroupListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager'
-    _right = ssostatus.operView
+    _right = state.operView
 
     def get(self):
         ps = self.get_page_config('用户组列表')
@@ -37,7 +37,7 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             id = int(self.get_arg('id', '0'))
             usergroup = usergroup_logic.UserGroupLogic.instance().query_one(id)
             if None == usergroup:
-                ps['msg'] = ssostatus.ResultInfo.get(105002, '')
+                ps['msg'] = state.ResultInfo.get(105002, '')
                 ps['gotoUrl'] =  ps['siteDomain'] + '/Admin/Role/List'
                 role = {'id':'','name':'','status':1,'remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         else:
@@ -70,8 +70,8 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                     self.redirect(ps['siteDomain'] +'Admin/UserGroup/List')
                     return
                 else:
-                    ps['msg'] = ssostatus.ResultInfo.get(101, '')
-            except ssoerror.SsoError as e:
+                    ps['msg'] = state.ResultInfo.get(101, '')
+            except error.RightError as e:
                 ps['msg'] = e.msg
         else:
             try:
@@ -81,8 +81,8 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                     self.redirect(ps['siteDomain'] +'Admin/UserGroup/List')
                     return
                 else:
-                    ps['msg'] = ssostatus.ResultInfo.get(101, '')
-            except ssoerror.SsoError as e:
+                    ps['msg'] = state.ResultInfo.get(101, '')
+            except error.RightError as e:
                 ps['msg'] = e.msg
         ps = self.format_none_to_empty(ps)
         self.render('admin/usergroup/add_or_edit.html', **ps)
@@ -91,7 +91,7 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserGroupDelHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager'
-    _right = ssostatus.operDel
+    _right = state.operDel
 
     def post(self):
         id = int(self.get_arg('id', '0'))
@@ -104,13 +104,13 @@ class UserGroupDelHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserGroupDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager'
-    _right = ssostatus.operView
+    _right = state.operView
     def get(self):
         ps = self.get_page_config('用户组详情')
         id = int(self.get_arg('id', '0'))
         usergroup = usergroup_logic.UserGroupLogic.instance().query_one(id)
         if None == usergroup:
-            ps['msg'] = ssostatus.ResultInfo.get(105002, '')
+            ps['msg'] = state.ResultInfo.get(105002, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/List'
             usergroup = {'id':'','name':'', 'statusname':'','status':1, 'remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}        
         ps['usergroup'] = usergroup
@@ -121,13 +121,13 @@ class UserGroupDetailHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserGroupUserListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindUserManager'
-    _right = ssostatus.operView
+    _right = state.operView
     def get(self):
         ps = self.get_page_config('用户组绑定用户列表')
         ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
         userGroups = usergroup_logic.UserGroupLogic.instance().query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
-            ps['msg'] = ssostatus.ResultInfo.get(105003, '')
+            ps['msg'] = state.ResultInfo.get(105003, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/Add'
             self.render('admin/usergroup/user_list.html', **ps)
             return
@@ -147,14 +147,14 @@ class UserGroupUserListHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserGroupUserBindHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindUserManager'
-    _right = ssostatus.operEdit
+    _right = state.operEdit
 
     def get(self):
         ps = self.get_page_config('新增用户绑定用户组')
         ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
         userGroups = usergroup_logic.UserGroupLogic.instance().query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
-            ps['msg'] = ssostatus.ResultInfo.get(105003, '')
+            ps['msg'] = state.ResultInfo.get(105003, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/Add'
             self.render('admin/usergroup/user_bind.html', **ps)
             return
@@ -172,7 +172,7 @@ class UserGroupUserBindHandler(admin_base_handler.AdminRightBaseHandler):
             ps['userInfo'] = userInfo['name']        
 
         ps['pagedata'] = user_logic.UserLogic.instance().query_page(name = ps['userName'], 
-            status = ssostatus.statusActive, page = ps['page'], size = ps['size'])
+            status = state.statusActive, page = ps['page'], size = ps['size'])
         ps = self.format_none_to_empty(ps)
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
         self.render('admin/usergroup/user_bind.html', **ps)
@@ -193,7 +193,7 @@ class UserGroupUserBindHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserGroupUserDelHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindUserManager'
-    _right = ssostatus.operDel
+    _right = state.operDel
     def post(self):
         id = int(self.get_arg('id', '0'))
         if id <= 0:
@@ -209,14 +209,14 @@ class UserGroupUserDelHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserGroupRoleListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindRoleManager'
-    _right = ssostatus.operView
+    _right = state.operView
 
     def get(self):
         ps = self.get_page_config('用户组绑定角色列表')
-        ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
+        ps['userGroupID'] = int(self.get_arg('id', '0'))
         userGroups = usergroup_logic.UserGroupLogic.instance().query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
-            ps['msg'] = ssostatus.ResultInfo.get(105003, '')
+            ps['msg'] = state.ResultInfo.get(105003, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/Add'
             self.render('admin/usergroup/role_list.html', **ps)
             return
@@ -235,14 +235,14 @@ class UserGroupRoleListHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserGroupRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindRoleManager'
-    _right = ssostatus.operEdit
+    _right = state.operEdit
 
     def get(self):
         ps = self.get_page_config('新增角色绑定用户组')
         ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
         userGroups = usergroup_logic.UserGroupLogic.instance().query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
-            ps['msg'] = ssostatus.ResultInfo.get(105003, '')
+            ps['msg'] = state.ResultInfo.get(105003, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/Add'
             self.render('admin/usergroup/user_bind.html', **ps)
             return
@@ -260,7 +260,7 @@ class UserGroupRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
             ps['roleInfo'] = roleInfo['name']        
 
         ps['pagedata'] = role_logic.RoleLogic.instance().query_page(name = ps['roleName'], 
-            status = ssostatus.statusActive, page = ps['page'], size = ps['size'])
+            status = state.statusActive, page = ps['page'], size = ps['size'])
         ps = self.format_none_to_empty(ps)
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
         self.render('admin/usergroup/role_bind.html', **ps)
@@ -281,7 +281,7 @@ class UserGroupRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserGroupRoleDelHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindRoleManager'
-    _right = ssostatus.operDel
+    _right = state.operDel
 
     def post(self):
         id = int(self.get_arg('id', '0'))
@@ -297,13 +297,13 @@ class UserGroupRoleDelHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserGroupRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindRoleManager'
-    _right = ssostatus.operView
+    _right = state.operView
 
     def get(self):
         ps = self.get_page_config('用户组应用权限信息')
         ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
         if 0 == ps['userGroupID']:
-            ps['msg'] = ssostatus.ResultInfo.get(105010, '')
+            ps['msg'] = state.ResultInfo.get(105010, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/List'
             self.render('admin/usergroup/right.html', **ps)
             return
@@ -311,7 +311,7 @@ class UserGroupRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
         ps['appCode'] = self.get_arg('appCode', '')
         ps['apps'] = application_logic.ApplicationLogic.instance().query_all_by_active()
         if None == ps['apps'] or len(ps['apps']) <= 0:
-            ps['msg'] = ssostatus.ResultInfo.get(101004, '')
+            ps['msg'] = state.ResultInfo.get(101004, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/Application/Add'
             self.render('admin/usergroup/right_detail.html', **ps)
             return

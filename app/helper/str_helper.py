@@ -77,6 +77,13 @@ def check_num_abc__(str):
         if c not in _num_abc__:
             return False
     return True
+
+_num_abc_port_ = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.1234567890'
+def check_num_abc_port__(str):
+    for c in str:
+        if c not in _num_abc_port_:
+            return False
+    return True
     
 _num = '1234567890'
 def check_num(str):

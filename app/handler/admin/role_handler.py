@@ -7,13 +7,13 @@ import config
 
 from datetime import datetime, timedelta
 import admin_base_handler
-from common import redis_cache, ssostatus, ssoerror
+from common import redis_cache, state, error
 from helper import str_helper, http_helper
 from logic import role_logic, application_logic, func_logic
 
 class RoleListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager'
-    _right = ssostatus.operView
+    _right = state.operView
 
     def get(self):
         ps = self.get_page_config('角色列表')
@@ -32,16 +32,16 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config('创建角色')
         if ps['isedit']:
-            self.check_oper_right(right = ssostatus.operEdit)
+            self.check_oper_right(right = state.operEdit)
             ps['title'] = self.get_page_title('编辑角色')
             id = int(self.get_arg('id', '0'))
             role = role_logic.RoleLogic.instance().query_one(id)
             if None == role:
-                ps['msg'] = ssostatus.ResultInfo.get(104002, '')
+                ps['msg'] = state.ResultInfo.get(104002, '')
                 ps['gotoUrl'] =  ps['siteDomain'] + 'Admin/Role/List'
                 role = {'id':'','name':'','status':1,'remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         else:
-            self.check_oper_right(right = ssostatus.operAdd)
+            self.check_oper_right(right = state.operAdd)
             role = self.get_args(['id', 'name', 'remark'], '')
             role['status'] = int(self.get_arg('status', '0'))
         ps['role'] = role
@@ -65,7 +65,7 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         role['user'] = self.get_oper_user()
         
         if ps['isedit']:
-            self.check_oper_right(right = ssostatus.operEdit)
+            self.check_oper_right(right = state.operEdit)
             try:
                 info = role_logic.RoleLogic.instance().update(id = role['id'], name = role['name'], 
                         status = role['status'], remark = role['remark'], user = role['user'])
@@ -73,11 +73,11 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                     self.redirect(ps['siteDomain'] +'Admin/Role/List')
                     return
                 else:
-                    ps['msg'] = ssostatus.ResultInfo.get(101, '')
-            except ssoerror.SsoError as e:
+                    ps['msg'] = state.ResultInfo.get(101, '')
+            except error.RightError as e:
                 ps['msg'] = e.msg
         else:
-            self.check_oper_right(right = ssostatus.operAdd)
+            self.check_oper_right(right = state.operAdd)
             try:
                 info = role_logic.RoleLogic.instance().add(name = role['name'], 
                         status = role['status'], remark = role['remark'], user = role['user'])
@@ -85,8 +85,8 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                     self.redirect(ps['siteDomain'] +'Admin/Role/List')
                     return
                 else:
-                    ps['msg'] = ssostatus.ResultInfo.get(101, '')
-            except ssoerror.SsoError as e:
+                    ps['msg'] = state.ResultInfo.get(101, '')
+            except error.RightError as e:
                 ps['msg'] = e.msg
         ps = self.format_none_to_empty(ps)
         self.render('admin/role/add_or_edit.html', **ps)
@@ -95,7 +95,7 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
 
 class RoleDelHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager'
-    _right = ssostatus.operDel
+    _right = state.operDel
     def post(self):
         id = int(self.get_arg('id', '0'))
         user = self.get_oper_user()
@@ -107,13 +107,13 @@ class RoleDelHandler(admin_base_handler.AdminRightBaseHandler):
 
 class RoleDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager'
-    _right = ssostatus.operView
+    _right = state.operView
     def get(self):
         ps = self.get_page_config('角色详情')
         id = int(self.get_arg('id', '0'))
         role = role_logic.RoleLogic.instance().query_one(id)
         if None == role:
-            ps['msg'] = ssostatus.ResultInfo.get(104002, '')
+            ps['msg'] = state.ResultInfo.get(104002, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/Role/List'
             role = {'id':'','name':'', 'statusname':'','status':1, 'remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}        
         ps['role'] = role
@@ -123,7 +123,7 @@ class RoleDetailHandler(admin_base_handler.AdminRightBaseHandler):
 
 class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager.RoleBindRightManager'
-    _right = ssostatus.operView
+    _right = state.operView
 
     def get(self):
         ps = self.get_page_config('编辑角色权限')
@@ -133,7 +133,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         ps['apps'] = []
         roles = role_logic.RoleLogic.instance().query_all_by_active()
         if None == roles or len(roles) == 0:
-            ps['msg'] = ssostatus.ResultInfo.get(104003, '')
+            ps['msg'] = state.ResultInfo.get(104003, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/Role/Add'
             self.render('admin/role/right_edit.html', **ps)
             return
@@ -142,7 +142,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
                 ps['roleID'] = roles[0]['id']    
         apps = application_logic.ApplicationLogic.instance().query_all_by_active()
         if None == apps or len(apps) == 0:
-            ps['msg'] = ssostatus.ResultInfo.get(104003, '')
+            ps['msg'] = state.ResultInfo.get(104003, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/Application/Add'
             self.render('admin/role/right_edit.html', **ps)
             return
@@ -163,14 +163,14 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
             funcs = []
         ps['funcs'] = funcs
         if self.is_edit():
-            self.check_oper_right(right = ssostatus.operEdit)
+            self.check_oper_right(right = state.operEdit)
             self.render('admin/role/right_edit.html', **ps)
         else:
-            self.check_oper_right(right = ssostatus.operView)
+            self.check_oper_right(right = state.operView)
             self.render('admin/role/right_detail.html', **ps)
 
     def post(self):
-        self.check_oper_right(right = ssostatus.operEdit)
+        self.check_oper_right(right = state.operEdit)
         ps = self.get_page_config('编辑角色权限')
         ps['roleID'] = int(self.get_arg('roleID', '0'))
         ps['appCode'] = self.get_arg('appCode', '')
@@ -191,7 +191,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
             customRight = ''
             if func['customJson'] != None:                
                 for c in func['customJson']:
-                    cid = self.get_arg(('rightcustom_%d_%d' % (func['id'], c['id'])), '')
+                    cid = self.get_arg(('rightcustom_%d_%s' % (func['id'], c['k'])), '')
                     if cid != '':
                         customRight = customRight + cid + ','
                         c['right'] = True
@@ -215,8 +215,8 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         ps['funcs'] = funcs
 
         if type:
-            ps['msg'] = ssostatus.ResultInfo.get(0, '')
+            ps['msg'] = state.ResultInfo.get(0, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/Role/List'
         else:
-            ps['msg'] = ssostatus.ResultInfo.get(104004, '')
+            ps['msg'] = state.ResultInfo.get(104004, '')
         self.render('admin/role/right_edit.html', **ps)

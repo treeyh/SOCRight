@@ -1,7 +1,7 @@
 #-*- encoding: utf-8 -*-
 
 from helper import str_helper
-from common import mysql, ssostatus, ssoerror
+from common import mysql, state, error
 
 class RoleLogic():
 
@@ -23,7 +23,7 @@ class RoleLogic():
     _query_col = str_helper.format_str_to_list_filter_empty('id, name, status, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
     def query_page(self, id = '', name = '', status = 0, page = 1, size = 12):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         ps = [isdelete]
         if '' != id:
             sql = sql + ' and id = %s '
@@ -39,13 +39,13 @@ class RoleLogic():
         roles = mysql.find_page(sql, yz, self._query_col, page, size)
         if None != roles['data']:
             for r in roles['data']:
-                r['statusname'] = ssostatus.Status.get(r['status'])
+                r['statusname'] = state.Status.get(r['status'])
         return roles
 
 
     def query_one(self, id = 0):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         ps = [isdelete]        
         if 0 != id:
             sql = sql + ' and id = %s '
@@ -55,18 +55,18 @@ class RoleLogic():
         yz = tuple(ps)
         role = mysql.find_one(sql, yz, self._query_col)
         if None != role:
-            role['statusname'] = ssostatus.Status.get(role['status'])
+            role['statusname'] = state.Status.get(role['status'])
         return role
 
 
     def query_one_by_name(self, name = ''):
         sql = self._query_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         sql = sql + ' and name = %s '
         yz = (isdelete, name)
         role = mysql.find_one(sql, yz, self._query_col)
         if None != role:
-            role['statusname'] = ssostatus.Status.get(role['status'])
+            role['statusname'] = state.Status.get(role['status'])
         return role
 
 
@@ -74,8 +74,8 @@ class RoleLogic():
     _query_all_by_active_col = str_helper.format_str_to_list_filter_empty('id, name', ',')
     def query_all_by_active(self):
         sql = self._query_all_by_active_sql
-        isdelete = ssostatus.Boole['false']
-        yz = (isdelete, ssostatus.statusActive)
+        isdelete = state.Boole['false']
+        yz = (isdelete, state.statusActive)
         roles = mysql.find_all(sql, yz, self._query_all_by_active_col)
         return roles
 
@@ -87,9 +87,9 @@ class RoleLogic():
     def add(self, name, status, remark, user):
         obj = self.query_one_by_name(name = name)
         if None != obj:
-            raise ssoerror.SsoError(code = 104001)
+            raise error.RightError(code = 104001)
 
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         yz = (name, status, remark, isdelete, user, user)
         uid = mysql.insert_or_update_or_delete(self._add_sql, yz, True)
         return uid
@@ -100,9 +100,9 @@ class RoleLogic():
     def update(self, id, name, status, remark, user):
         obj = self.query_one_by_name(name = name)
         if None != obj and str(obj['id']) != str(id):
-            raise ssoerror.SsoError(code = 104001)
+            raise error.RightError(code = 104001)
             
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         yz = (name, status, remark, user, id)
         result = mysql.insert_or_update_or_delete(self._update_sql, yz)
         return 0 == result
@@ -111,7 +111,7 @@ class RoleLogic():
     _delete_sql = '''   update sso_role set isDelete = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where id = %s  '''
     def delete(self, id, user):
-        isdelete = ssostatus.Boole['true']
+        isdelete = state.Boole['true']
         yz = (isdelete, user, id)
         result = mysql.insert_or_update_or_delete(self._delete_sql, yz)
         return 0 == result
@@ -125,7 +125,7 @@ class RoleLogic():
     _query_right_by_role_app_col = str_helper.format_str_to_list_filter_empty('id, funcID, appCode, roleID, right, customRight, isDelete, creater, createTime, lastUpdater, lastUpdateTime, path', ',')
     def query_right_by_role_app(self, roleID, appCode):
         sql = self._query_right_by_role_app_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         yz = (isdelete, roleID, appCode)
         roles = mysql.find_all(sql, yz, self._query_right_by_role_app_col)
         return roles
@@ -135,8 +135,8 @@ class RoleLogic():
                         where isDelete = %s and roleID = %s and appCode = %s '''    
     def delete_right_by_role_app(self, roleID, appCode, user):
         sql = self._delete_right_by_role_app_sql
-        isdeletetrue = ssostatus.Boole['true']
-        isdeletefalse = ssostatus.Boole['false']
+        isdeletetrue = state.Boole['true']
+        isdeletefalse = state.Boole['false']
         yz = (isdeletetrue, user, isdeletefalse, roleID, appCode)
         result = mysql.insert_or_update_or_delete(sql, yz)
         return 0 == result
@@ -148,7 +148,7 @@ class RoleLogic():
         self.delete_right_by_role_app(roleID, appCode, user)
         
         sql = self._add_right_by_role_app_sql
-        isdelete = ssostatus.Boole['false']
+        isdelete = state.Boole['false']
         params = []
         for right in rights:
             params.append( (right['funcID'], appCode, roleID, right['right'], right['customRight'], isdelete, user, user))
@@ -177,7 +177,7 @@ class RoleLogic():
                 func['right'] = func['right'] | right.get('right', 0)
             if None != func['customJson']:
                 for custom in func['customJson']:
-                    if (None != right) and ((',%d,' % custom['id']) in right.get('customRight', '')):
+                    if (None != right) and ((',%s,' % custom['k']) in right.get('customRight', '')):
                         custom['right'] = True
 
         return funcs
@@ -190,7 +190,7 @@ class RoleLogic():
         for func in funcs:
             if func.get('right', None) == None:
                 func['right'] = 0
-            if func.get('customJson','') != '' and (type(func['customJson']) == str or type(func['customJson']) == unicode):
+            if func.get('customJson','') != '' and (isinstance(func['customJson'], str) or isinstance(func['customJson'], unicode)):
                 func['customJson'] = str_helper.json_decode(func['customJson'])
                 for j in func['customJson']:
                     j['right'] = False

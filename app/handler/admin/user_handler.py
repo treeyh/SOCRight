@@ -9,13 +9,13 @@ from datetime import datetime, timedelta
 import config
 
 import admin_base_handler
-from common import redis_cache, ssostatus, ssoerror
+from common import redis_cache, state, error
 from helper import str_helper, http_helper
 from logic import user_logic, role_logic, application_logic, usergroup_logic
 
 class UserListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
-    _right = ssostatus.operView
+    _right = state.operView
     def get(self):
         ps = self.get_page_config('用户列表')
         user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email'], '')
@@ -35,16 +35,16 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config('创建用户')
         if ps['isedit']:
-            self.check_oper_right(right = ssostatus.operEdit)
+            self.check_oper_right(right = state.operEdit)
             ps['title'] = self.get_page_title('编辑用户')
             id = int(self.get_arg('id', '0'))
             user = user_logic.UserLogic.instance().query_one(id)
             if None == user:
-                ps['msg'] = ssostatus.ResultInfo.get(103002, '')
+                ps['msg'] = state.ResultInfo.get(103002, '')
                 ps['gotoUrl'] = ps['siteDomain'] + 'Admin/User/List'
                 user = {'id':'', 'name':'', 'realName':'', 'passWord':'','mobile':'','tel':'','email':'','status':1,'lastLoginTime':'','lastLoginApp':'','lastLoginIp':'','remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         else:
-            self.check_oper_right(right = ssostatus.operAdd)
+            self.check_oper_right(right = state.operAdd)
             user = self.get_args(['id', 'name', 'realName', 'passWord', 'mobile', 'tel', 'email', 'remark'], '')
             user['status'] = int(self.get_arg('status', '0'))
         ps['user'] = user
@@ -71,7 +71,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         user['user'] = self.get_oper_user()
         ps['user'] = copy.copy(user)
         if ps['isedit']:
-            self.check_oper_right(right = ssostatus.operEdit)
+            self.check_oper_right(right = state.operEdit)
             try:
                 info = user_logic.UserLogic.instance().update(id = user['id'], realName = user['realName'], 
                         parentID = user['parentID'], mobile = user['mobile'], tel = user['tel'], email = user['email'], 
@@ -80,11 +80,11 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                     self.redirect(ps['siteDomain'] + 'Admin/User/List')
                     return
                 else:
-                    ps['msg'] = ssostatus.ResultInfo.get(101, '')
-            except ssoerror.SsoError as e:
+                    ps['msg'] = state.ResultInfo.get(101, '')
+            except error.RightError as e:
                 ps['msg'] = e.msg
         else:
-            self.check_oper_right(right = ssostatus.operEdit)            
+            self.check_oper_right(right = state.operEdit)            
             try:
                 info = user_logic.UserLogic.instance().add(name = user['name'], passWord = user['passWord'], 
                             realName = user['realName'], mobile = user['mobile'], tel = user['tel'], email = user['email'],
@@ -93,8 +93,8 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                     self.redirect(ps['siteDomain'] + 'Admin/User/List')
                     return
                 else:
-                    ps['msg'] = ssostatus.ResultInfo.get(101, '')
-            except ssoerror.SsoError as e:
+                    ps['msg'] = state.ResultInfo.get(101, '')
+            except error.RightError as e:
                 ps['msg'] = e.msg
         ps = self.format_none_to_empty(ps)
         self.render('admin/user/add_or_edit.html', **ps)
@@ -103,7 +103,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserDelHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
-    _right = ssostatus.operDel
+    _right = state.operDel
     def post(self):
         id = int(self.get_arg('id', '0'))
         user = self.get_oper_user()
@@ -115,13 +115,13 @@ class UserDelHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
-    _right = ssostatus.operView
+    _right = state.operView
     def get(self):
         ps = self.get_page_config('用户详情')
         id = int(self.get_arg('id', '0'))
         user = user_logic.UserLogic.instance().query_one(id)
         if None == user:
-            ps['msg'] = ssostatus.ResultInfo.get(103002, '')
+            ps['msg'] = state.ResultInfo.get(103002, '')
             ps['gotoUrl'] = ps['siteDomain'] + 'Admin/User/List'
             user = {'id':'','name':'', 'passWord':'', 'statusname':'','mobile':'','tel':'','email':'','status':1,'lastLoginTime':'','lastLoginApp':'','lastLoginIp':'','remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}        
         ps['user'] = user
@@ -133,13 +133,13 @@ class UserDetailHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserRoleListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager.UserBindRoleManager'
-    _right = ssostatus.operView
+    _right = state.operView
 
     def get(self):
         ps = self.get_page_config('用户绑定角色列表')
         ps['userID'] = int(self.get_arg('userID', '0'))
         if 0 == ps['userID']:
-            ps['msg'] = ssostatus.ResultInfo.get(105003, '')
+            ps['msg'] = state.ResultInfo.get(105003, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/User/Add'
             self.render('admin/user/role_list.html', **ps)
             return
@@ -158,12 +158,12 @@ class UserRoleListHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager.UserBindRoleManager'
-    _right = ssostatus.operEdit
+    _right = state.operEdit
     def get(self):
         ps = self.get_page_config('新增角色绑定用户')
         ps['userID'] = int(self.get_arg('userID', '0'))
         if 0 == ps['userID']:
-            ps['msg'] = ssostatus.ResultInfo.get(103003, '')
+            ps['msg'] = state.ResultInfo.get(103003, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/User/Add'
             self.render('admin/user/role_list.html', **ps)
             return
@@ -177,7 +177,7 @@ class UserRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
             ps['roleInfo'] = roleInfo['name']        
 
         ps['pagedata'] = role_logic.RoleLogic.instance().query_page(name = ps['roleName'], 
-            status = ssostatus.statusActive, page = ps['page'], size = ps['size'])
+            status = state.statusActive, page = ps['page'], size = ps['size'])
         
         user = user_logic.UserLogic.instance().query_one(id = ps['userID'])
         ps['userInfo'] = user['name']
@@ -203,7 +203,7 @@ class UserRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserRoleDelHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager.UserBindRoleManager'
-    _right = ssostatus.operDel
+    _right = state.operDel
 
     def post(self):
         id = int(self.get_arg('id', '0'))
@@ -219,12 +219,12 @@ class UserRoleDelHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager.UserBindRoleManager'
-    _right = ssostatus.operView
+    _right = state.operView
     def get(self):
         ps = self.get_page_config('用户应用权限信息')
         ps['userID'] = int(self.get_arg('userID', '0'))
         if 0 == ps['userID']:
-            ps['msg'] = ssostatus.ResultInfo.get(103007, '')
+            ps['msg'] = state.ResultInfo.get(103007, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/User/List'
             self.render('admin/user/right.html', **ps)
             return
@@ -232,7 +232,7 @@ class UserRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
         ps['appCode'] = self.get_arg('appCode', '')
         ps['apps'] = application_logic.ApplicationLogic.instance().query_all_by_active()
         if None == ps['apps'] or len(ps['apps']) <= 0:
-            ps['msg'] = ssostatus.ResultInfo.get(101004, '')
+            ps['msg'] = state.ResultInfo.get(101004, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/Application/Add'
             self.render('admin/user/right_detail.html', **ps)
             return
@@ -257,13 +257,13 @@ class UserRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
 
 class UserUserGroupListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindUserManager'
-    _right = ssostatus.operView
+    _right = state.operView
 
     def get(self):
         ps = self.get_page_config('用户绑定用户组列表')
         ps['userID'] = int(self.get_arg('userID', '0'))
         if 0 == ps['userID']:
-            ps['msg'] = ssostatus.ResultInfo.get(103007, '')
+            ps['msg'] = state.ResultInfo.get(103007, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/User/List'
             self.render('admin/user/right.html', **ps)
             return

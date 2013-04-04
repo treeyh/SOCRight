@@ -4,7 +4,7 @@
 import tornado.web
 from datetime import datetime, timedelta
 
-from common import redis_cache, ssostatus, ssoerror
+from common import redis_cache, state, error
 from helper import str_helper
 from logic import user_logic, application_logic
 import config
@@ -117,8 +117,8 @@ class PassWordEditHandler(AppListHandler):
                 ps['msg'] = '操作成功'
                 ps['gotoUrl'] = ps['serviceSiteDomain']+'Login'
             else:
-                ps['msg'] = ssostatus.ResultInfo.get(101, '')
-        except ssoerror.SsoError as e:
+                ps['msg'] = state.ResultInfo.get(101, '')
+        except error.RightError as e:
             ps['msg'] = e.msg
         
         self.render('password_edit.html', **ps)
