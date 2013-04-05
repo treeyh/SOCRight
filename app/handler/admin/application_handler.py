@@ -3,13 +3,11 @@
 
 import tornado.web
 import tornado.escape
-from tornado.escape import json_decode
-from tornado.escape import json_encode
 import config
 
 from datetime import datetime, timedelta
 import admin_base_handler
-from common import redis_cache, state, error
+from common import redis_cache, state, error, log
 from helper import str_helper, http_helper
 from logic import application_logic
 

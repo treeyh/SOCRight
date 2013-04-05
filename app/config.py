@@ -2,7 +2,6 @@
 
 import os
 
-
 SOCRightConfig = {
     'version':'3',
     'siteName' : '云海统一权限管理平台',
@@ -11,7 +10,7 @@ SOCRightConfig = {
     'siteDomain' : 'http://ssoadmin.kanchene.com/',
     'serviceSiteDomain' : 'http://sso.kanchene.com/',
 
-    'size' : 15,
+    'size' : 20,
     'appCode' : 'SOCRight',
     'rightCookieName' : 'soc_right_user',
     'adminCookieName' : 'soc_right_admin_user',

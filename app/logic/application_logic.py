@@ -20,7 +20,7 @@ class ApplicationLogic():
     _query_sql = '''  select code, name, developer, url, status, remark, 
  isDelete, creater, createTime, lastUpdater, lastUpdateTime from sso_application  where  isDelete = %s   '''
     _query_col = str_helper.format_str_to_list_filter_empty('code, name, developer, url, status, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
-    def query_page(self, name = '', code = '', status = 0, page = 1 , size = 12):
+    def query_page(self, name = '', code = '', status = 0, page = 1 , size = 12):        
         sql = self._query_sql
         isdelete = state.Boole['false']
         ps = [isdelete]
