@@ -3,7 +3,7 @@
 from helper import str_helper
 from common import mysql, state, error
 
-from logic import func_logic, role_logic
+from logic import func_logic, role_logic, user_api_logic
 
 class UserGroupLogic():
 
@@ -182,6 +182,9 @@ class UserGroupLogic():
         isdelete = state.Boole['false']
         yz = (userGroupID, userID, '', isdelete, user, user)
         result = mysql.insert_or_update_or_delete(self._bind_group_user_sql, yz, True)
+        if result > 0:
+            #操作成功，清空用户组用户缓存
+            user_api_logic.UserApiLogic.instance()._del_user_group_cache(userGroupID = userGroupID)
         return result > 0
 
 
@@ -191,6 +194,9 @@ class UserGroupLogic():
         isdelete = state.Boole['true']
         yz = (isdelete, user, id)
         result = mysql.insert_or_update_or_delete(self._del_group_user_sql, yz)
+        if result == 0:
+            #操作成功，清空用户组用户缓存
+            user_api_logic.UserApiLogic.instance()._del_user_group_cache(userGroupID = userGroupID)
         return result == 0
 
     

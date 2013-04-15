@@ -2,8 +2,6 @@
 
 import tornado.web
 #import tornado.escape
-from tornado.escape import json_decode
-from tornado.escape import json_encode
 from datetime import datetime
 
 
@@ -11,7 +9,7 @@ import config
 from common import state, redis_cache
 from helper import str_helper
 from handler import base_handler
-from logic import usergroup_logic, user_logic
+from logic import user_api_logic, user_logic
 
 #{"code":0,"msg":"OK","data":{"id": 1, "tel": "123", "email": "treeyh@126.com", "name": "\u4f59\u6d77"}}
 #{"code":0,"msg":"OK"}
@@ -37,15 +35,7 @@ class UserByUserGroupHandler(base_handler.BaseHandler):
             self.out_fail(code = 1001, msg = 'userGroupID')
             return
 
-        users = usergroup_logic.UserGroupLogic.instance().query_all_group_users(userGroupID = userGroupID)        
-        if None == users or len(users) == 0:
-            self.out_ok(data = '[]')
-            return
-        us = []
-        for u in users:
-            u1 = {'userName':u['userName'], 'userRealName':u['userRealName'], 'userID':u['userID']}
-            us.append(u1)
-        json = str_helper.json_encode(us)
+        json = user_api_logic.UserApiLogic.instance().query_users_by_user_group(userGroupID = userGroupID)
         self.out_ok(data = json)
         return
 
@@ -57,7 +47,7 @@ class UserByUserNameHandler(base_handler.BaseHandler):
             self.out_fail(code = 1001, msg = 'userName')
             return
 
-        user = user_logic.UserLogic.instance().query_one_by_name(name = userName)
+        user = user_api_logic.UserApiLogic.instance().query_user_by_name(name = userName)
         if None == users:
             self.out_ok(data = '{}')
             return
