@@ -20,6 +20,7 @@ class FuncLogic():
     _query_all_by_app_sql = '''  select id, name, code, parentID, path, 
                         sort, customJson from sso_func  where  isDelete = %s   '''    
     _query_all_by_app_col = str_helper.format_str_to_list_filter_empty('id, name, code, parentID, path, sort, customJson', ',')
+    ''' 根据appcode查询应用的功能信息 '''
     def query_all_by_app(self, appCode):
         sql = self._query_all_by_app_sql
         isdelete = state.Boole['false']
@@ -35,6 +36,7 @@ class FuncLogic():
                         sort, status, remark, isDelete, creater, createTime, 
                         lastUpdater, lastUpdateTime from sso_func  where  isDelete = %s   '''    
     _query_col = str_helper.format_str_to_list_filter_empty('id, appCode, name, code, parentID, path, customJson, sort, status, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
+    ''' 根据path获取功能信息 '''
     def query_one_by_path(self, path):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -44,6 +46,7 @@ class FuncLogic():
         func = mysql.find_one(sql, yz, self._query_col)
         return func
 
+    ''' 根据id获取功能信息 '''
     def query_one_by_id(self, id):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -58,6 +61,7 @@ class FuncLogic():
                         sort, status, remark, isDelete, creater, createTime, 
                         lastUpdater, lastUpdateTime)  
                         VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s, now())  '''
+    ''' 创建功能 '''
     def add(self, appCode, name, code, parentID, path, customJson,
                         sort, status, remark, user):
         if not self._check_customJson(customJson):
@@ -72,6 +76,7 @@ class FuncLogic():
     _update_sql = '''   update sso_func set name = %s, sort = %s, customJson = %s,
                             remark = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where id = %s  '''
+    ''' 更新功能 '''
     def update(self, id, name, sort, customJson, remark, user):
         if not self._check_customJson(customJson):
             raise error.RightError(code = 102001)
@@ -83,6 +88,7 @@ class FuncLogic():
     _delete_sql = '''   update sso_func set isDelete = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where id = %s; update sso_func set isDelete = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where path like %s;   '''
+    ''' 删除功能 '''
     def delete(self, id, user):
         isdelete = state.Boole['true']
         func = self.query_one_by_id(id)
@@ -93,6 +99,7 @@ class FuncLogic():
         result = mysql.insert_or_update_or_delete(self._delete_sql, yz)
         return 0 == result
 
+    ''' 验证功能的自定义json信息 '''
     def _check_customJson(self, customJson):
         if None == customJson or '' == customJson:
             return True
@@ -107,6 +114,7 @@ class FuncLogic():
         return True
 
 
+    ''' 获取应用的功能树 '''
     def _func_tree(self, funcs):
         ls = []
         headls = []
@@ -131,6 +139,7 @@ class FuncLogic():
             del(l['_dotcount'])
         return ls
 
+    ''' 获取功能树信息 '''
     def _func_tree_info(self, funcs, path, maxindex):
         ls = []
         nowindex = path.count('.')

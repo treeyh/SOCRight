@@ -20,6 +20,7 @@ class UserLogic():
             cls._instance = cls()
         return cls._instance
 
+    ''' 获取密码md5值 '''
     @staticmethod
     def _format_user_password_md5(password):
         str = '#!@81%sjl=)k' % password
@@ -28,12 +29,13 @@ class UserLogic():
 
     _login_sql = '''  select id, realName, email, mobile, tel , name from sso_user where name = %s and passWord = %s and status != %s and isDelete = %s   '''
     _login_col = str_helper.format_str_to_list_filter_empty('id, realName, email, mobile, tel , name', ',')
+    ''' 用户登录 '''
     def login(self, name, password):
         password = UserLogic._format_user_password_md5(password)        
         user = mysql.find_one(self._login_sql, (name, password, state.User['leave'], state.Boole['false']), self._login_col)
         return user
 
-
+    ''' 登录应用，获得登录的url '''
     def get_goto_user_url(self, userID, appCode, ip, backUrl = ''):
         '''   
             保存为这样的格式：
@@ -95,6 +97,7 @@ class UserLogic():
                             lastLoginApp, lastLoginIp, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime 
                     from sso_user where isDelete = %s  '''
     _query_col = str_helper.format_str_to_list_filter_empty('id , name, realName, parentID, mobile, tel, email, status, lastLoginTime, lastLoginApp, lastLoginIp, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
+    ''' 分页查询用户信息 '''
     def query_page(self, id = '', name = '', realName = '', tel = '', mobile = '', email = '', status = 0, page = 1, size = 12):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -129,6 +132,7 @@ class UserLogic():
         return users
 
 
+    ''' 根据userID查询用户 '''
     def query_one(self, id = 0):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -144,7 +148,7 @@ class UserLogic():
             user['statusname'] = state.UserStatus.get(user['status'])
         return user
 
-
+    ''' 根据email查询用户 '''
     def query_one_by_email(self, email = ''):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -156,7 +160,7 @@ class UserLogic():
             user['statusname'] = state.UserStatus.get(user['status'])
         return user
 
-
+    ''' 根据userName查询用户 '''
     def query_one_by_name(self, name = ''):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -171,6 +175,7 @@ class UserLogic():
     _add_sql = '''  INSERT INTO sso_user(name, passWord, realName, parentID, mobile, tel, email, status, lastLoginTime, 
                     lastLoginApp, lastLoginIp, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime)
                      VALUES(%s, %s, %s, %s, %s, %s, %s ,%s, null, null, null, %s, %s, %s, now(), %s, now() )  '''
+    ''' 创建用户 '''
     def add(self, name, passWord, realName, mobile, tel, email, status, remark, parentID, user):
         u = self.query_one_by_email(email)               #判断用户邮箱是否已存在        
         if None != u:
@@ -189,6 +194,7 @@ class UserLogic():
     _update_sql = '''   update sso_user set  `realName` = %s, `parentID` = %s, `mobile` = %s, `tel` = %s, `email` = %s,
                             `status` = %s, `remark` = %s, `lastUpdater` = %s, 
                             `lastUpdateTime` = now() where `id` = %s  '''
+    ''' 更新用户 '''
     def update(self, id, realName, parentID, mobile, tel, email, status, remark, user):
         u = self.query_one_by_email(email)               #判断用户邮箱是否已存在     
         if None != u and str(u['id']) != str(id):
@@ -202,6 +208,7 @@ class UserLogic():
     
     _delete_sql = '''   update sso_user set isDelete = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where id = %s  '''
+    ''' 删除用户，逻辑删除 '''
     def delete(self, id, user):
         isdelete = state.Boole['true']
         yz = (isdelete, user, id)
@@ -212,6 +219,7 @@ class UserLogic():
     
 
     _update_password_sql = '''   update sso_user set  `passWord` = %s where  `name` = %s and isDelete = %s '''
+    ''' 修改用户密码 '''
     def update_password(self, name , oldPassWord, newPassWord1, newPassWord2):
         if newPassWord1 != newPassWord2:
             raise error.RightError(code = 103010)
@@ -228,8 +236,8 @@ class UserLogic():
 
 
     _update_goto_app_sql = '''   update sso_user set  `lastLoginTime` = now(), `lastLoginApp` = %s, `lastLoginIp` = %s where  `name` = %s and isDelete = %s '''
-    def update_goto_app(self, name , appCode, ip):
-        
+    ''' 更新用户最后登录应用信息 '''
+    def update_goto_app(self, name , appCode, ip):        
         isdelete = state.Boole['false']
         yz = (appCode, ip, name, isdelete)
         result = mysql.insert_or_update_or_delete(self._update_goto_app_sql, yz)
@@ -242,12 +250,14 @@ class UserLogic():
                             where ugu.userID = %s and  ugu.isDelete = %s and u.status = %s order by ugu.id desc '''
     _query_user_roles_col = str_helper.format_str_to_list_filter_empty(
             'id, userID, roleID, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, roleName', ',')
+    ''' 分页查询用户所属角色 '''
     def query_page_user_roles(self, userID, page = 1, size = 12):
         isdelete = state.Boole['false']
         yz = (userID, isdelete, state.statusActive)
         roles = mysql.find_page(self._query_user_roles_sql, yz, self._query_user_roles_col, page, size)
         return roles
 
+    ''' 查询用户所有的角色 '''
     def query_all_user_roles(self, userID):
         isdelete = state.Boole['false']
         yz = (userID, isdelete, state.statusActive)
@@ -257,6 +267,7 @@ class UserLogic():
 
     _bind_group_role_sql = '''  INSERT INTO sso_user_role(userID, roleID, remark, isDelete, creater, 
             createTime, lastUpdater, lastUpdateTime) VALUES(%s, %s, %s, %s, %s, NOW(), %s, NOW()) '''
+    ''' 绑定用户的角色 '''
     def bind_user_role(self, userID, roleID, user):
         roles = self.query_all_user_roles(userID)
         if roles != None:
@@ -270,6 +281,7 @@ class UserLogic():
 
 
     _del_user_role_sql = '''  update sso_user_role set isDelete = %s , lastUpdater = %s , lastUpdateTime = now() WHERE id = %s '''
+    ''' 删除用户角色 '''
     def del_user_role(self, id, user):
         isdelete = state.Boole['true']
         yz = (isdelete, user, id)
@@ -277,7 +289,7 @@ class UserLogic():
         return 0 == result
 
 
-
+    ''' 查询用户权限 '''
     def query_user_app_right(self, userID, appCode):
         user = self.query_one(userID)
         if user == None:

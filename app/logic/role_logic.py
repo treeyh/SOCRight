@@ -21,6 +21,7 @@ class RoleLogic():
     _query_sql = '''  select id, name, status, remark, isDelete, creater, createTime, 
                         lastUpdater, lastUpdateTime from sso_role where isDelete = %s  '''
     _query_col = str_helper.format_str_to_list_filter_empty('id, name, status, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
+    ''' 分页查询角色信息 '''
     def query_page(self, id = '', name = '', status = 0, page = 1, size = 12):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -42,7 +43,7 @@ class RoleLogic():
                 r['statusname'] = state.Status.get(r['status'])
         return roles
 
-
+    ''' 根据id查询角色 '''
     def query_one(self, id = 0):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -58,7 +59,7 @@ class RoleLogic():
             role['statusname'] = state.Status.get(role['status'])
         return role
 
-
+    ''' 根据名称查询角色 '''
     def query_one_by_name(self, name = ''):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -72,6 +73,7 @@ class RoleLogic():
 
     _query_all_by_active_sql = '''  select id, name from sso_role where isDelete = %s and status = %s  '''
     _query_all_by_active_col = str_helper.format_str_to_list_filter_empty('id, name', ',')
+    ''' 获取所有可用的角色 '''
     def query_all_by_active(self):
         sql = self._query_all_by_active_sql
         isdelete = state.Boole['false']
@@ -84,6 +86,7 @@ class RoleLogic():
     _add_sql = '''  INSERT INTO sso_role(name, status, remark, isDelete, 
                         creater, createTime, lastUpdater, lastUpdateTime)
                      VALUES(%s, %s, %s, %s, %s, now(), %s, now() )  '''
+    ''' 创建角色 '''
     def add(self, name, status, remark, user):
         obj = self.query_one_by_name(name = name)
         if None != obj:
@@ -97,6 +100,7 @@ class RoleLogic():
 
     _update_sql = '''   update sso_role set name = %s, status = %s, remark = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where id = %s  '''
+    ''' 更新角色 '''
     def update(self, id, name, status, remark, user):
         obj = self.query_one_by_name(name = name)
         if None != obj and str(obj['id']) != str(id):
@@ -110,6 +114,7 @@ class RoleLogic():
     
     _delete_sql = '''   update sso_role set isDelete = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where id = %s  '''
+    ''' 删除角色 '''
     def delete(self, id, user):
         isdelete = state.Boole['true']
         yz = (isdelete, user, id)
@@ -123,6 +128,7 @@ class RoleLogic():
                         rr.createTime, rr.lastUpdater, rr.lastUpdateTime, f.path from sso_role_right as rr  left  join  sso_func  as  f  on  rr.funcID = f.id 
                         where rr.isDelete = %s and rr.roleID = %s and rr.appCode = %s '''
     _query_right_by_role_app_col = str_helper.format_str_to_list_filter_empty('id, funcID, appCode, roleID, right, customRight, isDelete, creater, createTime, lastUpdater, lastUpdateTime, path', ',')
+    ''' 查询角色 '''
     def query_right_by_role_app(self, roleID, appCode):
         sql = self._query_right_by_role_app_sql
         isdelete = state.Boole['false']
@@ -131,8 +137,9 @@ class RoleLogic():
         return roles
 
     
-    _delete_right_by_role_app_sql = '''  update sso_role_right set isDelete = %s , lastUpdater = %s, lastUpdateTime = now()
+    _delete_right_by_role_app_sql = '''  update sso_role_right set isDelete = %s , lastUpdater = %s, lastUpdateTime = now() 
                         where isDelete = %s and roleID = %s and appCode = %s '''    
+    ''' 删除角色的应用权限 '''
     def delete_right_by_role_app(self, roleID, appCode, user):
         sql = self._delete_right_by_role_app_sql
         isdeletetrue = state.Boole['true']
@@ -144,6 +151,7 @@ class RoleLogic():
 
     _add_right_by_role_app_sql = '''  insert into sso_role_right(funcID, appCode, roleID, `right`, customRight, isDelete, creater, 
                         createTime, lastUpdater, lastUpdateTime) values(%s, %s, %s, %s, %s, %s, %s, now(), %s, now()) '''    
+    ''' 添加角色的应用权限 '''
     def add_right_by_role_app(self, roleID, appCode, rights, user):
         self.delete_right_by_role_app(roleID, appCode, user)
         
@@ -156,12 +164,11 @@ class RoleLogic():
         return 0 == result
 
 
-    
+    ''' 格式化角色的功能权限列表 '''
     def format_role_func_right(self, appCode, roleID, funcs):
         '''格式化角色对应该应用的权限信息'''
         if None == funcs or len(funcs) <= 0:
             return funcs
-
 
         rights = self.query_right_by_role_app(roleID = roleID, appCode = appCode)
         if None == rights or len(rights) <= 0 :
@@ -179,9 +186,9 @@ class RoleLogic():
                 for custom in func['customJson']:
                     if (None != right) and ((',%s,' % custom['k']) in right.get('customRight', '')):
                         custom['right'] = True
-
         return funcs
 
+    ''' 初始化功能权限 '''
     def init_func_right(self, funcs):
         #初始化功能的权限信息
         if None == funcs or len(funcs) <= 0:

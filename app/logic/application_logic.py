@@ -20,6 +20,7 @@ class ApplicationLogic():
     _query_sql = '''  select code, name, developer, url, status, remark, 
  isDelete, creater, createTime, lastUpdater, lastUpdateTime from sso_application  where  isDelete = %s   '''
     _query_col = str_helper.format_str_to_list_filter_empty('code, name, developer, url, status, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
+    ''' 分页查询应用信息 '''
     def query_page(self, name = '', code = '', status = 0, page = 1 , size = 12):        
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -41,6 +42,7 @@ class ApplicationLogic():
                 r['statusname'] = state.Status.get(r['status'])
         return apps
  
+    ''' 根据编号查询应用信息 '''
     def query_one(self, code = ''):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -56,7 +58,7 @@ class ApplicationLogic():
             app['statusname'] = state.Status.get(app['status'])
         return app
 
-
+    ''' 根据名称查询应用信息 '''
     def query_one_by_name(self, name = ''):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -69,6 +71,7 @@ class ApplicationLogic():
 
     _query_all_by_active_sql = '''  select code, name from sso_application  where isDelete = %s   '''
     _query_all_by_active_col = str_helper.format_str_to_list_filter_empty('code, name', ',')
+    ''' 查询所有可用的应用 '''
     def query_all_by_active(self):
         sql = self._query_all_by_active_sql
 
@@ -82,6 +85,7 @@ class ApplicationLogic():
     _add_sql = '''   INSERT INTO sso_application(code, name, developer, url, status, remark, 
                          isDelete, creater, createTime, lastUpdater, lastUpdateTime)  
                         VALUES(%s, %s, %s, %s, %s, %s, %s, %s, now(), %s, now())  '''
+    ''' 添加应用 '''
     def add(self, name, code, developer, url, status, remark, user):
         obj = self.query_one_by_name(name = name)
         if None != obj:
@@ -99,6 +103,7 @@ class ApplicationLogic():
     _update_sql = '''   update sso_application set name = %s, developer = %s, 
                             url = %s, status = %s, remark = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where code = %s  '''
+    ''' 更新应用 '''
     def update(self, name, code, developer, url, status, remark, user):
         obj = self.query_one_by_name(name = name)
         if None != obj and obj['code'] != str(code):
@@ -112,6 +117,7 @@ class ApplicationLogic():
     
     _delete_sql = '''   update sso_application set isDelete = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where code = %s  '''
+    ''' 删除应用 '''
     def delete(self, code, user):
         isdelete = state.Boole['true']
         yz = (isdelete, user, code)

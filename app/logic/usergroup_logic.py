@@ -23,6 +23,7 @@ class UserGroupLogic():
     _query_sql = '''  select id, name, status, remark, isDelete, creater, createTime, 
                         lastUpdater, lastUpdateTime from sso_user_group where isDelete = %s  '''
     _query_col = str_helper.format_str_to_list_filter_empty('id, name, status, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
+    ''' 分页查询用户组信息 '''
     def query_page(self, id = '', name = '', status = 0, page = 1, size = 12):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -44,6 +45,7 @@ class UserGroupLogic():
                 r['statusname'] = state.Status.get(r['status'])
         return usergroups
 
+    ''' 获取所有可用的用户组 '''
     def query_all_by_active(self):
         isdelete = state.Boole['false']
         sql = self._query_sql + ' and status = %s order by id desc '
@@ -54,6 +56,7 @@ class UserGroupLogic():
                 r['statusname'] = state.Status.get(r['status'])
         return usergroups
 
+    ''' 根据ID查询用户组 '''
     def query_one(self, id = 0):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -70,6 +73,7 @@ class UserGroupLogic():
         return usergroup
 
 
+    ''' 根据名称查询用户组 '''
     def query_one_by_name(self, name = ''):
         sql = self._query_sql
         isdelete = state.Boole['false']
@@ -85,6 +89,7 @@ class UserGroupLogic():
     _add_sql = '''  INSERT INTO sso_user_group(name, status, remark, isDelete, 
                         creater, createTime, lastUpdater, lastUpdateTime)
                      VALUES(%s, %s, %s, %s, %s, now(), %s, now() )  '''
+    ''' 新建用户组 '''
     def add(self, name, status, remark, user):
         obj = self.query_one_by_name(name = name)
         if None != obj:
@@ -98,6 +103,7 @@ class UserGroupLogic():
 
     _update_sql = '''   update sso_user_group set name = %s, status = %s, remark = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where id = %s  '''
+    ''' 更新用户组 '''
     def update(self, id, name, status, remark, user):
         obj = self.query_one_by_name(name = name)
         if None != obj and str(obj['id']) == str(id):
@@ -111,6 +117,7 @@ class UserGroupLogic():
     
     _delete_sql = '''   update sso_user_group set isDelete = %s, lastUpdater = %s, 
                             lastUpdateTime = now() where id = %s  '''
+    ''' 删除用户组，逻辑删除 '''
     def delete(self, id, user):
         isdelete = state.Boole['true']
         yz = (isdelete, user, id)
@@ -125,12 +132,14 @@ class UserGroupLogic():
                             where  ugu.userGroupID = %s and  ugu.isDelete = %s and u.status = %s  order by ugu.id desc '''
     _query_group_users_col = str_helper.format_str_to_list_filter_empty(
             'id, userGroupID, userID, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, userName, userEmail, userRealName', ',')
+    ''' 分页查询用户组的用户信息 '''
     def query_page_group_users(self, userGroupID, page = 1, size = 12):
         isdelete = state.Boole['false']
         yz = (userGroupID, isdelete, state.statusActive)
         users = mysql.find_page(self._query_group_users_sql, yz, self._query_group_users_col, page, size)
         return users
 
+    ''' 分页查询用户组的所有用户信息 '''
     def query_all_group_users(self, userGroupID):
         isdelete = state.Boole['false']
         yz = (userGroupID, isdelete, state.statusActive)
@@ -145,12 +154,14 @@ class UserGroupLogic():
                             where  ugu.userID = %s and  ugu.isDelete = %s and u.status = %s order by ugu.id desc '''
     _query_user_groups_col = str_helper.format_str_to_list_filter_empty(
             'id, userGroupID, userID, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, userGroupName', ',')
+    ''' 查询用户的所有用户组信息 '''
     def query_all_user_groups(self, userID):
         isdelete = state.Boole['false']
         yz = (userID, isdelete, state.statusActive)
         users = mysql.find_all(self._query_user_groups_sql, yz, self._query_user_groups_col)
         return users
 
+    ''' 分页查询用户的所有用户组信息 '''
     def query_page_user_groups(self, userID, page = 1, size = 12):
         isdelete = state.Boole['false']
         yz = (userID, isdelete, state.statusActive)
@@ -161,6 +172,7 @@ class UserGroupLogic():
 
     _bind_group_user_sql = '''  INSERT INTO sso_user_group_user(userGroupID, userID, remark, isDelete, creater, 
             createTime, lastUpdater, lastUpdateTime) VALUES(%s, %s, %s, %s, %s, NOW(), %s, NOW()) '''
+    ''' 用户绑定用户组 '''
     def bind_group_user(self, userGroupID, userID, user):
         users = self.query_all_group_users(userGroupID)
         if users != None:
@@ -174,13 +186,12 @@ class UserGroupLogic():
 
 
     _del_group_user_sql = '''  update sso_user_group_user set isDelete = %s , lastUpdater = %s , lastUpdateTime = now() WHERE id = %s '''
+    ''' 删除用户与用户组绑定 '''
     def del_group_user(self, id, user):
         isdelete = state.Boole['true']
         yz = (isdelete, user, id)
         result = mysql.insert_or_update_or_delete(self._del_group_user_sql, yz)
         return result == 0
-
-
 
     
     _query_group_roles_sql = '''  select ugu.id, ugu.userGroupID, ugu.roleID, ugu.remark, ugu.isDelete, ugu.creater, 
@@ -189,12 +200,14 @@ class UserGroupLogic():
                             where ugu.userGroupID = %s and  ugu.isDelete = %s and u.status = %s  order by ugu.id desc '''
     _query_group_roles_col = str_helper.format_str_to_list_filter_empty(
             'id, userGroupID, roleID, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, roleName', ',')
+    ''' 分页查询用户组的角色 '''
     def query_page_group_roles(self, userGroupID, page = 1, size = 12):
         isdelete = state.Boole['false']
         yz = (userGroupID, isdelete, state.statusActive)
         roles = mysql.find_page(self._query_group_roles_sql, yz, self._query_group_roles_col, page, size)
         return roles
 
+    ''' 查询用户组的所有角色 '''
     def query_all_group_roles(self, userGroupID):
         isdelete = state.Boole['false']
         yz = (userGroupID, isdelete, state.statusActive)
@@ -204,6 +217,7 @@ class UserGroupLogic():
 
     _bind_group_role_sql = '''  INSERT INTO sso_user_group_role(userGroupID, roleID, remark, isDelete, creater, 
             createTime, lastUpdater, lastUpdateTime) VALUES(%s, %s, %s, %s, %s, NOW(), %s, NOW()) '''
+    ''' 绑定用户组的角色 '''
     def bind_group_role(self, userGroupID, roleID, user):
         roles = self.query_all_group_roles(userGroupID)
         if roles != None:
@@ -217,15 +231,14 @@ class UserGroupLogic():
 
 
     _del_group_role_sql = '''  update sso_user_group_role set isDelete = %s , lastUpdater = %s , lastUpdateTime = now() WHERE id = %s '''
+    ''' 删除用户组的角色 '''
     def del_group_role(self, id, user):
         isdelete = state.Boole['true']
         yz = (isdelete, user, id)
         result = mysql.insert_or_update_or_delete(self._del_group_role_sql, yz)
         return 0 == result
-
-
     
-    
+    ''' 查询用户组对应的应用权限 '''
     def query_user_group_app_right(self, userGroupID, appCode, funcs = None):
         '''查询用户组对应应用的权限信息'''
         if None == funcs:
@@ -241,3 +254,5 @@ class UserGroupLogic():
             funcs = role_logic.RoleLogic.instance().format_role_func_right(appCode=appCode, roleID = role['roleID'], funcs = funcs)
 
         return funcs
+
+        
