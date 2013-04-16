@@ -1,9 +1,10 @@
 #-*- encoding: utf-8 -*-
 
 from helper import str_helper
-from common import mysql, state, error
+from common import mysql, state, error, redis_cache
+import config
 
-from logic import func_logic, role_logic, user_api_logic
+from logic import func_logic, role_logic
 
 class UserGroupLogic():
 
@@ -184,7 +185,7 @@ class UserGroupLogic():
         result = mysql.insert_or_update_or_delete(self._bind_group_user_sql, yz, True)
         if result > 0:
             #操作成功，清空用户组用户缓存
-            user_api_logic.UserApiLogic.instance()._del_user_group_cache(userGroupID = userGroupID)
+            self._del_user_group_cache(userGroupID = userGroupID)
         return result > 0
 
 
@@ -196,7 +197,7 @@ class UserGroupLogic():
         result = mysql.insert_or_update_or_delete(self._del_group_user_sql, yz)
         if result == 0:
             #操作成功，清空用户组用户缓存
-            user_api_logic.UserApiLogic.instance()._del_user_group_cache(userGroupID = userGroupID)
+            self._del_user_group_cache(userGroupID = userGroupID)
         return result == 0
 
     
@@ -262,3 +263,29 @@ class UserGroupLogic():
         return funcs
 
         
+
+    _users_by_group_key = 'soc_api_users_by_group_%s'
+    ''' 查询用户组下所有用户，带缓存 '''
+    def query_users_by_user_group_cache(self, userGroupID):
+        key = self._users_by_group_key % str(userGroupID)
+        json = redis_cache.getStr(key)
+        if None == json:
+            users = self.query_all_group_users(userGroupID = userGroupID)        
+            if None == users or len(users) == 0:
+                json = '[]'
+            else:
+                us = []
+                for u in users:
+                    u1 = {'userName':u['userName'], 'userRealName':u['userRealName'], 'userID':u['userID']}
+                    us.append(u1)
+                json = str_helper.json_encode(us)
+            redis_cache.setStr(key = key, val = json, time = config.cache['apiTimeOut'])
+        return json
+
+    ''' 清除用户组下所有用户缓存 '''
+    def _del_user_group_cache(self, userGroupID):
+        key = self._users_by_group_key % str(userGroupID)
+        redis_cache.delete(key = key)
+
+
+    

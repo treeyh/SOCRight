@@ -314,3 +314,26 @@ class UserLogic():
             for role in roles:
                 funcs = role_logic.RoleLogic.instance().format_role_func_right(appCode = appCode, roleID = role['roleID'], funcs = funcs)
         return funcs
+
+
+
+    _user_by_name_key = 'soc_api_user_by_name_%s'
+    ''' 根据用户名获取用户信息 '''
+    def query_user_by_name_cache(self, name):
+        key = self._user_by_name_key % name
+        json = redis_cache.getStr(key)
+        if None == json:
+            user = self.query_one_by_name(name = userName)
+            if None == users:
+                json = '{}'
+            else:
+                json = str_helper.json_encode(user)
+            redis_cache.setStr(key = key, val = json, time = config.cache['apiTimeOut'])
+        return json
+
+    ''' 删除用户名获取用户 '''
+    def _del_user_by_name_cache(self, name):
+        key = self._user_by_name_key % name
+        redis_cache.delete(key = key)
+
+

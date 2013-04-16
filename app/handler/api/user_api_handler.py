@@ -9,7 +9,7 @@ import config
 from common import state, redis_cache
 from helper import str_helper
 from handler import base_handler
-from logic import user_api_logic, user_logic
+from logic import usergroup_logic, user_logic
 
 #{"code":0,"msg":"OK","data":{"id": 1, "tel": "123", "email": "treeyh@126.com", "name": "\u4f59\u6d77"}}
 #{"code":0,"msg":"OK"}
@@ -35,7 +35,7 @@ class UserByUserGroupHandler(base_handler.BaseHandler):
             self.out_fail(code = 1001, msg = 'userGroupID')
             return
 
-        json = user_api_logic.UserApiLogic.instance().query_users_by_user_group(userGroupID = userGroupID)
+        json = usergroup_logic.UserGroupLogic.instance().query_users_by_user_group_cache(userGroupID = userGroupID)
         self.out_ok(data = json)
         return
 
@@ -47,7 +47,7 @@ class UserByUserNameHandler(base_handler.BaseHandler):
             self.out_fail(code = 1001, msg = 'userName')
             return
 
-        user = user_api_logic.UserApiLogic.instance().query_user_by_name(name = userName)
+        user = user_logic.UserLogic.instance().query_user_by_name_cache(name = userName)
         if None == users:
             self.out_ok(data = '{}')
             return
