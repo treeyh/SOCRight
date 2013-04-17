@@ -69,7 +69,7 @@
             </td>
             <td>
                 <a href="{{siteDomain}}Admin/Role/Detail?id={{ r['roleID'] }}">角色详情</a>
-                <a href="javascript:" onclick="UserGroupRole.del('{{r['id']}}')">删除</a>
+                <a href="javascript:" onclick="UserGroupRole.del('{{r['id']}}','{{userGroup['id']}}')">删除</a>
             </td>
         </tr>
         {% end %}
@@ -80,10 +80,10 @@
     <!--
 
     var UserGroupRole = {
-        del: function (id) {
+        del: function (id, userGroupID) {
             if (!confirm("确定删除该记录吗？")) return false;
 
-            $.post('{{siteDomain}}Admin/UserGroup/RoleDel', { 'id': id, 'ajax': 'ajax' },
+            $.post('{{siteDomain}}Admin/UserGroup/RoleDel', { 'id': id, 'userGroupID': userGroupID, 'ajax': 'ajax' },
                  function (data) {
                      if (0 == data.code) {
                          Common.alert('操作成功', window.location.href);
@@ -95,11 +95,8 @@
     };
 
     $(document).ready(function () {
-        $('#btFlush').bind('click', function () {
-            window.location.href = '{{siteDomain}}Admin/UserGroup/RoleList?userGroupID=' + $('#userGroups').val();
-        });
-        $('#userGroups').bind('change', function () {
-            window.location.href = '{{siteDomain}}Admin/UserGroup/RoleList?userGroupID=' + $('#userGroups').val();
+        $('#userGroupID').bind('change', function () {
+            window.location.href = '{{siteDomain}}Admin/UserGroup/RoleList?id=' + $('#userGroupID').val();
         });
     });
     //-->

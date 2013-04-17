@@ -191,7 +191,7 @@ class UserGroupLogic():
 
     _del_group_user_sql = '''  update sso_user_group_user set isDelete = %s , lastUpdater = %s , lastUpdateTime = now() WHERE id = %s '''
     ''' 删除用户与用户组绑定 '''
-    def del_group_user(self, id, user):
+    def del_group_user(self, id, userGroupID, user):
         isdelete = state.Boole['true']
         yz = (isdelete, user, id)
         result = mysql.insert_or_update_or_delete(self._del_group_user_sql, yz)
@@ -239,11 +239,12 @@ class UserGroupLogic():
 
     _del_group_role_sql = '''  update sso_user_group_role set isDelete = %s , lastUpdater = %s , lastUpdateTime = now() WHERE id = %s '''
     ''' 删除用户组的角色 '''
-    def del_group_role(self, id, user):
+    def del_group_role(self, id, userGroupID, user):
         isdelete = state.Boole['true']
         yz = (isdelete, user, id)
         result = mysql.insert_or_update_or_delete(self._del_group_role_sql, yz)
         return 0 == result
+    
     
     ''' 查询用户组对应的应用权限 '''
     def query_user_group_app_right(self, userGroupID, appCode, funcs = None):

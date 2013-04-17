@@ -196,10 +196,11 @@ class UserGroupUserDelHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operDel
     def post(self):
         id = int(self.get_arg('id', '0'))
-        if id <= 0:
+        userGroupID = int(self.get_arg('userGroupID', '0'))
+        if id <= 0 or userGroupID <= 0:
             self.out_fail(code = 105006)
             return
-        type = usergroup_logic.UserGroupLogic.instance().del_group_user(id = id, user = self.get_oper_user())
+        type = usergroup_logic.UserGroupLogic.instance().del_group_user(id = id, userGroupID = userGroupID, user = self.get_oper_user())
         if type:
             self.out_ok()
         else:
@@ -285,10 +286,11 @@ class UserGroupRoleDelHandler(admin_base_handler.AdminRightBaseHandler):
 
     def post(self):
         id = int(self.get_arg('id', '0'))
-        if id <= 0:
+        userGroupID = int(self.get_arg('userGroupID', '0'))
+        if id <= 0 or userGroupID <= 0:
             self.out_fail(code = 105009)
             return
-        type = usergroup_logic.UserGroupLogic.instance().del_group_role(id = id, user = self.get_oper_user())
+        type = usergroup_logic.UserGroupLogic.instance().del_group_role(id = id, userGroupID = userGroupID, user = self.get_oper_user())
         if type:
             self.out_ok()
         else:
