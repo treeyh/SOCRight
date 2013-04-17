@@ -38,9 +38,8 @@ def get_users_by_usergroup(userGroupID):
     return _soc_right_http_get(url, params)
 
 
-def get_users_by_name(userName):
+def get_user_by_name(userName):
     params = {'userName': userName}
     url = '%sUser/GetByUserName' % (config.urls['socRightApi'])
     return _soc_right_http_get(url, params)
 
-    
