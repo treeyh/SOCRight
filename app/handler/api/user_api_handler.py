@@ -57,4 +57,21 @@ class UserByUserNameHandler(base_handler.BaseHandler):
         return
 
 
+class UsersByUserNamesHandler(base_handler.BaseHandler):    
+    def get(self):
+        userNames = self.get_arg('userNames','')
+        if '' == userNames:
+            self.out_fail(code = 1001, msg = 'userNames')
+            return
+        userNemes = str_helper.format_str_to_list_filter_empty(userNemes, ',')
 
+        users = []
+        for userName in usernames:
+            if str_helper.is_null_or_empty(userName):
+                continue
+            user = user_logic.UserLogic.instance().query_user_by_name_cache(name = userName)    
+            users.append(user)        
+                
+        json = str_helper.json_encode(users)
+        self.out_ok(data = json)
+        return

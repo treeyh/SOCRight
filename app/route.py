@@ -25,6 +25,7 @@ route.append((r'^/Test', test_handler.TestHandler))
 route.append((r'^/Api/User/Get', user_api_handler.UserGetInfoHandler))
 route.append((r'^/Api/User/GetByUserGroup', user_api_handler.UserByUserGroupHandler))
 route.append((r'^/Api/User/GetByUserName', user_api_handler.UserByUserNameHandler))
+route.append((r'^/Api/User/GetByUserNames', user_api_handler.UsersByUserNamesHandler))
 
 
 

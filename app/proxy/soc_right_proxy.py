@@ -14,7 +14,7 @@ def _format_url(url, params):
         url = '%s%s=%s&' % (url, k, url_escape(params[k]))
     return url
 
-def _soc_right_http_get(url, params):
+def _http_get(url, params):
     url = _format_url(url, params)
     json = http_helper.get(url)
     print json
@@ -28,18 +28,18 @@ def _soc_right_http_get(url, params):
 def get_login_user(token):
     params = {'token': token}
     url = '%sUser/Get' % (config.urls['socRightApi'])
-    obj = _soc_right_http_get(url, params)
+    obj = _http_get(url, params)
     return obj
 
 
 def get_users_by_usergroup(userGroupID):
     params = {'userGroupID': str(userGroupID)}
     url = '%sUser/GetByUserGroup' % (config.urls['socRightApi'])
-    return _soc_right_http_get(url, params)
+    return _http_get(url, params)
 
 
 def get_user_by_name(userName):
     params = {'userName': userName}
     url = '%sUser/GetByUserName' % (config.urls['socRightApi'])
-    return _soc_right_http_get(url, params)
+    return _http_get(url, params)
 
