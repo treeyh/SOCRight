@@ -59,18 +59,19 @@ class UserByUserNameHandler(base_handler.BaseHandler):
 
 class UsersByUserNamesHandler(base_handler.BaseHandler):    
     def get(self):
-        userNames = self.get_arg('userNames','')
-        if '' == userNames:
-            self.out_fail(code = 1001, msg = 'userNames')
+        names = self.get_arg('names','')
+        if '' == names:
+            self.out_fail(code = 1001, msg = 'names')
             return
-        userNemes = str_helper.format_str_to_list_filter_empty(userNemes, ',')
+        names = str_helper.format_str_to_list_filter_empty(names, ',')
 
         users = []
-        for userName in usernames:
-            if str_helper.is_null_or_empty(userName):
+        for name in names:
+            if str_helper.is_null_or_empty(name):
                 continue
-            user = user_logic.UserLogic.instance().query_user_by_name_cache(name = userName)    
-            users.append(user)        
+            user = user_logic.UserLogic.instance().query_user_by_name_cache(name = name)    
+            if None != user:
+                users.append(user)
                 
         json = str_helper.json_encode(users)
         self.out_ok(data = json)

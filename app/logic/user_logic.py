@@ -321,15 +321,11 @@ class UserLogic():
     ''' 根据用户名获取用户信息 '''
     def query_user_by_name_cache(self, name):
         key = self._user_by_name_key % name
-        json = redis_cache.getStr(key)
-        if None == json:
-            user = self.query_one_by_name(name = userName)
-            if None == users:
-                json = '{}'
-            else:
-                json = str_helper.json_encode(user)
-            redis_cache.setStr(key = key, val = json, time = config.cache['apiTimeOut'])
-        return json
+        user = redis_cache.getObj(key)
+        if None == user:
+            user = self.query_one_by_name(name = name)            
+            redis_cache.setObj(key = key, val = user, time = config.cache['apiTimeOut'])
+        return user
 
     ''' 删除用户名获取用户 '''
     def _del_user_by_name_cache(self, name):
