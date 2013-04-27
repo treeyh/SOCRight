@@ -303,11 +303,11 @@ class UserGroupRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
 
     def get(self):
         ps = self.get_page_config('用户组应用权限信息')
-        ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
+        ps['userGroupID'] = int(self.get_arg('id', '0'))
         if 0 == ps['userGroupID']:
             ps['msg'] = state.ResultInfo.get(105010, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/List'
-            self.render('admin/usergroup/right.html', **ps)
+            self.render('admin/usergroup/right_detail.html', **ps)
             return
 
         ps['appCode'] = self.get_arg('appCode', '')
