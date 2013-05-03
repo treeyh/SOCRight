@@ -127,6 +127,7 @@ class FuncDelHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operDel
     def post(self):
         id = int(self.get_arg('id', '0'))
+
         user = self.get_oper_user()
         try:
             type = func_logic.FuncLogic.instance().delete(id = id, user = user)

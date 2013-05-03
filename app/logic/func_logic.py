@@ -86,16 +86,15 @@ class FuncLogic():
 
     
     _delete_sql = '''   update sso_func set isDelete = %s, lastUpdater = %s, 
-                            lastUpdateTime = now() where id = %s; update sso_func set isDelete = %s, lastUpdater = %s, 
-                            lastUpdateTime = now() where path like %s;   '''
+                            lastUpdateTime = now() where id = %s OR path like %s;   '''
     ''' 删除功能 '''
     def delete(self, id, user):
         isdelete = state.Boole['true']
-        func = self.query_one_by_id(id)
+        func = self.query_one_by_id(id = id)
         if None == func:
             raise error.RightError(code=102002)
         path = func['path'] + '.%'
-        yz = (isdelete, user, id, isdelete, user, path)
+        yz = (isdelete, user, id, path)
         result = mysql.insert_or_update_or_delete(self._delete_sql, yz)
         return 0 == result
 
