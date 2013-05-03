@@ -103,6 +103,11 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             else:
                 func['path'] = '%s.%s' % ((func_logic.FuncLogic.instance().query_one_by_id(func['parentID'])).get('path'), func['code'])
             func['status'] = state.Boole['true']
+
+            f = func_logic.FuncLogic.instance().query_one_by_path(path = func['path'])
+            if None != f:
+                self.out_fail(code = 102003)
+                return
             try:
                 func_logic.FuncLogic.instance().add(appCode = func['appCode'], name = func['name'], code = func['code'], 
                             parentID = func['parentID'], path = func['path'], customJson = func['customJson'], sort = func['sort'], 
