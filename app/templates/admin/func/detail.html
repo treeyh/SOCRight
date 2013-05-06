@@ -78,7 +78,7 @@
                         <td style="width: 200px;">
                             <input type="text" id="name" name="name" />
                             <input type="hidden" id="parentID" value="" />
-                            <input type="hidden" id="id" value="" />
+                            <input type="hidden" id="id" value="0" />
                         </td>
                         <td style="width: 60px;">
                             排序：<span class="red">*</span>
@@ -176,7 +176,7 @@
         clearFuncInfo:function() {
             $('#func_oper').html('');
             $('#name').val('');
-            $('#id').val('');
+            $('#id').val('0');
             $('#parentID').val('');
             $('#sort').val('');
             $('#code').val('');
