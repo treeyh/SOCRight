@@ -207,3 +207,27 @@ class BaseHandler(tornado.web.RequestHandler):
             html = '%s<a disabled style="margin-right: 5px;">第一页</a><a disabled style="margin-right: 5px;">上一页</a>' % (html)
             html = '%s<a disabled style="margin-right: 5px;" title="转到下一页">下一页</a><a disabled style="margin-right: 5px;" title="转到最末页">最末页</a>' % (html)
         return html
+
+
+
+class BaseRightHandler(BaseHandler):
+    
+    _rightKey = ''
+    _right = 0
+
+    def prepare(self):
+        user = self.current_user
+        if None == user:
+            ''' 判断用户是否存在,如果不存在,重新登录 '''
+            params = {'backUrl':config.urls['adminBackUrl'], 'appCode': config.SOCRightConfig['appCode']}
+            url = self.format_url(config.urls['loginUrl'] , params)
+            self.redirect(url)
+            return
+        if None == user['loginCount'] and 0 >= user['loginCount'] and 'passwordedit' not in self.request.path.lower():
+            
+
+        # if None == user['loginCount']  or 0 >= user['loginCount']:
+        #     params = {'msg':'100003'}
+        #     url = self.format_url(ps['serviceSiteDomain']+'PassWordEdit' , params)
+        #     self.redirect(url)
+        #     return

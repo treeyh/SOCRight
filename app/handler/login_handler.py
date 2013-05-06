@@ -25,6 +25,7 @@ class LoginHandler(base_handler.BaseHandler):
                 self.redirect(backUrl)
             return
         self.render('login.html', **ps)
+
     
     def post(self):
         ps = self.get_page_config('登录')
@@ -36,11 +37,17 @@ class LoginHandler(base_handler.BaseHandler):
         if None == user:
             self.redirect(ps['serviceSiteDomain']+'Login?msg=100002')
             return
+
         uuid = str_helper.get_uuid()
         redis_cache.setObj(uuid, user, config.cache['userTimeOut'])
         ex = ps['now'] + timedelta(seconds=config.cache['userTimeOut'])        
         self.clear_all_cookies()
         self.set_cookie(name = config.SOCRightConfig['rightCookieName'], value=uuid, expires=ex)
+        if None == user['loginCount'] or 0 == user['loginCount']:
+            self.redirect(ps['serviceSiteDomain']+'PassWordEdit?msg=100003&appCode='+ 
+                            str_helper.url_escape(ps['appCode']) +'&backUrl=' + 
+                            str_helper.url_escape(ps['backUrl']))
+            return
         if ps['appCode'] != '':
             backUrl = user_logic.UserLogic.instance().get_goto_user_url(userID = user['id'], appCode = ps['appCode'], ip = self.get_user_ip(), backUrl = ps['backUrl'])
             self.redirect(backUrl)
@@ -50,21 +57,13 @@ class LoginHandler(base_handler.BaseHandler):
 
 
 
-class LogoutHandler(base_handler.BaseHandler):
+class LogoutHandler(base_handler.BaseRightHandler):
     def get(self):
         self.clear_user_info()
         self.redirect(config.urls['loginUrl'])
 
 
-class AppListHandler(base_handler.BaseHandler):
-    
-    def prepare(self):
-        user = self.current_user
-        if None == user:
-            ''' 判断用户是否存在,如果不存在,重新登录 '''
-            url = config.urls['loginUrl']
-            self.redirect(url)
-            return
+class AppListHandler(base_handler.BaseRightHandler):
 
     def get(self):
         ps = self.get_page_config('应用集合列表')
@@ -74,7 +73,7 @@ class AppListHandler(base_handler.BaseHandler):
         self.render('app_list.html', **ps)
 
 
-class AppGotoHandler(AppListHandler):
+class AppGotoHandler(base_handler.BaseRightHandler):
     def get(self):
         ps = self.get_page_config('')
         ps['appCode'] = self.get_arg('appCode', '')
@@ -87,7 +86,7 @@ class AppGotoHandler(AppListHandler):
         self.redirect(gotoUrl)
 
 
-class PassWordEditHandler(AppListHandler):
+class PassWordEditHandler(base_handler.BaseRightHandler):
     def get(self):
         ps = self.get_page_config('修改密码')
         ps = self.get_args(ls = ['oldPassWord', 'newPassWord1', 'newPassWord2'], default = '', map = ps)

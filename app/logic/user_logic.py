@@ -27,8 +27,8 @@ class UserLogic():
         return str_helper.str_md5(str)
 
 
-    _login_sql = '''  select id, realName, email, mobile, tel , name from sso_user where name = %s and passWord = %s and status != %s and isDelete = %s   '''
-    _login_col = str_helper.format_str_to_list_filter_empty('id, realName, email, mobile, tel , name', ',')
+    _login_sql = '''  select id, realName, email, mobile, tel , name, loginCount from sso_user where name = %s and passWord = %s and status != %s and isDelete = %s   '''
+    _login_col = str_helper.format_str_to_list_filter_empty('id, realName, email, mobile, tel , name, loginCount', ',')
     ''' 用户登录 '''
     def login(self, name, password):
         password = UserLogic._format_user_password_md5(password)        
@@ -173,8 +173,8 @@ class UserLogic():
         return user
 
     _add_sql = '''  INSERT INTO sso_user(name, passWord, realName, parentID, mobile, tel, email, status, lastLoginTime, 
-                    lastLoginApp, lastLoginIp, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime)
-                     VALUES(%s, %s, %s, %s, %s, %s, %s ,%s, null, null, null, %s, %s, %s, now(), %s, now() )  '''
+                    lastLoginApp, lastLoginIp, loginCount, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime)
+                     VALUES(%s, %s, %s, %s, %s, %s, %s ,%s, null, null, null, 0, %s, %s, %s, now(), %s, now() )  '''
     ''' 创建用户 '''
     def add(self, name, passWord, realName, mobile, tel, email, status, remark, parentID, user):
         u = self.query_one_by_email(email)               #判断用户邮箱是否已存在        
@@ -235,7 +235,8 @@ class UserLogic():
 
 
 
-    _update_goto_app_sql = '''   update sso_user set  `lastLoginTime` = now(), `lastLoginApp` = %s, `lastLoginIp` = %s where  `name` = %s and isDelete = %s '''
+    _update_goto_app_sql = '''   update sso_user set  `lastLoginTime` = now(), `lastLoginApp` = %s, `lastLoginIp` = %s, 
+                                    `loginCount` = `loginCount` + 1 where  `name` = %s and isDelete = %s '''
     ''' 更新用户最后登录应用信息 '''
     def update_goto_app(self, name , appCode, ip):        
         isdelete = state.Boole['false']
