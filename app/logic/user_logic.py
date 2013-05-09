@@ -21,17 +21,43 @@ class UserLogic():
         return cls._instance
 
     ''' 获取密码md5值 '''
-    @staticmethod
-    def _format_user_password_md5(password):
+    def _format_user_password_md5(self, password):
         str = '#!@81%sjl=)k' % password
         return str_helper.str_md5(str)
+
+
+    _pw1 = 'abcdefghijklmnopqrstuvwxyz'
+    _pw2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    _pw3 = '0123456789'
+    def _check_password_complexity(self, password):
+        charTypeCount = 0
+        if 8 > len(password):
+            return 103012
+        pw1 , pw2, pw3, pw4 = False , False, False, False
+        for x in password:
+            if x in self._pw1:
+                pw1 = True
+            elif x in self._pw2:
+                pw2 = True
+            elif x in self._pw3:
+                pw3 = True
+            else:
+                pw4 = True
+
+        if (pw1 == True or pw2 == True) and pw3 == True:
+            return 0
+        else:
+            return 103012
+
+
+
 
 
     _login_sql = '''  select id, realName, email, mobile, tel , name, loginCount from sso_user where name = %s and passWord = %s and status != %s and isDelete = %s   '''
     _login_col = str_helper.format_str_to_list_filter_empty('id, realName, email, mobile, tel , name, loginCount', ',')
     ''' 用户登录 '''
     def login(self, name, password):
-        password = UserLogic._format_user_password_md5(password)        
+        password = self._format_user_password_md5(password)        
         user = mysql.find_one(self._login_sql, (name, password, state.User['leave'], state.Boole['false']), self._login_col)
         return user
 
@@ -183,6 +209,9 @@ class UserLogic():
         u = self.query_one_by_name(name)               #判断用户名是否已存在
         if None != u:
             raise error.RightError(code = 103008)
+        pwComp = self._check_password_complexity(password = passWord)
+        if pwComp != 0:
+            raise error.RightError(code = pwComp)
 
         isdelete = state.Boole['false']
         passWord = self._format_user_password_md5(passWord)
@@ -223,6 +252,11 @@ class UserLogic():
     def update_password(self, name , oldPassWord, newPassWord1, newPassWord2):
         if newPassWord1 != newPassWord2:
             raise error.RightError(code = 103010)
+        if oldPassWord == newPassWord1:
+            raise error.RightError(code = 103011)
+        pwComp = self._check_password_complexity(password = newPassWord1)
+        if pwComp != 0:
+            raise error.RightError(code = pwComp)
         u = self.login(name, oldPassWord)               #旧密码是否正确     
         if None == u:
             raise error.RightError(code = 103009)
@@ -238,7 +272,7 @@ class UserLogic():
     _update_goto_app_sql = '''   update sso_user set  `lastLoginTime` = now(), `lastLoginApp` = %s, `lastLoginIp` = %s, 
                                     `loginCount` = `loginCount` + 1 where  `name` = %s and isDelete = %s '''
     ''' 更新用户最后登录应用信息 '''
-    def update_goto_app(self, name , appCode, ip):        
+    def update_goto_app(self, name , appCode, ip):
         isdelete = state.Boole['false']
         yz = (appCode, ip, name, isdelete)
         result = mysql.insert_or_update_or_delete(self._update_goto_app_sql, yz)

@@ -43,12 +43,14 @@ class LoginHandler(base_handler.BaseHandler):
         ex = ps['now'] + timedelta(seconds=config.cache['userTimeOut'])        
         self.clear_all_cookies()
         self.set_cookie(name = config.SOCRightConfig['rightCookieName'], value=uuid, expires=ex)
-        if None == user['loginCount'] or 0 == user['loginCount']:
-            self.redirect(ps['serviceSiteDomain']+'PassWordEdit?msg=100003&appCode='+ 
+        
+        if ps['appCode'] != '':
+            if None == user['loginCount'] or 0 == user['loginCount']:
+                self.redirect(ps['serviceSiteDomain']+'PassWordEdit?msg=100003&appCode='+ 
                             str_helper.url_escape(ps['appCode']) +'&backUrl=' + 
                             str_helper.url_escape(ps['backUrl']))
             return
-        if ps['appCode'] != '':
+
             backUrl = user_logic.UserLogic.instance().get_goto_user_url(userID = user['id'], appCode = ps['appCode'], ip = self.get_user_ip(), backUrl = ps['backUrl'])
             self.redirect(backUrl)
         else:
@@ -57,7 +59,7 @@ class LoginHandler(base_handler.BaseHandler):
 
 
 
-class LogoutHandler(base_handler.BaseRightHandler):
+class LogoutHandler(base_handler.BaseHandler):
     def get(self):
         self.clear_user_info()
         self.redirect(config.urls['loginUrl'])
@@ -112,6 +114,10 @@ class PassWordEditHandler(base_handler.BaseRightHandler):
             type = user_logic.UserLogic.instance().update_password(name = user['name'], oldPassWord = ps['oldPassWord'] , 
                     newPassWord1 = ps['newPassWord1'] , newPassWord2 = ps['newPassWord2'])
             if type:
+                if None != user['loginCount']  and 0 >= user['loginCount']:
+                    ''' 第一次强制修改密码后更新登录计数  '''
+                    user_logic.UserLogic.instance().update_goto_app(user['name'], config.SOCRightConfig['appCode'], ip = self.get_user_ip())
+
                 self.clear_user_info()
                 ps['msg'] = '操作成功'
                 ps['gotoUrl'] = ps['serviceSiteDomain']+'Login'

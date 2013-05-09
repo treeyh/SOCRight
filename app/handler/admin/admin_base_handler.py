@@ -44,6 +44,7 @@ class AdminRightBaseHandler(AdminBaseHandler):
     _right = 0
 
     def prepare(self):
+        super(AdminRightBaseHandler, self).prepare()
         user = self.current_user
         if None == user:
             ''' 判断用户是否存在,如果不存在,重新登录 '''

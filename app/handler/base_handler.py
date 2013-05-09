@@ -216,6 +216,7 @@ class BaseRightHandler(BaseHandler):
     _right = 0
 
     def prepare(self):
+        super(BaseRightHandler, self).prepare()
         user = self.current_user
         if None == user:
             ''' 判断用户是否存在,如果不存在,重新登录 '''
@@ -223,11 +224,9 @@ class BaseRightHandler(BaseHandler):
             url = self.format_url(config.urls['loginUrl'] , params)
             self.redirect(url)
             return
-        if None == user['loginCount'] and 0 >= user['loginCount'] and 'passwordedit' not in self.request.path.lower():
             
-
-        # if None == user['loginCount']  or 0 >= user['loginCount']:
-        #     params = {'msg':'100003'}
-        #     url = self.format_url(ps['serviceSiteDomain']+'PassWordEdit' , params)
-        #     self.redirect(url)
-        #     return
+        if None != user['loginCount'] and 0 >= user['loginCount'] and 'passwordedit' not in self.request.path.lower():
+            params = {'msg': '100003'}
+            url = self.format_url(config.SOCRightConfig['serviceSiteDomain'] + 'PassWordEdit' , params)
+            self.redirect(url)
+            return
