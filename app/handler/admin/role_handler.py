@@ -154,10 +154,8 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         ps = self.format_none_to_empty(ps)
 
         funcs = func_logic.FuncLogic.instance().query_all_by_app(ps['appCode'])     #获得应用下的所有功能
-        print funcs
         if None != funcs and len(funcs) > 0:
             funcs = role_logic.RoleLogic.instance().init_func_right(funcs)
-            print funcs
             funcs = role_logic.RoleLogic.instance().format_role_func_right(appCode = ps['appCode'], roleID = ps['roleID'], funcs = funcs)
         else:
             funcs = []

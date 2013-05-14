@@ -30,7 +30,6 @@ class TestHandler(base_handler.BaseHandler):
             self.redirect("/Login?msg=100002")
             return
         uuid = str_helper.get_uuid()
-        print uuid
         redis_cache.setObj(uuid, user, config.cache['userTimeOut'])
         self.set_cookie(name = config.SOCRightConfig['cookiename'], value=uuid, expires=config.cache['userTimeOut'])
         self.render("login.html", **ps)

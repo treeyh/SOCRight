@@ -21,6 +21,5 @@ for line in lines:
 		l = l.replace('\r\n', '')
 		l = l[1:-1]
 		ll.append(l)
-	print ll
 	mysql.insert_or_update_or_delete(sql)
 

@@ -62,3 +62,25 @@
 数据库修改
 ALTER TABLE `sso_user`
 ADD COLUMN `loginCount`  int NULL DEFAULT 0 COMMENT '登录次数' AFTER `lastLoginIp`;
+
+CREATE TABLE `sso_department` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) DEFAULT NULL COMMENT '部门名称',
+  `status` int(11) DEFAULT NULL COMMENT '1可用，2不可用',
+  `remark` varchar(512) DEFAULT NULL COMMENT '备注',
+  `isDelete` int(11) DEFAULT NULL COMMENT '是否删除，1删除，2不删除',
+  `creater` varchar(32) DEFAULT NULL,
+  `createTime` datetime DEFAULT NULL,
+  `lastUpdater` varchar(32) DEFAULT NULL,
+  `lastUpdateTime` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+ALTER TABLE `sso_user`
+ADD COLUMN `departmentID`  int NULL COMMENT '部门ID' AFTER `parentID`;
+
+
+
+
+

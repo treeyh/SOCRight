@@ -17,7 +17,6 @@ def _format_url(url, params):
 def _http_get(url, params):
     url = _format_url(url, params)
     json = http_helper.get(url)
-    print json
     obj = str_helper.json_decode(json)
 
     if None == obj or obj['code'] != 0:

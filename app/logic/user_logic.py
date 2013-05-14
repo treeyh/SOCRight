@@ -344,7 +344,6 @@ class UserLogic():
         
         '''  统计绑定的角色权限  '''
         roles = self.query_all_user_roles(userID)
-        print roles
         if None != roles and len(roles) > 0:
             for role in roles:
                 funcs = role_logic.RoleLogic.instance().format_role_func_right(appCode = appCode, roleID = role['roleID'], funcs = funcs)

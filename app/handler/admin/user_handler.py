@@ -48,7 +48,6 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             user = self.get_args(['id', 'name', 'realName', 'passWord', 'mobile', 'tel', 'email', 'remark'], '')
             user['status'] = int(self.get_arg('status', '0'))
         ps['user'] = user
-        print user
         ps = self.format_none_to_empty(ps)
         self.render('admin/user/add_or_edit.html', **ps)
 
