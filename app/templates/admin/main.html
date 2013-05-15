@@ -72,6 +72,9 @@
 
     var zTreeNodes = [
         { id: 1, pId: 0, name: "{{siteName}}", open: true },
+        { id: 30, pId: 1, name: "部门管理", open: true },
+        { id: 31, pId: 30, name: "部门列表", url: "{{siteDomain}}Admin/Department/List", target: "content" },
+        { id: 32, pId: 30, name: "创建部门", url: "{{siteDomain}}Admin/Department/Add", target: "content" },
         { id: 2, pId: 1, name: "应用功能管理", open: true },
 		{ id: 3, pId: 2, name: "应用列表", url: "{{siteDomain}}Admin/Application/List", target: "content" },
 		{ id: 4, pId: 2, name: "创建应用", url: "{{siteDomain}}Admin/Application/Add", target: "content" },

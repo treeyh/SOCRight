@@ -3,7 +3,7 @@
 import os
 from handler import login_handler, test_handler
 from handler.api import user_api_handler
-from handler.admin import main_handler, application_handler, func_handler, user_handler, role_handler, usergroup_handler
+from handler.admin import main_handler, department_handler, application_handler, func_handler, user_handler, role_handler, usergroup_handler
 
 
 
@@ -34,6 +34,13 @@ route.append((r'^/Admin', main_handler.MainHandler))
 route.append((r'^/Admin/Main', main_handler.MainHandler))
 route.append((r'^/Admin/NotRight', main_handler.NotRightHandler))
 route.append((r'^/Admin/Logout', main_handler.LogoutHandler))
+
+route.append((r'^/Admin/Department/List', department_handler.DepartmentListHandler))
+route.append((r'^/Admin/Department/Add', department_handler.DepartmentAddOrEditHandler))
+route.append((r'^/Admin/Department/Edit', department_handler.DepartmentAddOrEditHandler))
+route.append((r'^/Admin/Department/Detail', department_handler.DepartmentDetailHandler))
+# route.append((r'^/Admin/Department/Del', department_handler.DepartmentDelHandler))
+
 route.append((r'^/Admin/Application/List', application_handler.ApplicationListHandler))
 route.append((r'^/Admin/Application/Add', application_handler.ApplicationAddOrEditHandler))
 route.append((r'^/Admin/Application/Edit', application_handler.ApplicationAddOrEditHandler))

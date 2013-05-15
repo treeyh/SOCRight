@@ -53,8 +53,8 @@ class UserLogic():
 
 
 
-    _login_sql = '''  select id, realName, email, mobile, tel , name, loginCount from sso_user where name = %s and passWord = %s and status != %s and isDelete = %s   '''
-    _login_col = str_helper.format_str_to_list_filter_empty('id, realName, email, mobile, tel , name, loginCount', ',')
+    _login_sql = '''  select id, realName, departmentID, email, mobile, tel , name, loginCount from sso_user where name = %s and passWord = %s and status != %s and isDelete = %s   '''
+    _login_col = str_helper.format_str_to_list_filter_empty('id, realName, departmentID, email, mobile, tel , name, loginCount', ',')
     ''' 用户登录 '''
     def login(self, name, password):
         password = self._format_user_password_md5(password)        
@@ -119,12 +119,13 @@ class UserLogic():
         return gotoUrl
 
 
-    _query_sql = '''  select id , name, realName, parentID, mobile, tel, email, status, lastLoginTime, 
+    _query_sql = '''  select id , name, realName, parentID, departmentID, mobile, tel, email, status, lastLoginTime, 
                             lastLoginApp, lastLoginIp, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime 
                     from sso_user where isDelete = %s  '''
-    _query_col = str_helper.format_str_to_list_filter_empty('id , name, realName, parentID, mobile, tel, email, status, lastLoginTime, lastLoginApp, lastLoginIp, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
+    _query_col = str_helper.format_str_to_list_filter_empty('id , name, realName, parentID, departmentID, mobile, tel, email, status, lastLoginTime, lastLoginApp, lastLoginIp, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
     ''' 分页查询用户信息 '''
-    def query_page(self, id = '', name = '', realName = '', tel = '', mobile = '', email = '', status = 0, page = 1, size = 12):
+    def query_page(self, id = '', name = '', realName = '', departmentID = 0, 
+                        tel = '', mobile = '', email = '', status = 0, page = 1, size = 12):
         sql = self._query_sql
         isdelete = state.Boole['false']
         ps = [isdelete]
@@ -134,6 +135,9 @@ class UserLogic():
         if 0 != status:
             sql = sql + ' and status = %s '
             ps.append(status)
+        if 0 != departmentID:
+            sql = sql + ' and departmentID = %s '
+            ps.append(departmentID)
         if '' != name:
             sql = sql + ' and name like %s '
             ps.append('%'+name+'%')

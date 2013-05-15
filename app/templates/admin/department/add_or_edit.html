@@ -6,23 +6,23 @@
 <div class="inputdiv">
     <form action="{{ request.uri }}" method="post">
     <table class="inputtable">
+        {% if isedit %}
         <tr>
             <td style="width: 100px;">
                 编号：<span class="red">*</span>
             </td>
             <td>
-                <input type="text" name="code" style="ime-mode:Disabled"  {% if isedit %} disabled {% end %} value="{{ app['code'] }}" />(允许输入英文字母、数字和下划线)
-                {% if isedit %}
-                <input type="hidden" name="code" value="{{ app['code'] }}" />
-                {% end %} 
+                {{ dep['id'] }}
+                <input type="hidden" name="id" value="{{ dep['id'] }}" />
             </td>
         </tr>
+        {% end %} 
         <tr>
             <td>
                 名称：<span class="red">*</span>
             </td>
             <td>
-                <input type="text" name="name" value="{{ app['name'] }}" />
+                <input type="text" name="name" value="{{ dep['name'] }}" />
             </td>
         </tr>
         <tr>
@@ -31,25 +31,9 @@
             </td>
             <td>
                 <select name="status">
-                    <option value="1" {% if app['status'] == 1 %} selected{% end %}>可用</option>
-                    <option value="2" {% if app['status'] == 2 %} selected{% end %}>不可用</option>
+                    <option value="1" {% if dep['status'] == 1 %} selected{% end %}>可用</option>
+                    <option value="2" {% if dep['status'] == 2 %} selected{% end %}>不可用</option>
                 </select>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                开发人负责人：
-            </td>
-            <td>
-                <input type="text" name="developer" value="{{ app['developer'] }}" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                默认链接：<span class="red">*</span>
-            </td>
-            <td>
-                <input type="text" name="url" value="{{ app['url'] }}" style="width:250px;" />
             </td>
         </tr>
         <tr>
@@ -57,7 +41,7 @@
                 备注：
             </td>
             <td>
-                <textarea rows="8" cols="40" name="remark">{{ app['remark'] }}</textarea>
+                <textarea rows="8" cols="40" name="remark">{{ dep['remark'] }}</textarea>
             </td>
         </tr>
         <tr>
