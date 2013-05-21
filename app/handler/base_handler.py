@@ -36,10 +36,16 @@ class BaseHandler(tornado.web.RequestHandler):
         ps['now'] = datetime.now()
         code = int(self.get_arg('msg', '0'))
         ps['gotoUrl'] = ''
+        ps['goLevel'] = ''
         if code > 0:
             ps['msg'] = state.ResultInfo.get(code, '')
         else:
             ps['msg'] = ''
+        return ps
+
+    def get_ok_and_back_params(self, ps):        
+        ps['msg'] = state.ResultInfo.get(0, '')
+        ps['goLevel'] = '-2'
         return ps
 
     def get_header(self, name, default=None): 

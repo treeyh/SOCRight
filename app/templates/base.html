@@ -25,8 +25,9 @@
             $(".showtable tr:odd").addClass("alt");
             var msg = '{{ msg }}';
             var gotoUrl = '{{ gotoUrl }}';
+            var goLevel = '{{ goLevel }}';
             if (msg != '') {
-                Common.alert(msg, gotoUrl);
+                Common.alert(msg, gotoUrl, goLevel);
             }
         });
     //-->

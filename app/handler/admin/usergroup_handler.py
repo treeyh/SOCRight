@@ -67,8 +67,7 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 info = usergroup_logic.UserGroupLogic.instance().update(id = usergroup['id'], name = usergroup['name'], 
                     status = usergroup['status'], remark = usergroup['remark'], user = usergroup['user'])
                 if info:
-                    self.redirect(ps['siteDomain'] +'Admin/UserGroup/List')
-                    return
+                    ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -78,8 +77,7 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 info = usergroup_logic.UserGroupLogic.instance().add(name = usergroup['name'], 
                     status = usergroup['status'], remark = usergroup['remark'], user = usergroup['user'])
                 if info > 0:
-                    self.redirect(ps['siteDomain'] +'Admin/UserGroup/List')
-                    return
+                    ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:

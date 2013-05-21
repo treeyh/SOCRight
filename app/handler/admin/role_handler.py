@@ -70,8 +70,7 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 info = role_logic.RoleLogic.instance().update(id = role['id'], name = role['name'], 
                         status = role['status'], remark = role['remark'], user = role['user'])
                 if info:
-                    self.redirect(ps['siteDomain'] +'Admin/Role/List')
-                    return
+                    ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -82,8 +81,7 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 info = role_logic.RoleLogic.instance().add(name = role['name'], 
                         status = role['status'], remark = role['remark'], user = role['user'])
                 if info > 0:
-                    self.redirect(ps['siteDomain'] +'Admin/Role/List')
-                    return
+                    ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -213,8 +211,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         ps['funcs'] = funcs
 
         if type:
-            ps['msg'] = state.ResultInfo.get(0, '')
-            ps['gotoUrl'] = ps['siteDomain'] +'Admin/Role/List'
+            ps = self.get_ok_and_back_params(ps = ps)
         else:
             ps['msg'] = state.ResultInfo.get(104004, '')
         self.render('admin/role/right_edit.html', **ps)

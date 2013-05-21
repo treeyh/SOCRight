@@ -85,8 +85,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                         tel = user['tel'], email = user['email'], status = user['status'], 
                         remark = user['remark'], user = user['user'])
                 if info:
-                    self.redirect(ps['siteDomain'] + 'Admin/User/List')
-                    return
+                    ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -98,8 +97,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                             realName = user['realName'], departmentID = user['departmentID'], mobile = user['mobile'], tel = user['tel'], email = user['email'],
                              status = user['status'], remark = user['remark'], parentID = user['parentID'], user = user['user'])
                 if info > 0:
-                    self.redirect(ps['siteDomain'] + 'Admin/User/List')
-                    return
+                    ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:

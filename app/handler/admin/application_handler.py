@@ -40,7 +40,8 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             app = application_logic.ApplicationLogic.instance().query_one(code)
             if None == app:
                 ps['msg'] = state.ResultInfo.get(1002, '')
-                ps['gotoUrl'] = ps['siteDomain'] + 'Admin/Application/List'
+                # ps['gotoUrl'] = ps['siteDomain'] + 'Admin/Application/List'
+                ps['goLevel'] = '-2'
                 app = {'code':'','name':'','developer':'','url':'','remark':'','status':1,'creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         else:
             self.check_oper_right(right = state.operAdd)
@@ -74,8 +75,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 info = application_logic.ApplicationLogic.instance().update(name = app['name'], code = app['code'], 
                         developer = app['developer'], url = app['url'], status = app['status'], remark = app['remark'], user = app['user'])
                 if info:
-                    self.redirect(ps['siteDomain'] + 'Admin/Application/List')
-                    return
+                    ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -86,8 +86,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 info = application_logic.ApplicationLogic.instance().add(name = app['name'], code = app['code'], 
                     developer = app['developer'], url = app['url'], status = app['status'], remark = app['remark'], user = app['user'])
                 if info:
-                    self.redirect(ps['siteDomain'] + 'Admin/Application/List')
-                    return
+                    ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
