@@ -59,6 +59,18 @@
             {% end %}
             <tr>
                 <td>
+                    部门：<span class="red">*</span>
+                </td>
+                <td>
+                    <select name="departmentID">
+                        {% for d in deps %}
+                        <option value="{{d['id']}}" {% if d['id'] == user['departmentID'] %} selected{% end %}>{{d['name']}}</option>
+                        {% end %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     手机：<span class="red">*</span>
                 </td>
                 <td>

@@ -100,10 +100,10 @@
         selectRoleApp: function () {
             var userID = $('#userID').val();
             var appCode = $('#apps').val();
-            window.location.href = '{{siteDomain}}Admin/User/RightDetail?userID=' + userID + '&appCode=' + appCode;
+            window.location.href = '{{siteDomain}}Admin/UserGroup/RightDetail?id=' + userID + '&appCode=' + appCode;
         }
     };
-
+    
     $(document).ready(function () {
         $(".cbtable tr").each(function (index) {
             if ((index % 2 == 1) && (this.parentNode.parentNode.className == "cbtable")) {

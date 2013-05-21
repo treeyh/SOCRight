@@ -68,6 +68,7 @@ def insert_more(sql, params = []):
 def find_one(sql, params= (), mapcol=None):
     conn=_getConnection()
     c = None
+    result = None
     try:
         c=conn.cursor()
         c.execute(sql, params)

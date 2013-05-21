@@ -53,7 +53,9 @@ class UserLogic():
 
 
 
-    _login_sql = '''  select id, realName, departmentID, email, mobile, tel , name, loginCount from sso_user where name = %s and passWord = %s and status != %s and isDelete = %s   '''
+    _login_sql = '''  select id, realName, departmentID, email, mobile, tel , name, loginCount 
+                            from sso_user where name = %s and passWord = %s and status != %s 
+                            and isDelete = %s   '''
     _login_col = str_helper.format_str_to_list_filter_empty('id, realName, departmentID, email, mobile, tel , name, loginCount', ',')
     ''' 用户登录 '''
     def login(self, name, password):
@@ -119,10 +121,12 @@ class UserLogic():
         return gotoUrl
 
 
-    _query_sql = '''  select id , name, realName, parentID, departmentID, mobile, tel, email, status, lastLoginTime, 
-                            lastLoginApp, lastLoginIp, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime 
-                    from sso_user where isDelete = %s  '''
-    _query_col = str_helper.format_str_to_list_filter_empty('id , name, realName, parentID, departmentID, mobile, tel, email, status, lastLoginTime, lastLoginApp, lastLoginIp, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
+    _query_sql = '''  select u.id , u.name, u.realName, u.parentID, u.departmentID, u.mobile, u.tel, u.email, u.status, u.lastLoginTime, 
+                            u.lastLoginApp, u.lastLoginIp, u.remark, u.isDelete, u.creater, u.createTime, u.lastUpdater, u.lastUpdateTime, d.name as departmentName  
+                    from sso_user as u 
+                    LEFT JOIN sso_department as d ON d.id = u.departmentID 
+                    where u.isDelete = %s  '''
+    _query_col = str_helper.format_str_to_list_filter_empty('id , name, realName, parentID, departmentID, mobile, tel, email, status, lastLoginTime, lastLoginApp, lastLoginIp, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, departmentName', ',')
     ''' 分页查询用户信息 '''
     def query_page(self, id = '', name = '', realName = '', departmentID = 0, 
                         tel = '', mobile = '', email = '', status = 0, page = 1, size = 12):
@@ -130,31 +134,31 @@ class UserLogic():
         isdelete = state.Boole['false']
         ps = [isdelete]
         if '' != id:
-            sql = sql + ' and id = %s '
+            sql = sql + ' and u.id = %s '
             ps.append(id)
         if 0 != status:
-            sql = sql + ' and status = %s '
+            sql = sql + ' and u.status = %s '
             ps.append(status)
         if 0 != departmentID:
-            sql = sql + ' and departmentID = %s '
+            sql = sql + ' and u.departmentID = %s '
             ps.append(departmentID)
         if '' != name:
-            sql = sql + ' and name like %s '
+            sql = sql + ' and u.name like %s '
             ps.append('%'+name+'%')
         if '' != realName:
-            sql = sql + ' and realName like %s '
+            sql = sql + ' and u.realName like %s '
             ps.append('%'+realName+'%')
         if '' != tel:
-            sql = sql + ' and tel like %s '
+            sql = sql + ' and u.tel like %s '
             ps.append('%'+tel+'%')
         if '' != email:
-            sql = sql + ' and email like %s '
+            sql = sql + ' and u.email like %s '
             ps.append('%'+email+'%')
         if '' != mobile:
-            sql = sql + ' and mobile like %s '
+            sql = sql + ' and u.mobile like %s '
             ps.append('%'+mobile+'%')
         yz = tuple(ps)
-        sql = sql + ' order by id desc '
+        sql = sql + ' order by u.id desc '
         users = mysql.find_page(sql, yz, self._query_col, page, size)
         if None != users['data']:
             for r in users['data']:
@@ -168,7 +172,7 @@ class UserLogic():
         isdelete = state.Boole['false']
         ps = [isdelete]        
         if 0 != id:
-            sql = sql + ' and id = %s '
+            sql = sql + ' and u.id = %s '
             ps.append(id)
         else:
             return None
@@ -182,7 +186,7 @@ class UserLogic():
     def query_one_by_email(self, email = ''):
         sql = self._query_sql
         isdelete = state.Boole['false']
-        sql = sql + ' and email = %s '        
+        sql = sql + ' and u.email = %s '        
         yz = (isdelete, email)
 
         user = mysql.find_one(sql, yz, self._query_col)
@@ -194,7 +198,7 @@ class UserLogic():
     def query_one_by_name(self, name = ''):
         sql = self._query_sql
         isdelete = state.Boole['false']
-        sql = sql + ' and name = %s '        
+        sql = sql + ' and u.name = %s '        
         yz = (isdelete, name)
 
         user = mysql.find_one(sql, yz, self._query_col)
@@ -202,11 +206,11 @@ class UserLogic():
             user['statusname'] = state.UserStatus.get(user['status'])
         return user
 
-    _add_sql = '''  INSERT INTO sso_user(name, passWord, realName, parentID, mobile, tel, email, status, lastLoginTime, 
+    _add_sql = '''  INSERT INTO sso_user(name, passWord, realName, departmentID, parentID, mobile, tel, email, status, lastLoginTime, 
                     lastLoginApp, lastLoginIp, loginCount, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime)
-                     VALUES(%s, %s, %s, %s, %s, %s, %s ,%s, null, null, null, 0, %s, %s, %s, now(), %s, now() )  '''
+                     VALUES(%s, %s, %s, %s, %s, %s, %s, %s ,%s, null, null, null, 0, %s, %s, %s, now(), %s, now() )  '''
     ''' 创建用户 '''
-    def add(self, name, passWord, realName, mobile, tel, email, status, remark, parentID, user):
+    def add(self, name, passWord, realName, departmentID, mobile, tel, email, status, remark, parentID, user):
         u = self.query_one_by_email(email)               #判断用户邮箱是否已存在        
         if None != u:
             raise error.RightError(code = 103001)
@@ -219,22 +223,22 @@ class UserLogic():
 
         isdelete = state.Boole['false']
         passWord = self._format_user_password_md5(passWord)
-        yz = (name, passWord, realName, parentID, mobile, tel, email, status, remark, isdelete, user, user)
+        yz = (name, passWord, realName, departmentID, parentID, mobile, tel, email, status, remark, isdelete, user, user)
         uid = mysql.insert_or_update_or_delete(self._add_sql, yz, True)
         return uid
 
 
-    _update_sql = '''   update sso_user set  `realName` = %s, `parentID` = %s, `mobile` = %s, `tel` = %s, `email` = %s,
+    _update_sql = '''   update sso_user set  `realName` = %s, `departmentID` = %s, `parentID` = %s, `mobile` = %s, `tel` = %s, `email` = %s,
                             `status` = %s, `remark` = %s, `lastUpdater` = %s, 
                             `lastUpdateTime` = now() where `id` = %s  '''
     ''' 更新用户 '''
-    def update(self, id, realName, parentID, mobile, tel, email, status, remark, user):
+    def update(self, id, realName, departmentID, parentID, mobile, tel, email, status, remark, user):
         u = self.query_one_by_email(email)               #判断用户邮箱是否已存在     
         if None != u and str(u['id']) != str(id):
             raise error.RightError(code = 103001)
 
         isdelete = state.Boole['false']
-        yz = (realName, parentID, mobile, tel, email, status, remark, user, id)
+        yz = (realName, departmentID, parentID, mobile, tel, email, status, remark, user, id)
         result = mysql.insert_or_update_or_delete(self._update_sql, yz)
         return 0 == result
 

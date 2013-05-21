@@ -41,22 +41,27 @@
         </tr>
         <tr>
             <td>
-                手机：
+                所属部门：
             </td>
             <td>
-                <input type="text" name="mobile" value="{{ user['mobile'] }}" />
+                <select name="departmentID">
+                    <option value="0">全部部门</option>
+                    {% for d in deps %}
+                    <option value="{{d['id']}}" {% if d['id'] == user['departmentID'] %} selected{% end %}>{{d['name']}}</option>
+                    {% end %}
+                </select>
+                <input type="hidden" name="mobile" value="{{ user['mobile'] }}" />
             </td>
             <td>
-                电话：
             </td>
             <td>
-                <input type="text" name="tel" value="{{ user['tel'] }}" />
+                <input type="hidden" name="tel" value="{{ user['tel'] }}" />
             </td>
             <td>
-                电子邮箱：
+                
             </td>
             <td>
-                <input type="text" name="email" value="{{ user['email'] }}" />
+                <input type="hidden" name="email" value="{{ user['email'] }}" />
             </td>
             <td style="text-align: right" colspan="3">
                 <input type="submit" style="width:100px; height:26px;line-height:18px; cursor:pointer; margin-right:3px;" value="查询" />
@@ -78,16 +83,16 @@
                 姓名
             </td>
             <td style="width:80px">
-                手机
-            </td>
-            <td style="width:80px">
-                电话
-            </td>
-            <td style="width:80px">
-                邮箱
+                部门
             </td>
             <td style="width:20px">
                 状态
+            </td>
+            <td style="width:50px">
+                创建更新人
+            </td>
+            <td style="width:60px">
+                创建时间
             </td>
             <td style="width:50px">
                 最后更新人
@@ -111,16 +116,16 @@
                 {{ r['realName'] }}
             </td>
             <td>
-                {{ r['mobile'] }}
-            </td>
-            <td>
-                {{ r['tel'] }}
-            </td>
-            <td>
-                {{ r['email'] }}
+                {{ r['departmentName'] }}
             </td>
             <td>
                 {{ r['statusname'] }}
+            </td>
+            <td>
+                {{ r['creater'] }}
+            </td>
+            <td>
+                {{ str(r['createTime'])[0:-3] }}
             </td>
             <td>
                 {{ r['lastUpdater'] }}

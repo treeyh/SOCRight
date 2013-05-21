@@ -11,7 +11,7 @@ import config
 import admin_base_handler
 from common import redis_cache, state, error
 from helper import str_helper, http_helper
-from logic import user_logic, role_logic, application_logic, usergroup_logic
+from logic import user_logic, role_logic, application_logic, usergroup_logic, department_logic
 
 class UserListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
@@ -20,14 +20,18 @@ class UserListHandler(admin_base_handler.AdminRightBaseHandler):
         ps = self.get_page_config('用户列表')
         user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email'], '')
         user['status'] = int(self.get_arg('status', '0'))
+        user['departmentID'] = int(self.get_arg('departmentID', '0'))
+        ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
         ps['page'] = int(self.get_arg('page', '1'))
         ps['pagedata'] = user_logic.UserLogic.instance().query_page(id = user['id'],
-                    name = user['name'], realName = user['realName'], tel = user['tel'], mobile = user['mobile'], 
-                    email = user['email'], status = user['status'], page = ps['page'], size = ps['size'])
+                    name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
+                     tel = user['tel'], mobile = user['mobile'], email = user['email'], 
+                     status = user['status'], page = ps['page'], size = ps['size'])
         ps['user'] = user
         ps = self.format_none_to_empty(ps)
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
         self.render('admin/user/list.html', **ps)
+
 
 class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
@@ -42,12 +46,14 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             if None == user:
                 ps['msg'] = state.ResultInfo.get(103002, '')
                 ps['gotoUrl'] = ps['siteDomain'] + 'Admin/User/List'
-                user = {'id':'', 'name':'', 'realName':'', 'passWord':'','mobile':'','tel':'','email':'','status':1,'lastLoginTime':'','lastLoginApp':'','lastLoginIp':'','remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
+                user = {'id':'', 'name':'', 'departmentID': '', 'realName':'', 'passWord':'','mobile':'','tel':'','email':'','status':1,'lastLoginTime':'','lastLoginApp':'','lastLoginIp':'','remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         else:
             self.check_oper_right(right = state.operAdd)
-            user = self.get_args(['id', 'name', 'realName', 'passWord', 'mobile', 'tel', 'email', 'remark'], '')
+            user = self.get_args(['id', 'name', 'realName', 'departmentID', 'passWord', 'mobile', 'tel', 'email', 'remark'], '')
             user['status'] = int(self.get_arg('status', '0'))
         ps['user'] = user
+        ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
+
         ps = self.format_none_to_empty(ps)
         self.render('admin/user/add_or_edit.html', **ps)
 
@@ -57,9 +63,11 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             ps['title'] = self.get_page_title('编辑用户')
 
         user = self.get_args(['id', 'passWord', 'name', 'realName', 'mobile', 'tel', 'email', 'remark'], '')
-        user['status'] = int(self.get_arg('status', '0'))        
+        user['status'] = int(self.get_arg('status', '0'))
+        user['departmentID'] = int(self.get_arg('departmentID', '0'))
         user['parentID'] = int(self.get_arg('parentID', '0'))
         ps['user'] = user
+        ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
         msg = self.check_str_empty_input(user, ['name', 'realName', 'email', 'mobile'])
         if str_helper.is_null_or_empty(msg) == False:
             ps['msg'] = msg
@@ -73,8 +81,9 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             self.check_oper_right(right = state.operEdit)
             try:
                 info = user_logic.UserLogic.instance().update(id = user['id'], realName = user['realName'], 
-                        parentID = user['parentID'], mobile = user['mobile'], tel = user['tel'], email = user['email'], 
-                        status = user['status'], remark = user['remark'], user = user['user'])
+                        departmentID = user['departmentID'], parentID = user['parentID'], mobile = user['mobile'], 
+                        tel = user['tel'], email = user['email'], status = user['status'], 
+                        remark = user['remark'], user = user['user'])
                 if info:
                     self.redirect(ps['siteDomain'] + 'Admin/User/List')
                     return
@@ -86,7 +95,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             self.check_oper_right(right = state.operEdit)            
             try:
                 info = user_logic.UserLogic.instance().add(name = user['name'], passWord = user['passWord'], 
-                            realName = user['realName'], mobile = user['mobile'], tel = user['tel'], email = user['email'],
+                            realName = user['realName'], departmentID = user['departmentID'], mobile = user['mobile'], tel = user['tel'], email = user['email'],
                              status = user['status'], remark = user['remark'], parentID = user['parentID'], user = user['user'])
                 if info > 0:
                     self.redirect(ps['siteDomain'] + 'Admin/User/List')
