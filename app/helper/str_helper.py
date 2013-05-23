@@ -4,7 +4,7 @@ import hashlib
 import uuid
 import sys
 import urllib
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 def is_null_or_empty(str):
     return True if str == None or str == '' else False
@@ -48,6 +48,17 @@ def format_url(url, params):
     return url
 
 
+def get_now_datestr():
+    return _get_add_datetime(days = 0).strftime('%Y-%m-%d')
+
+def get_now_datetimestr():
+    return _get_add_datetime(days = 0).strftime('%Y-%m-%d %H:%M:%S')
+
+def get_add_datest(days):
+    return _get_add_datetime(days = days).strftime('%Y-%m-%d')
+
+def _get_add_datetime(days):
+    return datetime.now() + timedelta(days=days)
 
 
 

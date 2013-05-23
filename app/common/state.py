@@ -74,11 +74,6 @@ Boole = {
     'false' : 2,
 }
 
-User = {
-    'normal' : 1,
-    'leave' : 10,
-}
-
 
 Status = {
     1 : '可用',
@@ -87,8 +82,9 @@ Status = {
 UserStatus = {
     1 : '在职',
     2 : '离职',
+    3 : '锁定',
+    4 : '到期',
 }
-
 
 statusActive = 1
 

@@ -80,7 +80,10 @@ CREATE TABLE `sso_department` (
 ALTER TABLE `sso_user`
 ADD COLUMN `departmentID`  int NULL COMMENT '部门ID' AFTER `parentID`;
 
+ALTER TABLE `sso_user`
+ADD COLUMN `beginDate`  datetime NULL COMMENT '帐号开始日期' AFTER `loginCount`,
+ADD COLUMN `endDate`  datetime NULL COMMENT '帐号结束日期' AFTER `beginDate`;
 
-
+update sso_user set beginDate = '2013-05-20', endDate = '2014-05-20'
 
 

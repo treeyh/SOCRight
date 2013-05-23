@@ -1,4 +1,6 @@
-{% extends "../../base.html" %} {% block head %} {% end %} {% block body %}
+{% extends "../../base.html" %} {% block head %} 
+<script language="JavaScript" type="text/javascript" src="{{ jsDomain }}js/My97DatePicker/WdatePicker.js?{{ version }}"></script>
+{% end %} {% block body %}
 <div class="titlediv">
     <h1>
         {{ title }}</h1>
@@ -71,6 +73,14 @@
             </tr>
             <tr>
                 <td>
+                    有效日期：<span class="red">*</span>
+                </td>
+                <td>
+                    <input type="text" class="Wdate" name="beginDate" id="beginDate" value="{{ user['beginDate'] }}" onFocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'2037-10-01\'}',readOnly:true})" /> -- <input type="text" class="Wdate" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'beginDate\')}',maxDate:'2037-10-01',readOnly:true})" name="endDate" id="endDate" value="{{ user['endDate'] }}" />
+                </td>
+            </tr>
+            <tr>
+                <td>
                     手机：<span class="red">*</span>
                 </td>
                 <td>
@@ -91,9 +101,10 @@
                 </td>
                 <td>
                     <select name="status">
-                        <option value="1" {% if user['status'] == 1 %} selected{% end %}>在职</option>
-                        <option value="2" {% if user['status'] == 2 %} selected{% end %}>离职</option>
-                    </select>
+                    {% for k in userStatus.keys() %}
+                    <option value="{{k}}" {% if k == user['status'] %} selected{% end %}>{{userStatus[k]}}</option>
+                    {% end %}
+                </select>
                 </td>
             </tr>
             <tr>

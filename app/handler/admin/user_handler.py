@@ -23,6 +23,7 @@ class UserListHandler(admin_base_handler.AdminRightBaseHandler):
         user['departmentID'] = int(self.get_arg('departmentID', '0'))
         ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
         ps['page'] = int(self.get_arg('page', '1'))
+        ps['userStatus'] = state.UserStatus
         ps['pagedata'] = user_logic.UserLogic.instance().query_page(id = user['id'],
                     name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
                      tel = user['tel'], mobile = user['mobile'], email = user['email'], 
@@ -46,12 +47,15 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             if None == user:
                 ps['msg'] = state.ResultInfo.get(103002, '')
                 ps['gotoUrl'] = ps['siteDomain'] + 'Admin/User/List'
-                user = {'id':'', 'name':'', 'departmentID': '', 'realName':'', 'passWord':'','mobile':'','tel':'','email':'','status':1,'lastLoginTime':'','lastLoginApp':'','lastLoginIp':'','remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
+                user = {'id':'', 'name':'', 'departmentID': '', 'realName':'','beginDate':'','endDate':'', 'passWord':'','mobile':'','tel':'','email':'','status':1,'lastLoginTime':'','lastLoginApp':'','lastLoginIp':'','remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         else:
             self.check_oper_right(right = state.operAdd)
             user = self.get_args(['id', 'name', 'realName', 'departmentID', 'passWord', 'mobile', 'tel', 'email', 'remark'], '')
+            user['beginDate'] = str_helper.get_now_datestr()
+            user['endDate'] = str_helper.get_add_datest(days = 365)
             user['status'] = int(self.get_arg('status', '0'))
         ps['user'] = user
+        ps['userStatus'] = state.UserStatus
         ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
 
         ps = self.format_none_to_empty(ps)
@@ -62,13 +66,14 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         if ps['isedit']:
             ps['title'] = self.get_page_title('编辑用户')
 
-        user = self.get_args(['id', 'passWord', 'name', 'realName', 'mobile', 'tel', 'email', 'remark'], '')
+        user = self.get_args(['id', 'passWord', 'name', 'realName', 'mobile', 'tel', 'email', 'remark', 'beginDate', 'endDate'], '')
         user['status'] = int(self.get_arg('status', '0'))
         user['departmentID'] = int(self.get_arg('departmentID', '0'))
         user['parentID'] = int(self.get_arg('parentID', '0'))
         ps['user'] = user
+        ps['userStatus'] = state.UserStatus
         ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
-        msg = self.check_str_empty_input(user, ['name', 'realName', 'email', 'mobile'])
+        msg = self.check_str_empty_input(user, ['name', 'realName', 'email', 'mobile', 'beginDate', 'endDate'])
         if str_helper.is_null_or_empty(msg) == False:
             ps['msg'] = msg
             ps = self.format_none_to_empty(ps)
@@ -82,8 +87,8 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             try:
                 info = user_logic.UserLogic.instance().update(id = user['id'], realName = user['realName'], 
                         departmentID = user['departmentID'], parentID = user['parentID'], mobile = user['mobile'], 
-                        tel = user['tel'], email = user['email'], status = user['status'], 
-                        remark = user['remark'], user = user['user'])
+                        tel = user['tel'], email = user['email'], status = user['status'], beginDate = user['beginDate'], 
+                        endDate = user['endDate'], remark = user['remark'], user = user['user'])
                 if info:
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
@@ -94,8 +99,10 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             self.check_oper_right(right = state.operEdit)            
             try:
                 info = user_logic.UserLogic.instance().add(name = user['name'], passWord = user['passWord'], 
-                            realName = user['realName'], departmentID = user['departmentID'], mobile = user['mobile'], tel = user['tel'], email = user['email'],
-                             status = user['status'], remark = user['remark'], parentID = user['parentID'], user = user['user'])
+                            realName = user['realName'], departmentID = user['departmentID'], mobile = user['mobile'], 
+                            tel = user['tel'], email = user['email'],beginDate = user['beginDate'], 
+                            endDate = user['endDate'], status = user['status'], remark = user['remark'], 
+                            parentID = user['parentID'], user = user['user'])
                 if info > 0:
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:

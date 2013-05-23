@@ -8,16 +8,11 @@
     <table class="inputtable">
         <tr>
             <td style="width: 60px;">
-                编号：
-            </td>
-            <td style="width: 200px;">
-                <input type="text" name="id" value="{{ user['id'] }}" />
-            </td>
-            <td style="width: 60px;">
                 用户名：
             </td>
             <td style="width: 200px;">
                 <input type="text" name="name" value="{{ user['name'] }}" />
+                <input type="hidden" name="id" value="{{ user['id'] }}" />
             </td>
             <td style="width: 60px;">
                 姓名：
@@ -28,22 +23,18 @@
             <td style="width: 60px;">
                 状态：
             </td>
-            <td style="width: 80px;">
+            <td style="width: 200px;">
                 <select name="status">
-                    <option value="0" {% if user['status'] == 0 %} selected{% end %}>全部</option>
-                    <option value="1" {% if user['status'] == 1 %} selected{% end %}>在职</option>
-                    <option value="2" {% if user['status'] == 2 %} selected{% end %}>离职</option>
+                    <option value="0">全部状态</option>
+                    {% for k in userStatus.keys() %}
+                    <option value="{{k}}" {% if k == user['status'] %} selected{% end %}>{{userStatus[k]}}</option>
+                    {% end %}
                 </select>
             </td>
-            <td style="text-align: right">
-                <a href="{{siteDomain}}Admin/User/Add" style="margin-right:20px;">创建用户</a>
-            </td>
-        </tr>
-        <tr>
-            <td>
+            <td style="width: 60px;">
                 所属部门：
             </td>
-            <td>
+            <td style="width: 80px;">
                 <select name="departmentID">
                     <option value="0">全部部门</option>
                     {% for d in deps %}
@@ -51,19 +42,11 @@
                     {% end %}
                 </select>
                 <input type="hidden" name="mobile" value="{{ user['mobile'] }}" />
-            </td>
-            <td>
-            </td>
-            <td>
                 <input type="hidden" name="tel" value="{{ user['tel'] }}" />
-            </td>
-            <td>
-                
-            </td>
-            <td>
                 <input type="hidden" name="email" value="{{ user['email'] }}" />
             </td>
-            <td style="text-align: right" colspan="3">
+            <td style="text-align: right">
+                <a href="{{siteDomain}}Admin/User/Add" style="margin-right:20px;">创建用户</a>
                 <input type="submit" style="width:100px; height:26px;line-height:18px; cursor:pointer; margin-right:3px;" value="查询" />
             </td>
         </tr>

@@ -54,13 +54,14 @@ class UserLogic():
 
 
     _login_sql = '''  select id, realName, departmentID, email, mobile, tel , name, loginCount 
-                            from sso_user where name = %s and passWord = %s and status != %s 
+                            from sso_user where name = %s and passWord = %s and status = %s and 
+                            beginDate <= now() and endDate >= now() 
                             and isDelete = %s   '''
     _login_col = str_helper.format_str_to_list_filter_empty('id, realName, departmentID, email, mobile, tel , name, loginCount', ',')
     ''' 用户登录 '''
     def login(self, name, password):
         password = self._format_user_password_md5(password)        
-        user = mysql.find_one(self._login_sql, (name, password, state.User['leave'], state.Boole['false']), self._login_col)
+        user = mysql.find_one(self._login_sql, (name, password, state.statusActive, state.Boole['false']), self._login_col)
         return user
 
     ''' 登录应用，获得登录的url '''
@@ -122,11 +123,11 @@ class UserLogic():
 
 
     _query_sql = '''  select u.id , u.name, u.realName, u.parentID, u.departmentID, u.mobile, u.tel, u.email, u.status, u.lastLoginTime, 
-                            u.lastLoginApp, u.lastLoginIp, u.remark, u.isDelete, u.creater, u.createTime, u.lastUpdater, u.lastUpdateTime, d.name as departmentName  
+                            u.lastLoginApp, u.lastLoginIp, u.loginCount, u.beginDate, u.endDate, u.remark, u.isDelete, u.creater, u.createTime, u.lastUpdater, u.lastUpdateTime, d.name as departmentName  
                     from sso_user as u 
                     LEFT JOIN sso_department as d ON d.id = u.departmentID 
                     where u.isDelete = %s  '''
-    _query_col = str_helper.format_str_to_list_filter_empty('id , name, realName, parentID, departmentID, mobile, tel, email, status, lastLoginTime, lastLoginApp, lastLoginIp, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, departmentName', ',')
+    _query_col = str_helper.format_str_to_list_filter_empty('id , name, realName, parentID, departmentID, mobile, tel, email, status, lastLoginTime, lastLoginApp, lastLoginIp, loginCount, beginDate, endDate, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, departmentName', ',')
     ''' 分页查询用户信息 '''
     def query_page(self, id = '', name = '', realName = '', departmentID = 0, 
                         tel = '', mobile = '', email = '', status = 0, page = 1, size = 12):
@@ -162,6 +163,8 @@ class UserLogic():
         users = mysql.find_page(sql, yz, self._query_col, page, size)
         if None != users['data']:
             for r in users['data']:
+                r['beginDate'] = str(r['beginDate'])[0:10]
+                r['endDate'] = str(r['endDate'])[0:10]
                 r['statusname'] = state.UserStatus.get(r['status'])
         return users
 
@@ -179,6 +182,8 @@ class UserLogic():
         yz = tuple(ps)
         user = mysql.find_one(sql, yz, self._query_col)
         if None != user:
+            user['beginDate'] = str(user['beginDate'])[0:10]
+            user['endDate'] = str(user['endDate'])[0:10]
             user['statusname'] = state.UserStatus.get(user['status'])
         return user
 
@@ -191,6 +196,8 @@ class UserLogic():
 
         user = mysql.find_one(sql, yz, self._query_col)
         if None != user:
+            user['beginDate'] = str(user['beginDate'])[0:10]
+            user['endDate'] = str(user['endDate'])[0:10]
             user['statusname'] = state.UserStatus.get(user['status'])
         return user
 
@@ -203,14 +210,17 @@ class UserLogic():
 
         user = mysql.find_one(sql, yz, self._query_col)
         if None != user:
+            user['beginDate'] = str(user['beginDate'])[0:10]
+            user['endDate'] = str(user['endDate'])[0:10]
             user['statusname'] = state.UserStatus.get(user['status'])
         return user
 
     _add_sql = '''  INSERT INTO sso_user(name, passWord, realName, departmentID, parentID, mobile, tel, email, status, lastLoginTime, 
-                    lastLoginApp, lastLoginIp, loginCount, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime)
-                     VALUES(%s, %s, %s, %s, %s, %s, %s, %s ,%s, null, null, null, 0, %s, %s, %s, now(), %s, now() )  '''
+                    lastLoginApp, lastLoginIp, loginCount, beginDate, endDate, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime)
+                     VALUES(%s, %s, %s, %s, %s, %s, %s, %s ,%s, null, null, null, 0, %s, %s, %s, %s, %s, now(), %s, now() )  '''
     ''' 创建用户 '''
-    def add(self, name, passWord, realName, departmentID, mobile, tel, email, status, remark, parentID, user):
+    def add(self, name, passWord, realName, departmentID, mobile, 
+        tel, email, status, beginDate, endDate, remark, parentID, user):
         u = self.query_one_by_email(email)               #判断用户邮箱是否已存在        
         if None != u:
             raise error.RightError(code = 103001)
@@ -223,22 +233,25 @@ class UserLogic():
 
         isdelete = state.Boole['false']
         passWord = self._format_user_password_md5(passWord)
-        yz = (name, passWord, realName, departmentID, parentID, mobile, tel, email, status, remark, isdelete, user, user)
+        yz = (name, passWord, realName, departmentID, parentID, mobile, tel, email, status, 
+            beginDate, endDate + ' 23:59:59', remark, isdelete, user, user)
         uid = mysql.insert_or_update_or_delete(self._add_sql, yz, True)
         return uid
 
 
     _update_sql = '''   update sso_user set  `realName` = %s, `departmentID` = %s, `parentID` = %s, `mobile` = %s, `tel` = %s, `email` = %s,
-                            `status` = %s, `remark` = %s, `lastUpdater` = %s, 
+                            `status` = %s, beginDate = %s, endDate = %s, `remark` = %s, `lastUpdater` = %s, 
                             `lastUpdateTime` = now() where `id` = %s  '''
     ''' 更新用户 '''
-    def update(self, id, realName, departmentID, parentID, mobile, tel, email, status, remark, user):
+    def update(self, id, realName, departmentID, parentID, mobile, tel, email, status,
+                 beginDate, endDate, remark, user):
         u = self.query_one_by_email(email)               #判断用户邮箱是否已存在     
         if None != u and str(u['id']) != str(id):
             raise error.RightError(code = 103001)
 
         isdelete = state.Boole['false']
-        yz = (realName, departmentID, parentID, mobile, tel, email, status, remark, user, id)
+        yz = (realName, departmentID, parentID, mobile, tel, email, 
+            status, beginDate, endDate + ' 23:59:59', remark, user, id)
         result = mysql.insert_or_update_or_delete(self._update_sql, yz)
         return 0 == result
 
