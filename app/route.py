@@ -63,6 +63,7 @@ route.append((r'^/Admin/User/RoleDel', user_handler.UserRoleDelHandler))
 route.append((r'^/Admin/User/RightDetail', user_handler.UserRightDetailHandler))
 route.append((r'^/Admin/User/GroupList', user_handler.UserUserGroupListHandler))
 route.append((r'^/Admin/User/ResetPassWord', user_handler.UserResetPassWordHandler))
+route.append((r'^/Admin/User/Export', user_handler.UserExportHandler))
 
 
 route.append((r'^/Admin/Role/List', role_handler.RoleListHandler))

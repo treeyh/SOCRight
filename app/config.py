@@ -14,6 +14,9 @@ SOCRightConfig = {
     'appCode' : 'SOCRight',
     'rightCookieName' : 'soc_right_user',
     'adminCookieName' : 'soc_right_admin_user',
+
+    'realPath' : '/opt/www/02_SOC/SOCRight/',
+    'exportUserPath' : 'static/export/user/',
 }
 
 urls = {

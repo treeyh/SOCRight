@@ -318,7 +318,7 @@ class UserExportHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
     _right = state.operView
     def get(self):
-        ps = self.get_page_config('用户列表')
+        ps = self.get_page_config('导出用户Excel')
         user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email'], '')
         user['status'] = int(self.get_arg('status', '0'))
         user['departmentID'] = int(self.get_arg('departmentID', '0'))
@@ -328,8 +328,29 @@ class UserExportHandler(admin_base_handler.AdminRightBaseHandler):
         ps['pagedata'] = user_logic.UserLogic.instance().query_page(id = user['id'],
                     name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
                      tel = user['tel'], mobile = user['mobile'], email = user['email'], 
-                     status = user['status'], page = ps['page'], size = ps['size'])
-        ps['user'] = user
-        ps = self.format_none_to_empty(ps)
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
-        self.render('admin/user/list.html', **ps)
+                     status = user['status'], page = ps['page'], size = 999)
+
+        users = ps['pagedata']['data']
+
+        #生成excel文件
+        info = '''<table><tr><td>用户ID</td><td>用户名</td><td>姓名</td><td>部门</td><td>状态</td>
+                    <td>最后登录时间</td><td>创建人</td><td>创建时间</td><td>最后更新人</td><td>最后更新时间</td><tr>'''
+
+        for user in users:
+            u = '''<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>
+                    <td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><tr>''' % (str(user['id']), user['name'], user['realName'], 
+                        user['departmentName'], user['statusname'], user['lastLoginTime'], user['creater'], str(user['createTime']), 
+                        user['lastUpdater'], str(user['lastUpdateTime']) )
+            info = info + u
+        info = info + '</table>'
+        fileName = config.SOCRightConfig['exportUserPath'] + str_helper.get_uuid() + '.xls'
+        path = config.SOCRightConfig['realPath'] + fileName
+        file_object = open('thefile.txt', 'w')
+        file_object.write(all_the_text)
+        file_object.close( )    
+        self.redirect(config.SOCRightConfig['siteDomain']+fileName)
+
+
+
+
+        
