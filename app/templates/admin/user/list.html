@@ -46,6 +46,7 @@
                 <input type="hidden" name="email" value="{{ user['email'] }}" />
             </td>
             <td style="text-align: right">
+                <a href="{{siteDomain}}Admin/User/Export?name={{user['name']}}&status={{user['status']}}&realName={{user['realName']}}&departmentID={{user['departmentID']}}" target="_blank" style="margin-right:20px;">导出结果</a>
                 <a href="{{siteDomain}}Admin/User/Add" style="margin-right:20px;">创建用户</a>
                 <input type="submit" style="width:100px; height:26px;line-height:18px; cursor:pointer; margin-right:3px;" value="查询" />
             </td>

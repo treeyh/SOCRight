@@ -289,6 +289,19 @@ class UserLogic():
         return 0 == result
 
 
+    ''' 重置用户密码 '''
+    def reset_password(self, name):
+        passWord = str_helper.get_uuid()
+        isdelete = state.Boole['false']
+        pw = self._format_user_password_md5(passWord)        
+        yz = (pw, name, isdelete)
+
+        result = mysql.insert_or_update_or_delete(self._update_password_sql, yz)
+        
+        if 0 == result:
+            return passWord
+        return None
+
 
     _update_goto_app_sql = '''   update sso_user set  `lastLoginTime` = now(), `lastLoginApp` = %s, `lastLoginIp` = %s, 
                                     `loginCount` = `loginCount` + 1 where  `name` = %s and isDelete = %s '''

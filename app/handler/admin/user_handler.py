@@ -291,3 +291,45 @@ class UserUserGroupListHandler(admin_base_handler.AdminRightBaseHandler):
         ps = self.format_none_to_empty(ps)
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])
         self.render('admin/user/group_list.html', **ps)
+
+
+class UserResetPassWordHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindUserManager'
+    _right = state.operView
+
+    def post(self):
+        # ps = self.get_page_config('重置用户密码')
+        name = self.get_arg('name', '')
+        # userName = self.get_arg('userName', '')
+        print 'name:' + name
+        if None == name or '' == name:
+            self.out_fail(code = 103007)
+            return
+        
+        newPW = user_logic.UserLogic.instance().reset_password(name)
+        if None == newPW or '' == newPW:
+            self.out_fail(code = 101)
+            return
+        self.out_ok(data = '{"newpw":"'+newPW+'"}')
+
+
+#导出用户excel
+class UserExportHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
+    _right = state.operView
+    def get(self):
+        ps = self.get_page_config('用户列表')
+        user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email'], '')
+        user['status'] = int(self.get_arg('status', '0'))
+        user['departmentID'] = int(self.get_arg('departmentID', '0'))
+        ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
+        ps['page'] = int(self.get_arg('page', '1'))
+        ps['userStatus'] = state.UserStatus
+        ps['pagedata'] = user_logic.UserLogic.instance().query_page(id = user['id'],
+                    name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
+                     tel = user['tel'], mobile = user['mobile'], email = user['email'], 
+                     status = user['status'], page = ps['page'], size = ps['size'])
+        ps['user'] = user
+        ps = self.format_none_to_empty(ps)
+        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
+        self.render('admin/user/list.html', **ps)

@@ -59,9 +59,11 @@
 
 
 
-数据库修改
+数据库修改:
 ALTER TABLE `sso_user`
 ADD COLUMN `loginCount`  int NULL DEFAULT 0 COMMENT '登录次数' AFTER `lastLoginIp`;
+
+update sso_user set loginCount = 0
 
 CREATE TABLE `sso_department` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -85,5 +87,11 @@ ADD COLUMN `beginDate`  datetime NULL COMMENT '帐号开始日期' AFTER `loginC
 ADD COLUMN `endDate`  datetime NULL COMMENT '帐号结束日期' AFTER `beginDate`;
 
 update sso_user set beginDate = '2013-05-20', endDate = '2014-05-20'
+
+
+
+权限修改：
+角色管理同级增加部门管理,编号为：DepartmentManager
+
 
 

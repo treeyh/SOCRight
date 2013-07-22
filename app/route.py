@@ -28,7 +28,6 @@ route.append((r'^/Api/User/GetByUserName', user_api_handler.UserByUserNameHandle
 route.append((r'^/Api/User/GetByUserNames', user_api_handler.UsersByUserNamesHandler))
 
 
-
 #route.append((r'^/', main_handler.MainHandler))        #后台程序需开启这个
 route.append((r'^/Admin', main_handler.MainHandler))
 route.append((r'^/Admin/Main', main_handler.MainHandler))
@@ -63,6 +62,7 @@ route.append((r'^/Admin/User/RoleBind', user_handler.UserRoleBindHandler))
 route.append((r'^/Admin/User/RoleDel', user_handler.UserRoleDelHandler))
 route.append((r'^/Admin/User/RightDetail', user_handler.UserRightDetailHandler))
 route.append((r'^/Admin/User/GroupList', user_handler.UserUserGroupListHandler))
+route.append((r'^/Admin/User/ResetPassWord', user_handler.UserResetPassWordHandler))
 
 
 route.append((r'^/Admin/Role/List', role_handler.RoleListHandler))
@@ -72,6 +72,7 @@ route.append((r'^/Admin/Role/Detail', role_handler.RoleDetailHandler))
 route.append((r'^/Admin/Role/Del', role_handler.RoleDelHandler))
 route.append((r'^/Admin/Role/RightEdit', role_handler.RoleRightHandler))
 route.append((r'^/Admin/Role/RightDetail', role_handler.RoleRightHandler))
+
 
 route.append((r'^/Admin/UserGroup/List', usergroup_handler.UserGroupListHandler))
 route.append((r'^/Admin/UserGroup/Add', usergroup_handler.UserGroupAddOrEditHandler))

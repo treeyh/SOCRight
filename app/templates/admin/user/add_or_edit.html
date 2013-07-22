@@ -118,10 +118,35 @@
             <tr>
                 <td colspan="2" style="padding-left:120px; height:40px;">
                     <input type="submit" style="width:100px; height:30px;line-height:18px; cursor:pointer; margin-right:3px;" value="提交" />
-                    <input type="button" style="width:100px; height:30px;line-height:18px; cursor:pointer; margin-right:3px;" onclick="window.history.go(-1);" value="返回" />
+                    <input type="button" style="width:100px; height:30px;line-height:18px; cursor:pointer; margin-right:3px;" onclick="window.history.go(-1);" value="返回" />   
+                    {% if isedit %}                 
+                    <input type="button" style="width:100px; height:30px;line-height:18px; cursor:pointer; margin-right:3px;" onclick="User.resetPassWord('{{ user['name'] }}');" value="重置密码" id="btResetPW" />
+                    <lable id="showResetPassWord" class="red"></lable>
+                    {% end %}
                 </td>
             </tr>
         </table>
     </form>
 </div>
+<script type="text/javascript" language="javascript">
+    <!--
+    var User = {
+        resetPassWord: function (name) {
+            if (!confirm("确定重置用户【{{ user['realName'] }}】的密码吗？")) {
+                return false;
+            }
+
+            $.post('/Admin/User/ResetPassWord', { 'name': name, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', '');
+                         $('#showResetPassWord').text("用户新密码：" + data.data.newpw + "。请注意保存。");
+                     } else {
+                         Common.alert('操作失败,' + data.msg);
+                     }
+                 }, "json");
+        }
+    };
+    //-->
+</script>
 {% end %}
