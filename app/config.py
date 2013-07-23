@@ -16,7 +16,7 @@ SOCRightConfig = {
     'adminCookieName' : 'soc_right_admin_user',
 
     'realPath' : '/opt/www/02_SOC/SOCRight/',
-    'exportUserPath' : 'static/export/user/',
+    'exportUserPath' : 'app/static/export/user/',
 }
 
 urls = {
