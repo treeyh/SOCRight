@@ -101,7 +101,7 @@ app/static目录下创建export目录，在export目录下创建user目录
 配置：
 
 SOCRightConfig节点中，增加以下两个参数：
-项目部署路径
+#项目部署路径
 'realPath' : '/opt/www/02_SOC/SOCRight/',
-导出用户保存路径
+#导出用户保存路径
 'exportUserPath' : 'static/export/user/',

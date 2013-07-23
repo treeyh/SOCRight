@@ -331,7 +331,7 @@ class UserExportHandler(admin_base_handler.AdminRightBaseHandler):
         ps['pagedata'] = user_logic.UserLogic.instance().query_page(id = user['id'],
                     name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
                      tel = user['tel'], mobile = user['mobile'], email = user['email'], 
-                     status = user['status'], page = ps['page'], size = 999)
+                     status = user['status'], page = ps['page'], size = 9999)
 
         users = ps['pagedata']['data']
 
