@@ -63,7 +63,7 @@
 ALTER TABLE `sso_user`
 ADD COLUMN `loginCount`  int NULL DEFAULT 0 COMMENT '登录次数' AFTER `lastLoginIp`;
 
-update sso_user set loginCount = 0
+update sso_user set loginCount = 0;
 
 CREATE TABLE `sso_department` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -86,7 +86,35 @@ ALTER TABLE `sso_user`
 ADD COLUMN `beginDate`  datetime NULL COMMENT '帐号开始日期' AFTER `loginCount`,
 ADD COLUMN `endDate`  datetime NULL COMMENT '帐号结束日期' AFTER `beginDate`;
 
-update sso_user set beginDate = '2013-05-20', endDate = '2014-05-20'
+update sso_user set beginDate = '2013-05-20', endDate = '2014-05-20';
+
+
+CREATE TABLE `sso_oper_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `operID` int(11) DEFAULT NULL COMMENT '操作人ID',
+  `operUserName` varchar(64) DEFAULT NULL COMMENT '操作人用户名',
+  `operRealName` varchar(64) DEFAULT NULL COMMENT '操作人姓名',
+  `appCode` varchar(32) DEFAULT NULL COMMENT '操作应用编号',
+  `funcPath` varchar(1024) DEFAULT NULL COMMENT '功能path',
+  `action` varchar(64) DEFAULT NULL COMMENT '动作',
+  `targetType` int(11) DEFAULT NULL COMMENT '目标类型',
+  `targetID` varchar(64) DEFAULT NULL COMMENT '目标ID',
+  `startStatus` text COMMENT '原始状态',
+  `endStatus` text COMMENT '结束状态',
+  `operTime` datetime DEFAULT NULL COMMENT '操作时间',
+  PRIMARY KEY (`id`),
+  KEY `index_sso_oper_log_operID` (`operID`),
+  KEY `index_sso_oper_log_operUserName` (`operUserName`),
+  KEY `index_sso_oper_log_appCode` (`appCode`),
+  KEY `index_sso_oper_log_funcPath` (`funcPath`),
+  KEY `index_sso_oper_log_action` (`action`),
+  KEY `index_sso_oper_log_operTime` (`operTime`),
+  KEY `index_sso_oper_log_targetID` (`targetID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
 
 
 
