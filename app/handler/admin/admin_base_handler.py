@@ -43,6 +43,9 @@ class AdminRightBaseHandler(AdminBaseHandler):
     _rightKey = ''
     _right = 0
 
+    _resetPwKey = 'ResetPassword'
+    _exportUserKey = 'Export'
+
     def prepare(self):
         super(AdminRightBaseHandler, self).prepare()
         user = self.current_user
@@ -78,3 +81,17 @@ class AdminRightBaseHandler(AdminBaseHandler):
             else:
                 self.redirect(config.SOCRightConfig['siteDomain']+'Admin/NotRight')
             return
+
+
+    def check_oper_right_custom_right(self, rightKey, customRight):
+        user = self.current_user
+        rights = user.get('rights', [])
+        for r in rights:
+            if r.get('path', '') != rightKey:
+                continue
+            crs = r.get('customRight', [])
+            for cr in crs:
+                if customRight == cr:
+                    return True
+            return False
+        return False

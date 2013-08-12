@@ -18,6 +18,8 @@ class UserListHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
     def get(self):
         ps = self.get_page_config('用户列表')
+
+        ps['ExportType'] = self.check_oper_right_custom_right(self._rightKey, self._exportUserKey)
         user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email'], '')
         user['status'] = int(self.get_arg('status', '0'))
         user['departmentID'] = int(self.get_arg('departmentID', '0'))
@@ -39,6 +41,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _right = 0
     def get(self):
         ps = self.get_page_config('创建用户')
+        ps['ResetPasswordType'] = self.check_oper_right_custom_right(self._rightKey, self._resetPwKey)
         if ps['isedit']:
             self.check_oper_right(right = state.operEdit)
             ps['title'] = self.get_page_title('编辑用户')
@@ -63,6 +66,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
 
     def post(self):
         ps = self.get_page_config('创建用户')
+        ps['ResetPasswordType'] = self.check_oper_right_custom_right(self._rightKey, self._resetPwKey)
         if ps['isedit']:
             ps['title'] = self.get_page_title('编辑用户')
 
@@ -294,14 +298,19 @@ class UserUserGroupListHandler(admin_base_handler.AdminRightBaseHandler):
 
 
 class UserResetPassWordHandler(admin_base_handler.AdminRightBaseHandler):
-    _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindUserManager'
+    _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
     _right = state.operView
 
     def post(self):
         # ps = self.get_page_config('重置用户密码')
         name = self.get_arg('name', '')
+
+        type = self.check_oper_right_custom_right(self._rightKey, self._resetPwKey)
+        if type == False:
+            self.out_fail(code = 1004)
+            self.finish()
+            return
         # userName = self.get_arg('userName', '')
-        print 'name:' + name
         if None == name or '' == name:
             self.out_fail(code = 103007)
             return
@@ -318,6 +327,12 @@ class UserExportHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
     _right = state.operView
     def get(self):
+
+        type = self.check_oper_right_custom_right(self._rightKey, self._exportUserKey)
+        if type == False:
+            self.redirect(config.SOCRightConfig['siteDomain']+'Admin/NotRight')
+            return
+
         import sys
         reload(sys)                        
         sys.setdefaultencoding('utf-8')    

@@ -32,3 +32,5 @@ class OperLogLogic():
         yz = (operID, operUserName, operRealName, appCode, funcPath, action, targetType, targetID, startStatus, endStatus)
         result = mysql.insert_or_update_or_delete(self._add_sql, yz)
         return 0 == result
+
+        
