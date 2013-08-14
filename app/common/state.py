@@ -86,6 +86,7 @@ UserStatus = {
     4 : u'到期',
 }
 
+statusUserActive = 1
 statusActive = 1
 
 

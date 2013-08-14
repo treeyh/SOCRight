@@ -167,13 +167,18 @@ class BaseHandler(tornado.web.RequestHandler):
                 if i > pageTotal: break;
                 numArea.append(i)
         elif (page >= (pageTotal - count + middleNum)):
-            for i in range(1, count+1):
-                if i > pageTotal: break;
-                numArea.append(pageTotal - count + i)
+            start = 1
+            if start > (pageTotal - count + start):
+                start = start - pageTotal + count
+            for i in range(start, count+start):
+                index = pageTotal - count + i
+                if index > pageTotal: break;
+                numArea.append(index)
         else:
             for i in range(1, count+1):
-                if i > pageTotal: break;
-                numArea.append(page - middleNum + i)
+                index = page - middleNum + i
+                if index > pageTotal: break;
+                numArea.append(index)
         return numArea
 
     
@@ -206,12 +211,16 @@ class BaseHandler(tornado.web.RequestHandler):
                     html = '%s<a href="%s%d" title="转到第%d页" style="margin-right: 5px;">....</a>' % (html, url, next, next)
                 next = page + 1
                 html = '%s<a href="%s%d" style="margin-right: 5px;" title="转到下一页">下一页</a>' % (html, url, next)
-                html = '%s<a href="%s%d" style="margin-right: 5px;" title="转到最末页">最末页</a>' % (html, url, pageTotal)
+                html = '%s<a href="%s%d" style="margin-right: 20px;" title="转到最末页">最末页</a>' % (html, url, pageTotal)
             else:
-                html = '%s<a disabled style="margin-right: 5px;" title="转到下一页">下一页</a><a disabled style="margin-right: 5px;" title="转到最末页">最末页</a>' % (html)
+                html = '%s<a disabled style="margin-right: 5px;" title="转到下一页">下一页</a><a disabled style="margin-right: 20px;" title="转到最末页">最末页</a>' % (html)
         else:
             html = '%s<a disabled style="margin-right: 5px;">第一页</a><a disabled style="margin-right: 5px;">上一页</a>' % (html)
-            html = '%s<a disabled style="margin-right: 5px;" title="转到下一页">下一页</a><a disabled style="margin-right: 5px;" title="转到最末页">最末页</a>' % (html)
+            html = '%s<a disabled style="margin-right: 5px;" title="转到下一页">下一页</a><a disabled style="margin-right: 20px;" title="转到最末页">最末页</a>' % (html)
+
+        html = '%s跳转第<input type="text" value="%d" id="btGoToPage" style="margin-left:5px; width:20px;" />页<input type="button" value="Go" style="margin-left:10px;margin-right: 20px;cursor:pointer;" onclick="Common.goToPage(\'%s\', %d)" />' % (html, page, url, pageTotal)
+
+        html = '%s</div>' % html
         return html
 
 
