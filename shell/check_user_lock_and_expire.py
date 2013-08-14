@@ -6,7 +6,6 @@ import sys
 
 sys.path.append('/opt/www/02_SOC/SOCRight/app/')
 
-print sys.path
 
 from helper import str_helper
 from logic import user_logic
@@ -35,3 +34,7 @@ if __name__ == '__main__':
 	up = _get_user_info(page = 1, size = 100)
 
 	print up
+
+	print str_helper.date_string_to_datetime(up['data'][0]['endDate'])
+
+	print get_today()

@@ -61,6 +61,10 @@ def _get_add_datetime(days):
     return datetime.now() + timedelta(days=days)
 
 
+def date_string_to_datetime(string):
+    return datetime.strptime(string, "%Y-%m-%d")
+
+
 
 def url_escape(value):
     """Returns a valid URL-encoded version of the given value."""
