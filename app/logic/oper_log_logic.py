@@ -15,12 +15,46 @@ class OperLogLogic():
             cls._instance = cls()
         return cls._instance
 
+
+    
+
     _query_sql = '''  select id, operID, operUserName, operRealName, appCode, funcPath, 
     						action, targetType, targetID, startStatus, endStatus, operTime 
-    						from  sso_oper_log  where 1 = 1  '''
-    _query_col = '''    '''
-    def query(self, operID , operUserName, appCode, funcPath, action, beginTime, endTime):
-    	return None
+    						from  sso_oper_log as u where 1 = 1  '''
+    _query_col = str_helper.format_str_to_list_filter_empty('id, operID, operUserName, operRealName, appCode, funcPath, action, targetType, targetID, startStatus, endStatus, operTime ', ',')
+    def query(self, operID , operUserName, appCode, funcPath, action, beginTime, endTime, page, size):
+        sql = self._query_sql
+        ps = []
+        if None != operID and 0 != operID:
+            sql = sql + ' and u.operID = %s '
+            ps.append(operID)
+        if None != operUserName and '' != operUserName:
+            sql = sql + ' and u.operUserName = %s '
+            ps.append(operUserName)
+        if None != appCode and '' != appCode:
+            sql = sql + ' and u.appCode = %s '
+            ps.append(appCode)
+        if None != funcPath and '' != funcPath:
+            sql = sql + ' and u.funcPath = %s '
+            ps.append(funcPath)
+        if None != action and '' != action:
+            sql = sql + ' and u.action = %s '
+            ps.append(action)
+        if None != beginTime and '' != beginTime:
+            sql = sql + ' and u.operTime >= %s '
+            ps.append(beginTime)
+        if None != endTime and '' != endTime:
+            sql = sql + ' and u.operTime <= %s '
+            ps.append(endTime)
+
+        yz = tuple(ps)
+        sql = sql + ' order by u.id desc '
+        logs = mysql.find_page(sql, yz, self._query_col, page, size)
+        if None != logs['data']:
+            for r in logs['data']:
+                r['operTime'] = str(r['operTime'])[0:20]
+                r['operTime'] = str(r['operTime'])[0:20]
+        return logs
 
 
     _add_sql = '''  INSERT INTO(operID, operUserName, operRealName, appCode, funcPath, 

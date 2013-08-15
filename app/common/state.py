@@ -87,6 +87,10 @@ UserStatus = {
 }
 
 statusUserActive = 1
+statusUserLock = 3
+statusUserExpire = 4
+
+
 statusActive = 1
 
 
@@ -95,3 +99,37 @@ operAdd = 2
 operEdit = 4
 operDel = 8
 
+
+
+logAction={
+    'userLogin' : u'用户登录',
+    'userActivate' : u'用户激活',
+    'userCreate' : u'用户管理_创建',
+    'userEdit' : u'用户管理_编辑',
+    'userDelete' : u'用户管理_删除',
+    'userLock' : u'用户管理_锁定',
+    'userResetPw' : u'用户管理_重置密码',
+    'userBindRole' : u'用户管理_绑定角色',
+    'userDeleteRole' : u'用户管理_删除绑定角色',
+    'userBindGroup' : u'用户管理_绑定用户组',
+    'userDeleteGroup' : u'用户管理_删除绑定用户组',
+    'userGroupCreate' : u'用户组管理_创建',
+    'userGroupDelete' : u'用户组管理_删除',
+    'userGroupBindUser' : u'用户组管理_绑定用户',
+    'userGroupDeleteUser' : u'用户组管理_删除绑定用户',
+    'appCreate' : u'应用管理_创建',
+    'appEdit' : u'应用管理_编辑',
+    'appDelete' : u'应用管理_删除',
+    'funcCreate' : u'功能管理_创建',
+    'funcEdit' : u'功能管理_编辑',
+    'funcDelete' : u'功能管理_删除',
+    'roleCreate' : u'角色管理_创建',
+    'roleEdit' : u'角色管理_编辑',
+    'roleDelete' : u'角色管理_删除',
+    'roleBindUserGroup' : u'角色管理_绑定用户组',
+    'roleDeleteUserGroup' : u'角色管理_删除绑定用户组',
+    'roleRight' : u'角色管理_权限设置',
+    'depCreate' : u'部门管理_创建',
+    'depEdit' : u'部门管理_编辑',
+    'depDelete' : u'部门管理_删除',
+}

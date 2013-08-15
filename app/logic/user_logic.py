@@ -303,6 +303,15 @@ class UserLogic():
         return None
 
 
+    _update_status_sql = '''   update sso_user set  `status` = %s, `lastUpdater` = %s, 
+                            `lastUpdateTime` = now() where `id` = %s  '''
+    ''' 更新用户 '''
+    def update_status(self, id, status, user):
+        yz = (status, user, id)
+        result = mysql.insert_or_update_or_delete(self._update_status_sql, yz)
+        return 0 == result
+
+
     _update_goto_app_sql = '''   update sso_user set  `lastLoginTime` = now(), `lastLoginApp` = %s, `lastLoginIp` = %s, 
                                     `loginCount` = `loginCount` + 1 where  `name` = %s and isDelete = %s '''
     ''' 更新用户最后登录应用信息 '''
