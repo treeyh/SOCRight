@@ -19,10 +19,10 @@ class OperLogLogic():
     
 
     _query_sql = '''  select id, operID, operUserName, operRealName, appCode, funcPath, 
-    						action, targetType, targetID, startStatus, endStatus, operTime 
+    						action, targetType, targetID, startStatus, endStatus, operIp, operTime 
     						from  sso_oper_log as u where 1 = 1  '''
-    _query_col = str_helper.format_str_to_list_filter_empty('id, operID, operUserName, operRealName, appCode, funcPath, action, targetType, targetID, startStatus, endStatus, operTime ', ',')
-    def query(self, operID , operUserName, appCode, funcPath, action, beginTime, endTime, page, size):
+    _query_col = str_helper.format_str_to_list_filter_empty('id, operID, operUserName, operRealName, appCode, funcPath, action, targetType, targetID, startStatus, endStatus, operIp, operTime ', ',')
+    def query(self, operID , operUserName, appCode, funcPath, action, operIp, beginTime, endTime, page, size):
         sql = self._query_sql
         ps = []
         if None != operID and 0 != operID:
@@ -40,6 +40,9 @@ class OperLogLogic():
         if None != action and '' != action:
             sql = sql + ' and u.action = %s '
             ps.append(action)
+        if None != operIp and '' != operIp:
+            sql = sql + ' and u.operIp = %s '
+            ps.append(operIp)
         if None != beginTime and '' != beginTime:
             sql = sql + ' and u.operTime >= %s '
             ps.append(beginTime)
@@ -53,17 +56,18 @@ class OperLogLogic():
         if None != logs['data']:
             for r in logs['data']:
                 r['operTime'] = str(r['operTime'])[0:20]
-                r['operTime'] = str(r['operTime'])[0:20]
+                r['actionName'] = state.logAction[r['action']]
         return logs
 
 
-    _add_sql = '''  INSERT INTO(operID, operUserName, operRealName, appCode, funcPath, 
-    						action, targetType, targetID, startStatus, endStatus, operTime) 
-							VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now() ) '''
+
+    _add_sql = '''  INSERT INTO  sso_oper_log (operID, operUserName, operRealName, appCode, funcPath, 
+    						action, targetType, targetID, startStatus, endStatus, operIp, operTime) 
+							VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now() ) '''
     ''' 添加日志 '''
     def add(self, operID, operUserName, operRealName, appCode, funcPath, action, 
-    	targetType, targetID, startStatus, endStatus):
-        yz = (operID, operUserName, operRealName, appCode, funcPath, action, targetType, targetID, startStatus, endStatus)
+    	targetType = 0, targetID = '', startStatus = '', endStatus = '', operIp = ''):
+        yz = (operID, operUserName, operRealName, appCode, funcPath, action, targetType, targetID, startStatus, endStatus, operIp)
         result = mysql.insert_or_update_or_delete(self._add_sql, yz)
         return 0 == result
 

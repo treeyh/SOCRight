@@ -5,3 +5,4 @@ import config
 
 
 logger = logging.getLogger(config.SOCRightConfig['appCode'])
+
