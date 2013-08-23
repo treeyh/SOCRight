@@ -3,12 +3,14 @@
 from helper import str_helper
 from common import mysql, state, error
 
+
 class OperLogLogic():
 
-    def __init__(self):   
+    def __init__(self):
         return
 
     _instance = None
+
     @classmethod
     def instance(cls):
         if cls._instance == None:
@@ -16,12 +18,12 @@ class OperLogLogic():
         return cls._instance
 
 
-    
 
-    _query_sql = '''  select id, operID, operUserName, operRealName, appCode, funcPath, 
-    						action, targetType, targetID, startStatus, endStatus, operIp, operTime 
+    _query_sql = '''  select id, operID, operUserName, operRealName, appCode, funcPath,
+    						action, targetType, targetID, targetName, startStatus, endStatus, operIp, operTime
     						from  sso_oper_log as u where 1 = 1  '''
-    _query_col = str_helper.format_str_to_list_filter_empty('id, operID, operUserName, operRealName, appCode, funcPath, action, targetType, targetID, startStatus, endStatus, operIp, operTime ', ',')
+    _query_col = str_helper.format_str_to_list_filter_empty(
+        'id, operID, operUserName, operRealName, appCode, funcPath, action, targetType, targetID, targetName, startStatus, endStatus, operIp, operTime ', ',')
     def query(self, operID , operUserName, appCode, funcPath, action, operIp, beginTime, endTime, page, size):
         sql = self._query_sql
         ps = []
@@ -61,14 +63,14 @@ class OperLogLogic():
 
 
 
-    _add_sql = '''  INSERT INTO  sso_oper_log (operID, operUserName, operRealName, appCode, funcPath, 
-    						action, targetType, targetID, startStatus, endStatus, operIp, operTime) 
-							VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now() ) '''
+    _add_sql = '''  INSERT INTO  sso_oper_log (operID, operUserName, operRealName, appCode, funcPath,
+    						action, targetType, targetID, targetName, startStatus, endStatus, operIp, operTime)
+							VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now() ) '''
     ''' 添加日志 '''
-    def add(self, operID, operUserName, operRealName, appCode, funcPath, action, 
-    	targetType = 0, targetID = '', startStatus = '', endStatus = '', operIp = ''):
-        yz = (operID, operUserName, operRealName, appCode, funcPath, action, targetType, targetID, startStatus, endStatus, operIp)
+
+    def add(self, operID, operUserName, operRealName, appCode, funcPath, action,
+            targetType=0, targetID='', targetName='', startStatus='', endStatus='', operIp=''):
+        yz = (operID, operUserName, operRealName, appCode, funcPath, action,
+              targetType, targetID, targetName, startStatus, endStatus, operIp)
         result = mysql.insert_or_update_or_delete(self._add_sql, yz)
         return 0 == result
-
-        

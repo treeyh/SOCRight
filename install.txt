@@ -60,35 +60,6 @@
 
 
 数据库修改:
-ALTER TABLE `sso_user`
-ADD COLUMN `loginCount`  int NULL DEFAULT 0 COMMENT '登录次数' AFTER `lastLoginIp`;
-
-update sso_user set loginCount = 0;
-
-CREATE TABLE `sso_department` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) DEFAULT NULL COMMENT '部门名称',
-  `status` int(11) DEFAULT NULL COMMENT '1可用，2不可用',
-  `remark` varchar(512) DEFAULT NULL COMMENT '备注',
-  `isDelete` int(11) DEFAULT NULL COMMENT '是否删除，1删除，2不删除',
-  `creater` varchar(32) DEFAULT NULL,
-  `createTime` datetime DEFAULT NULL,
-  `lastUpdater` varchar(32) DEFAULT NULL,
-  `lastUpdateTime` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-ALTER TABLE `sso_user`
-ADD COLUMN `departmentID`  int NULL COMMENT '部门ID' AFTER `parentID`;
-
-ALTER TABLE `sso_user`
-ADD COLUMN `beginDate`  datetime NULL COMMENT '帐号开始日期' AFTER `loginCount`,
-ADD COLUMN `endDate`  datetime NULL COMMENT '帐号结束日期' AFTER `beginDate`;
-
-update sso_user set beginDate = '2013-05-20', endDate = '2014-05-20';
-
-
 CREATE TABLE `sso_oper_log` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `operID` int(11) DEFAULT NULL COMMENT '操作人ID',
@@ -101,20 +72,17 @@ CREATE TABLE `sso_oper_log` (
   `targetID` varchar(64) DEFAULT NULL COMMENT '目标ID',
   `startStatus` text COMMENT '原始状态',
   `endStatus` text COMMENT '结束状态',
+  `operIp` varchar(64) DEFAULT NULL COMMENT '操作IP',
   `operTime` datetime DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`),
   KEY `index_sso_oper_log_operID` (`operID`),
   KEY `index_sso_oper_log_operUserName` (`operUserName`),
   KEY `index_sso_oper_log_appCode` (`appCode`),
-  KEY `index_sso_oper_log_funcPath` (`funcPath`),
   KEY `index_sso_oper_log_action` (`action`),
   KEY `index_sso_oper_log_operTime` (`operTime`),
-  KEY `index_sso_oper_log_targetID` (`targetID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-
+  KEY `index_sso_oper_log_targetID` (`targetID`),
+  KEY `index_sso_oper_log_operIp` (`operIp`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 
 
@@ -122,14 +90,4 @@ CREATE TABLE `sso_oper_log` (
 角色管理同级增加部门管理,编号为：DepartmentManager
 
 
-目录修改：
-app/static目录下创建export目录，在export目录下创建user目录
 
-
-配置：
-
-SOCRightConfig节点中，增加以下两个参数：
-#项目部署路径
-'realPath' : '/opt/www/02_SOC/SOCRight/',
-#导出用户保存路径
-'exportUserPath' : 'app/static/export/user/',

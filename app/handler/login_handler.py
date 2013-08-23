@@ -53,7 +53,7 @@ class LoginHandler(base_handler.BaseHandler):
         if None == ac or '' == ac:
             ac = 'SOCRight'
         oper_log_logic.OperLogLogic.instance().add(operID=user['id'], operUserName=user['name'], operRealName=user[
-                                                   'realName'], appCode=ac, funcPath='', action='userLogin', targetType=0, targetID='', startStatus='', endStatus='', operIp=self.get_user_ip())
+                                                   'realName'], appCode=ac, funcPath='', action='userLogin', targetType=0, targetID='', targetName='', startStatus='', endStatus='', operIp=self.get_user_ip())
 
 
         if None != user['loginCount'] and 0 >= user['loginCount'] and 'passwordedit' not in self.request.path.lower():
@@ -145,7 +145,7 @@ class PassWordEditHandler(base_handler.BaseRightHandler):
                     user_logic.UserLogic.instance().update_goto_app(
                         user['name'], config.SOCRightConfig['appCode'], ip=self.get_user_ip())
                     oper_log_logic.OperLogLogic.instance().add(operID=user['id'], operUserName=user['name'], operRealName=user[
-                                                               'realName'], appCode='SOCRight', funcPath='', action='userActivate', targetType=0, targetID='', startStatus='', endStatus='', operIp=self.get_user_ip())
+                                                               'realName'], appCode='SOCRight', funcPath='', action='userActivate', targetType=0, targetID='', targetName='', startStatus='', endStatus='', operIp=self.get_user_ip())
 
                 self.clear_user_info()
                 ps['msg'] = '操作成功'
