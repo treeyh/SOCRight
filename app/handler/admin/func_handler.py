@@ -120,10 +120,10 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         else:
             self.check_oper_right(right = state.operEdit)
             try:
-                of = func_logic.FuncLogic.instance().query_one_by_path(func['path'])
+                of = func_logic.FuncLogic.instance().query_one_by_id(func['id'])
                 func_logic.FuncLogic.instance().update(id = func['id'], name = func['name'],sort = func['sort'], 
                                 customJson = func['customJson'],remark = func['remark'],user = func['user'])
-                nf = func_logic.FuncLogic.instance().query_one_by_path(func['path'])
+                nf = func_logic.FuncLogic.instance().query_one_by_id(func['id'])
                 self.write_oper_log(action = 'funcEdit', targetType = 3, targetID = str(nf['id']), targetName = nf['name'], startStatus = str_helper.json_encode(of), endStatus= str_helper.json_encode(nf))
             except error.RightError as e:
                 self.out_fail(code=e.code)

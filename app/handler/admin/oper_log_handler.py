@@ -24,7 +24,7 @@ class OperLogListHandler(admin_base_handler.AdminRightBaseHandler):
         ps['page'] = int(self.get_arg('page', '1'))
         ps['pagedata'] = oper_log_logic.OperLogLogic.instance().query_page(operID = operLog['operID'], operUserName = operLog['operUserName'], appCode = '', funcPath = '', action = operLog['action'], operIp = '', beginTime = operLog['beginTime'], endTime = operLog['endTime'], page = ps['page'], size = ps['size'])
         ps['operLog'] = operLog
-        ps['actions'] = state.logAction
+        ps['actions'] = state.logAction2
         ps['pager'] = self.build_page_html(page=ps['page'], size=ps[
                                            'size'], total=ps['pagedata']['total'], pageTotal=ps['pagedata']['pagetotal'])
         self.render('admin/operlog/list.html', **ps)
@@ -39,7 +39,7 @@ class OperLogExportHandler(admin_base_handler.AdminRightBaseHandler):
         if type == False:
             self.redirect(config.SOCRightConfig['siteDomain']+'Admin/NotRight')
             return
-        
+
         import sys
         reload(sys)                        
         sys.setdefaultencoding('utf-8')   
@@ -66,7 +66,6 @@ class OperLogExportHandler(admin_base_handler.AdminRightBaseHandler):
         fileName = config.SOCRightConfig['exportOperLogPath'] + str_helper.get_now_datestr() +'_'+ str_helper.get_uuid() + '.xls'
 
         path = config.SOCRightConfig['realPath'] + fileName
-
 
         file_object = open(path, 'w')
         file_object.write(info)

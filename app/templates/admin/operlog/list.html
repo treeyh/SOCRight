@@ -27,8 +27,8 @@
             <td style="width: 80px;">
                 <select name="action">
                     <option value="">全部</option>
-                    {% for k in actions.keys() %}
-                    <option value="{{k}}" {% if operLog['action'] == k %} selected{% end %}>{{actions[k]}}</option>
+                    {% for k in actions %}
+                    <option value="{{k['k']}}" {% if operLog['action'] == k['k'] %} selected{% end %}>{{k['v']}}</option>
                     {% end %}
                 </select>
             </td>

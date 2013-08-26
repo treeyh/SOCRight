@@ -108,6 +108,7 @@ logAction={
     'userEdit' : u'用户管理_编辑',
     'userDelete' : u'用户管理_删除',
     'userLock' : u'用户管理_锁定',
+    'userUnLock' : u'用户管理_解除锁定',
     'userResetPw' : u'用户管理_重置密码',
     'userBindRole' : u'用户管理_绑定角色',
     'userDeleteRole' : u'用户管理_删除绑定角色',
@@ -136,3 +137,40 @@ logAction={
     'depEdit' : u'部门管理_编辑',
     #'depDelete' : u'部门管理_删除',
 }
+
+logAction2=[
+    {'k' : 'userLogin' , 'v' : u'用户登录'},#1
+    {'k' : 'userActivate' , 'v' : u'用户激活'},
+    {'k' : 'userCreate' , 'v' : u'用户管理_创建'},
+    {'k' : 'userEdit' , 'v' : u'用户管理_编辑'},
+    {'k' : 'userDelete' , 'v' : u'用户管理_删除'},
+    {'k' : 'userLock' , 'v' : u'用户管理_锁定'},
+    {'k' : 'userUnLock' , 'v' : u'用户管理_解除锁定'},
+    {'k' : 'userResetPw' , 'v' : u'用户管理_重置密码'},
+    {'k' : 'userBindRole' , 'v' : u'用户管理_绑定角色'},
+    {'k' : 'userDeleteRole' , 'v' : u'用户管理_删除绑定角色'},
+    {'k' : 'userBindGroup' , 'v' : u'用户管理_绑定用户组'},
+    {'k' : 'userDeleteGroup' , 'v' : u'用户管理_删除绑定用户组'},
+    {'k' : 'userGroupCreate' , 'v' : u'用户组管理_创建'},#6
+    {'k' : 'userGroupEdit' , 'v' : u'用户组管理_编辑'},
+    {'k' : 'userGroupDelete' , 'v' : u'用户组管理_删除'},
+    {'k' : 'userGroupBindUser' , 'v' : u'用户组管理_绑定用户'},
+    {'k' : 'userGroupDeleteUser' , 'v' : u'用户组管理_删除绑定用户'},
+    {'k' : 'userGroupBindRole' , 'v' : u'用户组管理_绑定角色'},
+    {'k' : 'userGroupDeleteRole' , 'v' : u'用户组管理_删除绑定角色'},
+    {'k' : 'appCreate' , 'v' : u'应用管理_创建'},#2
+    {'k' : 'appEdit' , 'v' : u'应用管理_编辑'},
+    #'appDelete' : u'应用管理_删除',
+    {'k' : 'funcCreate' , 'v' : u'功能管理_创建'},#3
+    {'k' : 'funcEdit' , 'v' : u'功能管理_编辑'},
+    {'k' : 'funcDelete' , 'v' : u'功能管理_删除'},
+    {'k' : 'roleCreate' , 'v' : u'角色管理_创建'},#5
+    {'k' : 'roleEdit' , 'v' : u'角色管理_编辑'},
+    {'k' : 'roleDelete' , 'v' : u'角色管理_删除'},
+    #'roleBindUserGroup' : u'角色管理_绑定用户组',
+    #'roleDeleteUserGroup' : u'角色管理_删除绑定用户组',
+    {'k' : 'roleSetRight' , 'v' : u'角色管理_权限设置'},
+    {'k' : 'depCreate' , 'v' : u'部门管理_创建'},#4
+    {'k' : 'depEdit' , 'v' : u'部门管理_编辑'},
+    #'depDelete' : u'部门管理_删除',
+]

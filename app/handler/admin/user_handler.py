@@ -20,6 +20,7 @@ class UserListHandler(admin_base_handler.AdminRightBaseHandler):
         ps = self.get_page_config('用户列表')
 
         ps['ExportType'] = self.check_oper_right_custom_right(self._rightKey, self._exportUserKey)
+        ps['LockType'] = self.check_oper_right_custom_right(self._rightKey, self._lockUserKey)
         user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email'], '')
         user['status'] = int(self.get_arg('status', '0'))
         user['departmentID'] = int(self.get_arg('departmentID', '0'))
@@ -389,6 +390,47 @@ class UserExportHandler(admin_base_handler.AdminRightBaseHandler):
         self.redirect(config.SOCRightConfig['siteDomain']+fileName)
 
 
+class UserUnLockHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
+    _right = state.operDel
+    def post(self):
+        type = self.check_oper_right_custom_right(self._rightKey, self._lockUserKey)
+        if type == False:
+            self.out_fail(code = 1004)
+            return
+        id = int(self.get_arg('id', '0'))
+        user = self.get_oper_user()
+        ou = user_logic.UserLogic.instance().query_one(id = id)
+        type = user_logic.UserLogic.instance().update_status(id = id, status = 1, user = user)
+        if type:
+            try:
+                self.write_oper_log(action = 'userUnLock', targetType = 1, targetID = str(id), targetName = ou['name'], startStatus = str_helper.json_encode(ou), endStatus= '')
+            except e:
+                print e
+            self.out_ok()
+        else:
+            self.out_fail(code = 101)
 
+
+class UserLockHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
+    _right = state.operDel
+    def post(self):
+        type = self.check_oper_right_custom_right(self._rightKey, self._lockUserKey)
+        if type == False:
+            self.out_fail(code = 1004)
+            return
+        id = int(self.get_arg('id', '0'))
+        user = self.get_oper_user()
+        ou = user_logic.UserLogic.instance().query_one(id = id)
+        type = user_logic.UserLogic.instance().update_status(id = id, status = 3, user = user)
+        if type:
+            try:
+                self.write_oper_log(action = 'userLock', targetType = 1, targetID = str(id), targetName = ou['name'], startStatus = str_helper.json_encode(ou), endStatus= '')
+            except e:
+                print e
+            self.out_ok()
+        else:
+            self.out_fail(code = 101)
 
         

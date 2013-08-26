@@ -121,6 +121,13 @@
                 {{ str(r['lastUpdateTime'])[0:-3] }}
             </td>
             <td>
+                {% if LockType == True %}
+                    {% if r['status'] == 3 %}
+                    <a href="javascript:" onclick="User.unLock('{{r['id']}}')">解锁</a>
+                    {% else %}
+                    <a href="javascript:" onclick="User.lock('{{r['id']}}')">锁定</a>
+                    {% end %}
+                {% end %}
                 <a href="{{siteDomain}}Admin/User/RightDetail?userID={{ r['id'] }}">权限预览</a>
                 <a href="{{siteDomain}}Admin/User/RoleList?userID={{ r['id'] }}">所属角色</a>
                 <a href="{{siteDomain}}Admin/User/GroupList?userID={{ r['id'] }}">所属用户组</a>
@@ -140,6 +147,30 @@
             if (!confirm("确定删除该记录吗？")) return false;
 
             $.post('/Admin/User/Del?' + Math.random(), { 'id': id, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', window.location.href);
+                     } else {
+                         Common.alert('操作失败,'+data.msg);
+                     }
+                 }, "json");
+        },
+        unLock: function (id) {
+            if (!confirm("确定解锁该用户吗？")) return false;
+
+            $.post('/Admin/User/UnLock?' + Math.random(), { 'id': id, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', window.location.href);
+                     } else {
+                         Common.alert('操作失败,'+data.msg);
+                     }
+                 }, "json");
+        },
+        lock: function (id) {
+            if (!confirm("确定锁定该用户吗？")) return false;
+
+            $.post('/Admin/User/Lock?' + Math.random(), { 'id': id, 'ajax': 'ajax' },
                  function (data) {
                      if (0 == data.code) {
                          Common.alert('操作成功', window.location.href);

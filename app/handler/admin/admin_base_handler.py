@@ -46,6 +46,7 @@ class AdminRightBaseHandler(AdminBaseHandler):
 
     _resetPwKey = 'ResetPassword'
     _exportUserKey = 'Export'
+    _lockUserKey = 'Lock'
 
     def prepare(self):
         super(AdminRightBaseHandler, self).prepare()
