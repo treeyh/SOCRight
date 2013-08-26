@@ -72,9 +72,12 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         if ps['isedit']:
             self.check_oper_right(right = state.operEdit)
             try:
+                oa = application_logic.ApplicationLogic.instance().query_one(app['code'])
                 info = application_logic.ApplicationLogic.instance().update(name = app['name'], code = app['code'], 
                         developer = app['developer'], url = app['url'], status = app['status'], remark = app['remark'], user = app['user'])
                 if info:
+                    na = application_logic.ApplicationLogic.instance().query_one(app['code'])
+                    self.write_oper_log(action = 'appEdit', targetType = 2, targetID = oa['code'], targetName = oa['name'], startStatus = str_helper.json_encode(oa), endStatus= str_helper.json_encode(na))
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
@@ -86,6 +89,8 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 info = application_logic.ApplicationLogic.instance().add(name = app['name'], code = app['code'], 
                     developer = app['developer'], url = app['url'], status = app['status'], remark = app['remark'], user = app['user'])
                 if info:
+                    na = application_logic.ApplicationLogic.instance().query_one(app['code'])
+                    self.write_oper_log(action = 'appCreate', targetType = 2, targetID = na['code'], targetName = na['name'], startStatus = '', endStatus= str_helper.json_encode(na))
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')

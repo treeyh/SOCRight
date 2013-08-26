@@ -1,4 +1,6 @@
-{% extends "../../base.html" %} {% block head %} {% end %} {% block body %}
+{% extends "../../base.html" %} {% block head %} 
+<script language="JavaScript" type="text/javascript" src="{{ jsDomain }}js/My97DatePicker/WdatePicker.js?{{ version }}"></script>
+{% end %} {% block body %}
 <div class="titlediv">
     <h1>
         {{ title }}</h1>
@@ -8,29 +10,54 @@
     <table class="inputtable">
         <tr>
             <td style="width: 60px;">
-                编号：
+                用户ID：
             </td>
             <td style="width: 200px;">
-                <input type="text" name="code" value="{{ app['code'] }}" />
+                <input type="text" name="operID" value="{{ operLog['operID'] }}" />
             </td>
             <td style="width: 60px;">
-                名称：
+                用户名：
             </td>
             <td style="width: 200px;">
-                <input type="text" name="name" value="{{ app['name'] }}" />
+                <input type="text" name="operUserName" value="{{ operLog['operUserName'] }}" />
             </td>
             <td style="width: 60px;">
-                状态：
+                类型：
             </td>
             <td style="width: 80px;">
-                <select name="status">
-                    <option value="0" {% if app['status'] == 0 %} selected{% end %}>全部</option>
-                    <option value="1" {% if app['status'] == 1 %} selected{% end %}>可用</option>
-                    <option value="2" {% if app['status'] == 2 %} selected{% end %}>不可用</option>
+                <select name="action">
+                    <option value="">全部</option>
+                    {% for k in actions.keys() %}
+                    <option value="{{k}}" {% if operLog['action'] == k %} selected{% end %}>{{actions[k]}}</option>
+                    {% end %}
                 </select>
             </td>
             <td style="text-align: right">
-                <a href="{{siteDomain}}Admin/Application/Add" style="margin-right:20px;">创建应用</a>
+                {% if ExportType == True %}
+                <a href="{{siteDomain}}Admin/OperLog/Export?action={{operLog['action']}}&operUserName={{operLog['operUserName']}}&operID={{operLog['operID']}}&beginTime={{operLog['beginTime']}}&endTime={{operLog['endTime']}}" target="_blank" style="margin-right:20px;">导出结果</a>
+                {% end %}
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 60px;">
+                开始日期：
+            </td>
+            <td style="width: 200px;">
+                <input type="text" onfocus="WdatePicker()" value="{{operLog['beginTime']}}" id="beginTime" name="beginTime" class="Wdate" readonly="">
+            </td>
+            <td style="width: 60px;">
+                结束日期：
+            </td>
+            <td style="width: 200px;">
+                <input type="text" onfocus="WdatePicker()" value="{{operLog['endTime']}}" id="endTime" name="endTime" class="Wdate" readonly="">
+            </td>
+            <td style="width: 60px;">
+
+            </td>
+            <td style="width: 80px;">
+                
+            </td>
+            <td style="text-align: right">
                 <input type="submit" style="width:100px; height:26px;line-height:18px; cursor:pointer; margin-right:3px;" value="查询" />
             </td>
         </tr>
@@ -44,11 +71,11 @@
             <td style="width:80px">
                 编号
             </td>
-            <td style="width:1500px">
+            <td style="width:150px">
                 操作人
             </td>
             <td style="width:50px">
-                应用
+                应用编号
             </td>
             <td style="width:40px">
                 动作
@@ -66,47 +93,29 @@
         {% for r in pagedata['data'] %}
         <tr>
             <td style="width:80px">
-                {{ r['code'] }}
+                {{ r['id'] }}
             </td>
-            <td style="width:90px">
-                {{ r['name'] }}
+            <td style="width:150px">
+                {{ r['operID'] }}/{{ r['operUserName'] }}/{{ r['operRealName'] }}
             </td>
             <td style="width:50px">
-                {{ r['developer'] }}
+                {{ r['appCode'] }}
             </td>
             <td style="width:40px">
-                {{ r['statusname'] }}
+                {{ r['actionname'] }}
             </td>
             <td style="width:200px">
-                {{ r['url'] }}
+                {{ r['targetID'] }}/{{ r['targetName'] }}
             </td>
             <td style="width:50px">
-                {{ r['lastUpdater'] }}
+                {{ r['operIp'] }}
             </td>
             <td style="width:80px">
-                {{ str(r['lastUpdateTime'])[0:-3] }}
+                {{ str(r['operTime'])[0:-3] }}
             </td>
         </tr>
         {% end %}
     </table>
     {% raw pager %}
 </div>
-<script type="text/javascript" language="javascript">
-    <!--
-    // var App = {
-    //     del: function (code) {
-    //         if (!confirm("确定删除该记录吗？")) return false;
-
-    //         $.post('/Admin/Application/Del', { 'code': code , 'ajax': 'ajax'},
-    //              function (data) {
-    //                  if (0 == data.code) {
-    //                      Common.alert('操作成功', window.location.href);
-    //                  } else {
-    //                      Common.alert('操作失败,'+data.msg);
-    //                  }
-    //              }, "json");
-    //     }
-    // };
-    //-->
-</script>
 {% end %}

@@ -64,9 +64,12 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         
         if ps['isedit']:
             try:
+                og = usergroup_logic.UserGroupLogic.instance().query_one(usergroup['id'])
                 info = usergroup_logic.UserGroupLogic.instance().update(id = usergroup['id'], name = usergroup['name'], 
                     status = usergroup['status'], remark = usergroup['remark'], user = usergroup['user'])
                 if info:
+                    ng = usergroup_logic.UserGroupLogic.instance().query_one(usergroup['id'])
+                    self.write_oper_log(action = 'userGroupEdit', targetType = 6, targetID = str(ng['id']), targetName = ng['name'], startStatus = str_helper.json_encode(og), endStatus= str_helper.json_encode(ng))
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
@@ -77,6 +80,8 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 info = usergroup_logic.UserGroupLogic.instance().add(name = usergroup['name'], 
                     status = usergroup['status'], remark = usergroup['remark'], user = usergroup['user'])
                 if info > 0:
+                    ng = usergroup_logic.UserGroupLogic.instance().query_one_by_name(usergroup['name'])
+                    self.write_oper_log(action = 'userGroupCreate', targetType = 6, targetID = str(ng['id']), targetName = ng['name'], startStatus = '', endStatus= str_helper.json_encode(ng))
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
@@ -94,8 +99,10 @@ class UserGroupDelHandler(admin_base_handler.AdminRightBaseHandler):
     def post(self):
         id = int(self.get_arg('id', '0'))
         user = self.get_oper_user()
+        og = usergroup_logic.UserGroupLogic.instance().query_one(id)
         type = usergroup_logic.UserGroupLogic.instance().delete(id = id, user = user)
         if type:
+            self.write_oper_log(action = 'userGroupDelete', targetType = 6, targetID = str(og['id']), targetName = og['name'], startStatus = str_helper.json_encode(og), endStatus= '')
             self.out_ok()
         else:
             self.out_fail(code = 101)
@@ -184,6 +191,7 @@ class UserGroupUserBindHandler(admin_base_handler.AdminRightBaseHandler):
             return
         id = usergroup_logic.UserGroupLogic.instance().bind_group_user(userGroupID = userGroupID, userID = userID, user = self.get_oper_user())
         if None != id and id > 0:
+            self.write_oper_log(action = 'userGroupBindUser', targetType = 6, targetID = str(userGroupID), targetName = str(userID), startStatus = str(userGroupID), endStatus= str(userID))
             self.out_ok()
         else:
             self.out_fail(code = 105005)
@@ -198,8 +206,10 @@ class UserGroupUserDelHandler(admin_base_handler.AdminRightBaseHandler):
         if id <= 0 or userGroupID <= 0:
             self.out_fail(code = 105006)
             return
+        oug = usergroup_logic.UserGroupLogic.instance().get_group_user(id = id)
         type = usergroup_logic.UserGroupLogic.instance().del_group_user(id = id, userGroupID = userGroupID, user = self.get_oper_user())
         if type:
+            self.write_oper_log(action = 'userGroupDeleteUser', targetType = 6, targetID = str(id), targetName = '', startStatus = str(oug['userGroupID']), endStatus= str(oug['userID']))
             self.out_ok()
         else:
             self.out_fail(code = 105006)
@@ -272,7 +282,8 @@ class UserGroupRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
             self.out_fail(code = 105007)
             return
         id = usergroup_logic.UserGroupLogic.instance().bind_group_role(userGroupID = userGroupID, roleID = roleID, user = self.get_oper_user())
-        if None != id and id > 0:
+        if None != id and id >= 0:
+            self.write_oper_log(action = 'userGroupBindRole', targetType = 6, targetID = str(id), targetName = '', startStatus = str(userGroupID), endStatus= str(roleID))
             self.out_ok()
         else:
             self.out_fail(code = 105008)
@@ -288,8 +299,10 @@ class UserGroupRoleDelHandler(admin_base_handler.AdminRightBaseHandler):
         if id <= 0 or userGroupID <= 0:
             self.out_fail(code = 105009)
             return
+        ogr = usergroup_logic.UserGroupLogic.instance().get_group_role(id = id)
         type = usergroup_logic.UserGroupLogic.instance().del_group_role(id = id, userGroupID = userGroupID, user = self.get_oper_user())
         if type:
+            self.write_oper_log(action = 'userGroupDeleteRole', targetType = 6, targetID = str(id), targetName = '', startStatus = str(ogr['userGroupID']), endStatus= str(ogr['roleID']))
             self.out_ok()
         else:
             self.out_fail(code = 105009)

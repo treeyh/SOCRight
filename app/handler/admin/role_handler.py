@@ -67,9 +67,12 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         if ps['isedit']:
             self.check_oper_right(right = state.operEdit)
             try:
+                oro = role_logic.RoleLogic.instance().query_one(role['id'])
                 info = role_logic.RoleLogic.instance().update(id = role['id'], name = role['name'], 
-                        status = role['status'], remark = role['remark'], user = role['user'])
-                if info:
+                        status = role['status'], remark = role['remark'], user = role['user'])                
+                if info:                    
+                    nro = role_logic.RoleLogic.instance().query_one(role['id'])
+                    self.write_oper_log(action = 'roleEdit', targetType = 5, targetID = str(nro['id']), targetName = nro['name'], startStatus = str_helper.json_encode(oro), endStatus= str_helper.json_encode(nro))
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
@@ -81,6 +84,8 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 info = role_logic.RoleLogic.instance().add(name = role['name'], 
                         status = role['status'], remark = role['remark'], user = role['user'])
                 if info > 0:
+                    nro = role_logic.RoleLogic.instance().query_one_by_name(role['name'])
+                    self.write_oper_log(action = 'roleEdit', targetType = 5, targetID = str(nro['id']), targetName = nro['name'], startStatus = '', endStatus= str_helper.json_encode(nro))
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
@@ -97,8 +102,10 @@ class RoleDelHandler(admin_base_handler.AdminRightBaseHandler):
     def post(self):
         id = int(self.get_arg('id', '0'))
         user = self.get_oper_user()
+        oro = role_logic.RoleLogic.instance().query_one(id)
         type = role_logic.RoleLogic.instance().delete(id = id, user = user)
         if type:
+            self.write_oper_log(action = 'roleDelete', targetType = 5, targetID = str(oro['id']), targetName = oro['name'], startStatus = str_helper.json_encode(oro), endStatus= '')
             self.out_ok()
         else:
             self.out_fail(code = 101)
@@ -211,6 +218,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         ps['funcs'] = funcs
 
         if type:
+            self.write_oper_log(action = 'roleSetRight', targetType = 5, targetID = str(ps['roleID']), targetName = ps['appCode'], startStatus = '', endStatus= str_helper.json_encode(rights))
             ps = self.get_ok_and_back_params(ps = ps)
         else:
             ps['msg'] = state.ResultInfo.get(104004, '')

@@ -70,7 +70,7 @@ class FuncLogic():
         yz = (appCode, name, code, parentID, path, customJson,
                         sort, status, remark, isdelete, user, user)
         result = mysql.insert_or_update_or_delete(self._add_sql, yz, True)
-        return 0 < result
+        return result
 
 
     _update_sql = '''   update sso_func set name = %s, sort = %s, customJson = %s,

@@ -109,17 +109,22 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 self.out_fail(code = 102003)
                 return
             try:
-                func_logic.FuncLogic.instance().add(appCode = func['appCode'], name = func['name'], code = func['code'], 
+                result = func_logic.FuncLogic.instance().add(appCode = func['appCode'], name = func['name'], code = func['code'], 
                             parentID = func['parentID'], path = func['path'], customJson = func['customJson'], sort = func['sort'], 
                             status = func['status'], remark = func['remark'], user = func['user'])
+                nf = func_logic.FuncLogic.instance().query_one_by_path(func['path'])
+                self.write_oper_log(action = 'funcCreate', targetType = 3, targetID = str(nf['id']), targetName = nf['name'], startStatus = '', endStatus= str_helper.json_encode(nf))
             except error.RightError as e:
                 self.out_fail(code=e.code)
                 return
         else:
             self.check_oper_right(right = state.operEdit)
             try:
+                of = func_logic.FuncLogic.instance().query_one_by_path(func['path'])
                 func_logic.FuncLogic.instance().update(id = func['id'], name = func['name'],sort = func['sort'], 
                                 customJson = func['customJson'],remark = func['remark'],user = func['user'])
+                nf = func_logic.FuncLogic.instance().query_one_by_path(func['path'])
+                self.write_oper_log(action = 'funcEdit', targetType = 3, targetID = str(nf['id']), targetName = nf['name'], startStatus = str_helper.json_encode(of), endStatus= str_helper.json_encode(nf))
             except error.RightError as e:
                 self.out_fail(code=e.code)
                 return
@@ -135,8 +140,10 @@ class FuncDelHandler(admin_base_handler.AdminRightBaseHandler):
 
         user = self.get_oper_user()
         try:
+            of = func_logic.FuncLogic.instance().query_one_by_id(id)
             type = func_logic.FuncLogic.instance().delete(id = id, user = user)
             if type:
+                self.write_oper_log(action = 'funcDelete', targetType = 3, targetID = str(of['id']), targetName = of['name'], startStatus = str_helper.json_encode(of), endStatus= '')
                 self.out_ok()
             else:
                 self.out_fail(code = 101)

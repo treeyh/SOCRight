@@ -108,6 +108,8 @@ class AppGotoHandler(base_handler.BaseRightHandler):
 
         gotoUrl = user_logic.UserLogic.instance().get_goto_user_url(
             userID=user['id'], appCode=ps['appCode'], ip=self.get_user_ip(), backUrl='')
+        oper_log_logic.OperLogLogic.instance().add(operID=user['id'], operUserName=user['name'], operRealName=user[
+                                                   'realName'], appCode=ps['appCode'], funcPath='', action='userLogin', targetType=0, targetID='', targetName='', startStatus='', endStatus='', operIp=self.get_user_ip())
         self.redirect(gotoUrl)
 
 

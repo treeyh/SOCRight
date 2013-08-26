@@ -17,6 +17,7 @@ SOCRightConfig = {
 
     'realPath' : '/opt/www/02_SOC/SOCRight/',
     'exportUserPath' : 'app/static/export/user/',
+    'exportOperLogPath' : 'app/static/export/operlog/',
 }
 
 urls = {

@@ -200,6 +200,16 @@ class UserGroupLogic():
             self._del_user_group_cache(userGroupID = userGroupID)
         return result == 0
 
+
+    _get_group_user_sql = '''  select id, userGroupID, userID from sso_user_group_user WHERE id = %s '''
+    _get_group_user_col = str_helper.format_str_to_list_filter_empty('id, userGroupID, userID', ',')
+    ''' 获取用户与用户组绑定 '''
+    def get_group_user(self, id):
+        yz = (id)
+        info = mysql.find_one(self._get_group_user_sql, yz, self._get_group_user_col)
+        return info
+
+
     
     _query_group_roles_sql = '''  select ugu.id, ugu.userGroupID, ugu.roleID, ugu.remark, ugu.isDelete, ugu.creater, 
                             ugu.createTime, ugu.lastUpdater, ugu.lastUpdateTime, u.`name` as roleName from sso_user_group_role as ugu 
@@ -233,8 +243,8 @@ class UserGroupLogic():
                     return True
         isdelete = state.Boole['false']
         yz = (userGroupID, roleID, '', isdelete, user, user)
-        result = mysql.insert_or_update_or_delete(self._bind_group_role_sql, yz)
-        return 0 == result
+        result = mysql.insert_or_update_or_delete(self._bind_group_role_sql, yz, isbackinsertid = True)
+        return result
 
 
     _del_group_role_sql = '''  update sso_user_group_role set isDelete = %s , lastUpdater = %s , lastUpdateTime = now() WHERE id = %s '''
@@ -244,6 +254,16 @@ class UserGroupLogic():
         yz = (isdelete, user, id)
         result = mysql.insert_or_update_or_delete(self._del_group_role_sql, yz)
         return 0 == result
+
+
+
+    _get_group_role_sql = '''  select id, userGroupID, roleID from sso_user_group_role WHERE id = %s '''
+    _get_group_role_col = str_helper.format_str_to_list_filter_empty('id, userGroupID, roleID', ',')
+    ''' 获取用户与用户组绑定 '''
+    def get_group_role(self, id):
+        yz = (id)
+        info = mysql.find_one(self._get_group_role_sql, yz, self._get_group_role_col)
+        return info
     
     
     ''' 查询用户组对应的应用权限 '''

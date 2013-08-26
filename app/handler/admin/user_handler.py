@@ -11,7 +11,7 @@ import config
 import admin_base_handler
 from common import redis_cache, state, error
 from helper import str_helper, http_helper
-from logic import user_logic, role_logic, application_logic, usergroup_logic, department_logic
+from logic import user_logic, role_logic, application_logic, usergroup_logic, department_logic, oper_log_logic
 
 class UserListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
@@ -89,11 +89,14 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         if ps['isedit']:
             self.check_oper_right(right = state.operEdit)
             try:
+                ou = user_logic.UserLogic.instance().query_one_by_name(name = user['name'])
                 info = user_logic.UserLogic.instance().update(id = user['id'], realName = user['realName'], 
                         departmentID = user['departmentID'], parentID = user['parentID'], mobile = user['mobile'], 
                         tel = user['tel'], email = user['email'], status = user['status'], beginDate = user['beginDate'], 
                         endDate = user['endDate'], remark = user['remark'], user = user['user'])
                 if info:
+                    nu = user_logic.UserLogic.instance().query_one_by_name(name = user['name'])
+                    self.write_oper_log(action = 'userEdit', targetType = 1, targetID = str(nu['id']), targetName = nu['name'], startStatus = str_helper.json_encode(ou), endStatus= str_helper.json_encode(nu))
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
@@ -108,6 +111,8 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                             endDate = user['endDate'], status = user['status'], remark = user['remark'], 
                             parentID = user['parentID'], user = user['user'])
                 if info > 0:
+                    nu = user_logic.UserLogic.instance().query_one_by_name(name = user['name'])
+                    self.write_oper_log(action = 'userCreate', targetType = 1, targetID = str(nu['id']), targetName = nu['name'], startStatus = '', endStatus= str_helper.json_encode(nu))
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
@@ -117,6 +122,9 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         self.render('admin/user/add_or_edit.html', **ps)
 
 
+    
+
+
 
 class UserDelHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
@@ -124,8 +132,13 @@ class UserDelHandler(admin_base_handler.AdminRightBaseHandler):
     def post(self):
         id = int(self.get_arg('id', '0'))
         user = self.get_oper_user()
+        ou = user_logic.UserLogic.instance().query_one(id = id)
         type = user_logic.UserLogic.instance().delete(id = id, user = user)
         if type:
+            try:
+                self.write_oper_log(action = 'userDelete', targetType = 1, targetID = str(id), targetName = ou['name'], startStatus = str_helper.json_encode(ou), endStatus= '')
+            except e:
+                print e
             self.out_ok()
         else:
             self.out_fail(code = 101)
@@ -213,6 +226,7 @@ class UserRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
             return
         id = user_logic.UserLogic.instance().bind_user_role(userID = userID, roleID = roleID, user = self.get_oper_user())
         if None != id and id > 0:
+            self.write_oper_log(action = 'userBindRole', targetType = 1, targetID = str(userID), targetName = '', startStatus = str(userID), endStatus= str(roleID))
             self.out_ok()
         else:
             self.out_fail(code = 103005)
@@ -227,8 +241,10 @@ class UserRoleDelHandler(admin_base_handler.AdminRightBaseHandler):
         if id <= 0:
             self.out_fail(code = 103006)
             return
+        ur = user_logic.UserLogic.instance().get_user_role(id = id)
         type = user_logic.UserLogic.instance().del_user_role(id = id, user = self.get_oper_user())
         if type:
+            self.write_oper_log(action = 'userDeleteRole', targetType = 2, targetID = str(id), targetName = '', startStatus = str(ur['userID']), endStatus= str(ur['roleID']))
             self.out_ok()
         else:
             self.out_fail(code = 103006)
@@ -319,6 +335,9 @@ class UserResetPassWordHandler(admin_base_handler.AdminRightBaseHandler):
         if None == newPW or '' == newPW:
             self.out_fail(code = 101)
             return
+
+        ou = user_logic.UserLogic.instance().query_one_by_name(name = name)
+        self.write_oper_log(action = 'userResetPw', targetType = 1, targetID = str(ou['id']), targetName = name, startStatus = '', endStatus= '')
         self.out_ok(data = '{"newpw":"'+newPW+'"}')
 
 

@@ -208,7 +208,7 @@
             $.post('/Admin/Func/AddOrUpdate', { 'appCode': appCode, 'code': code, 'name': name, 'id': id, 'parentID': parentID, 'sort': sort, 'path': path, 'customJson': customJson, 'remark': remark , 'ajax': 'ajax'},
                  function (data) {
                      if (0 == data.code) {
-                         Common.alert('操作成功', '/Admin/Func/List?appCode=' + appCode);
+                         Common.alert('操作成功', '/Admin/Func/Edit?appCode=' + appCode);
                      } else {
                          Common.alert('操作失败,'+data.msg);
                      }

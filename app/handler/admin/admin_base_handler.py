@@ -7,6 +7,7 @@ import config
 from common import state, redis_cache
 from helper import str_helper
 from handler import base_handler
+from logic import oper_log_logic
 
 
 class AdminBaseHandler(base_handler.BaseHandler):    
@@ -95,3 +96,8 @@ class AdminRightBaseHandler(AdminBaseHandler):
                     return True
             return False
         return False
+
+    def write_oper_log(self, action, targetType = 0, targetID = '', targetName = '', startStatus = '', endStatus= ''):
+        u = self.current_user
+        oper_log_logic.OperLogLogic.instance().add(operID=u['id'], operUserName=u['name'], operRealName=u[
+                                                'realName'], appCode='SOCRight', funcPath=self._rightKey, action=action, targetType=targetType, targetID=targetID, targetName=targetName, startStatus=startStatus, endStatus=endStatus, operIp=self.get_user_ip())

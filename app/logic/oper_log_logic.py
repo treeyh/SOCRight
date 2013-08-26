@@ -20,11 +20,10 @@ class OperLogLogic():
 
 
     _query_sql = '''  select id, operID, operUserName, operRealName, appCode, funcPath,
-    						action, targetType, targetID, targetName, startStatus, endStatus, operIp, operTime
-    						from  sso_oper_log as u where 1 = 1  '''
+    						action, targetType, targetID, targetName, startStatus, endStatus, operIp, operTime from  sso_oper_log as u where 1 = 1 '''
     _query_col = str_helper.format_str_to_list_filter_empty(
         'id, operID, operUserName, operRealName, appCode, funcPath, action, targetType, targetID, targetName, startStatus, endStatus, operIp, operTime ', ',')
-    def query(self, operID , operUserName, appCode, funcPath, action, operIp, beginTime, endTime, page, size):
+    def query_page(self, operID , operUserName, appCode, funcPath, action, operIp, beginTime, endTime, page, size):
         sql = self._query_sql
         ps = []
         if None != operID and 0 != operID:
@@ -47,18 +46,20 @@ class OperLogLogic():
             ps.append(operIp)
         if None != beginTime and '' != beginTime:
             sql = sql + ' and u.operTime >= %s '
-            ps.append(beginTime)
+            ps.append(beginTime + ' 00:00:00')
         if None != endTime and '' != endTime:
             sql = sql + ' and u.operTime <= %s '
-            ps.append(endTime)
+            ps.append(endTime+ ' 23:59:59')
 
         yz = tuple(ps)
         sql = sql + ' order by u.id desc '
+        print sql 
+        print yz
         logs = mysql.find_page(sql, yz, self._query_col, page, size)
         if None != logs['data']:
             for r in logs['data']:
-                r['operTime'] = str(r['operTime'])[0:20]
-                r['actionName'] = state.logAction[r['action']]
+                # r['operTime'] = str(r['operTime'])[0:20]
+                r['actionname'] = state.logAction[r['action']]
         return logs
 
 

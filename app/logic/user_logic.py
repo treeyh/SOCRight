@@ -366,6 +366,14 @@ class UserLogic():
         result = mysql.insert_or_update_or_delete(self._del_user_role_sql, yz)
         return 0 == result
 
+    _get_user_role_sql = '''  select id, userID, roleID from sso_user_role WHERE id = %s '''
+    _get_user_role_col = str_helper.format_str_to_list_filter_empty('id, userID, roleID', ',')
+    ''' 获得用户角色信息 '''
+    def get_user_role(self, id):
+        yz = (id)
+        info = mysql.find_one(self._get_user_role_sql, yz, self._get_user_role_col)
+        return info
+
 
     ''' 查询用户权限 '''
     def query_user_app_right(self, userID, appCode):

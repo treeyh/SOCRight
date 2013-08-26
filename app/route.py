@@ -3,7 +3,7 @@
 import os
 from handler import login_handler, test_handler
 from handler.api import user_api_handler
-from handler.admin import main_handler, department_handler, application_handler, func_handler, user_handler, role_handler, usergroup_handler
+from handler.admin import main_handler, department_handler, application_handler, func_handler, user_handler, role_handler, usergroup_handler, oper_log_handler
 
 
 
@@ -88,4 +88,7 @@ route.append((r'^/Admin/UserGroup/RoleBind', usergroup_handler.UserGroupRoleBind
 route.append((r'^/Admin/UserGroup/RoleDel', usergroup_handler.UserGroupRoleDelHandler))
 route.append((r'^/Admin/UserGroup/RightDetail', usergroup_handler.UserGroupRightDetailHandler))
 
+
+route.append((r'^/Admin/OperLog/List', oper_log_handler.OperLogListHandler))
+route.append((r'^/Admin/OperLog/Export', oper_log_handler.OperLogExportHandler))
 

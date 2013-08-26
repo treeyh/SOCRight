@@ -102,7 +102,7 @@ operDel = 8
 
 
 logAction={
-    'userLogin' : u'用户登录',
+    'userLogin' : u'用户登录',#1
     'userActivate' : u'用户激活',
     'userCreate' : u'用户管理_创建',
     'userEdit' : u'用户管理_编辑',
@@ -113,23 +113,26 @@ logAction={
     'userDeleteRole' : u'用户管理_删除绑定角色',
     'userBindGroup' : u'用户管理_绑定用户组',
     'userDeleteGroup' : u'用户管理_删除绑定用户组',
-    'userGroupCreate' : u'用户组管理_创建',
+    'userGroupCreate' : u'用户组管理_创建',#6
+    'userGroupEdit' : u'用户组管理_编辑',
     'userGroupDelete' : u'用户组管理_删除',
     'userGroupBindUser' : u'用户组管理_绑定用户',
     'userGroupDeleteUser' : u'用户组管理_删除绑定用户',
-    'appCreate' : u'应用管理_创建',
+    'userGroupBindRole' : u'用户组管理_绑定角色',
+    'userGroupDeleteRole' : u'用户组管理_删除绑定角色',
+    'appCreate' : u'应用管理_创建',#2
     'appEdit' : u'应用管理_编辑',
-    'appDelete' : u'应用管理_删除',
-    'funcCreate' : u'功能管理_创建',
+    #'appDelete' : u'应用管理_删除',
+    'funcCreate' : u'功能管理_创建',#3
     'funcEdit' : u'功能管理_编辑',
     'funcDelete' : u'功能管理_删除',
-    'roleCreate' : u'角色管理_创建',
+    'roleCreate' : u'角色管理_创建',#5
     'roleEdit' : u'角色管理_编辑',
     'roleDelete' : u'角色管理_删除',
-    'roleBindUserGroup' : u'角色管理_绑定用户组',
-    'roleDeleteUserGroup' : u'角色管理_删除绑定用户组',
-    'roleRight' : u'角色管理_权限设置',
-    'depCreate' : u'部门管理_创建',
+    #'roleBindUserGroup' : u'角色管理_绑定用户组',
+    #'roleDeleteUserGroup' : u'角色管理_删除绑定用户组',
+    'roleSetRight' : u'角色管理_权限设置',
+    'depCreate' : u'部门管理_创建',#4
     'depEdit' : u'部门管理_编辑',
-    'depDelete' : u'部门管理_删除',
+    #'depDelete' : u'部门管理_删除',
 }

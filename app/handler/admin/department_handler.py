@@ -69,10 +69,13 @@ class DepartmentAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             self.check_oper_right(right = state.operEdit)
 
             try:
+                od = department_logic.DepartmentLogic.instance().query_one(dep['id'])
                 info = department_logic.DepartmentLogic.instance().update(id = dep['id'], name = dep['name'], 
                     status = dep['status'], remark = dep['remark'], user = dep['user'])
                 
                 if info:
+                    nd = department_logic.DepartmentLogic.instance().query_one(dep['id'])
+                    self.write_oper_log(action = 'depEdit', targetType = 4, targetID = str(nd['id']), targetName = nd['name'], startStatus = str_helper.json_encode(od), endStatus= str_helper.json_encode(nd))
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
@@ -84,6 +87,8 @@ class DepartmentAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 info = department_logic.DepartmentLogic.instance().add(name = dep['name'],
                         status = dep['status'], remark = dep['remark'], user = dep['user'])
                 if info:
+                    nd = department_logic.DepartmentLogic.instance().query_one_by_name(dep['name'])
+                    self.write_oper_log(action = 'depCreate', targetType = 4, targetID = str(nd['id']), targetName = nd['name'], startStatus = '', endStatus= str_helper.json_encode(nd))
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')

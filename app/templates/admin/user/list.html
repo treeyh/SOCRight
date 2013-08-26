@@ -139,7 +139,7 @@
         del: function (id) {
             if (!confirm("确定删除该记录吗？")) return false;
 
-            $.post('/Admin/User/Del', { 'id': id, 'ajax': 'ajax' },
+            $.post('/Admin/User/Del?' + Math.random(), { 'id': id, 'ajax': 'ajax' },
                  function (data) {
                      if (0 == data.code) {
                          Common.alert('操作成功', window.location.href);
