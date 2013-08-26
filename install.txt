@@ -70,6 +70,7 @@ CREATE TABLE `sso_oper_log` (
   `action` varchar(64) DEFAULT NULL COMMENT '动作',
   `targetType` int(11) DEFAULT NULL COMMENT '目标类型',
   `targetID` varchar(64) DEFAULT NULL COMMENT '目标ID',
+  `targetName` varchar(64) DEFAULT NULL COMMENT '目标名称',
   `startStatus` text COMMENT '原始状态',
   `endStatus` text COMMENT '结束状态',
   `operIp` varchar(64) DEFAULT NULL COMMENT '操作IP',
@@ -82,12 +83,14 @@ CREATE TABLE `sso_oper_log` (
   KEY `index_sso_oper_log_operTime` (`operTime`),
   KEY `index_sso_oper_log_targetID` (`targetID`),
   KEY `index_sso_oper_log_operIp` (`operIp`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+
 
 
 
 权限修改：
-修改用户管理自定义Json配置为：[{"k":"Export","v":"导出用户数据"},{"k":"ResetPassword","v":"重置用户密码"}]
+修改用户管理自定义Json配置为：[{"k":"Export","v":"导出用户数据"},{"k":"ResetPassword","v":"重置用户密码"},{"k":"Lock","v":"锁定用户"}]
 部门管理同级增加操作日志管理功能,编号为：OperLogManager，自定义json配置为：[{"k":"Export","v":"导出操作数据"}]
 
 赋给相应角色权限进行测试
