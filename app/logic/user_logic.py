@@ -165,10 +165,10 @@ class UserLogic():
             sql = sql + ' and u.createTime <= %s '
             ps.append(createTimeEnd)
         if None != lastUpdateTimeBegin and '' != lastUpdateTimeBegin:
-            sql = sql + ' and u.lastLoginTime >= %s '
+            sql = sql + ' and u.lastUpdateTime >= %s '
             ps.append(lastUpdateTimeBegin)
         if None != lastUpdateTimeEnd and '' != lastUpdateTimeEnd:
-            sql = sql + ' and u.lastLoginTime <= %s '
+            sql = sql + ' and u.lastUpdateTime <= %s '
             ps.append(lastUpdateTimeEnd)
         yz = tuple(ps)
         sql = sql + ' order by u.id desc '
