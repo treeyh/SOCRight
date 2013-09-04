@@ -1,4 +1,6 @@
-{% extends "../../base.html" %} {% block head %} {% end %} {% block body %}
+{% extends "../../base.html" %} {% block head %} 
+<script language="JavaScript" type="text/javascript" src="{{ jsDomain }}js/My97DatePicker/WdatePicker.js?{{ version }}"></script>
+{% end %} {% block body %}
 <div class="titlediv">
     <h1>
         {{ title }}</h1>
@@ -44,6 +46,34 @@
                 <input type="hidden" name="mobile" value="{{ user['mobile'] }}" />
                 <input type="hidden" name="tel" value="{{ user['tel'] }}" />
                 <input type="hidden" name="email" value="{{ user['email'] }}" />
+            </td>
+            <td style="text-align: right">                
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 60px;">
+                创建开始时间：
+            </td>
+            <td style="width: 200px;">
+                <input type="text" onfocus="WdatePicker()" value="{{user['createTimeBegin']}}" id="createTimeBegin" name="createTimeBegin" class="Wdate" />
+            </td>
+            <td style="width: 60px;">
+                创建结束时间：
+            </td>
+            <td style="width: 200px;">
+                <input type="text" onfocus="WdatePicker()" value="{{user['createTimeEnd']}}" id="createTimeEnd" name="createTimeEnd" class="Wdate" />
+            </td>
+            <td style="width: 60px;">
+                更新开始时间：
+            </td>
+            <td style="width: 200px;">
+                <input type="text" onfocus="WdatePicker()" value="{{user['lastUpdateTimeBegin']}}" id="lastUpdateTimeBegin" name="lastUpdateTimeBegin" class="Wdate" />
+            </td>
+            <td style="width: 60px;">
+                更新结束时间：
+            </td>
+            <td style="width: 80px;">
+                <input type="text" onfocus="WdatePicker()" value="{{user['lastUpdateTimeEnd']}}" id="lastUpdateTimeEnd" name="lastUpdateTimeEnd" class="Wdate" />
             </td>
             <td style="text-align: right">
                 {% if ExportType == True %}

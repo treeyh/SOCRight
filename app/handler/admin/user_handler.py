@@ -21,7 +21,7 @@ class UserListHandler(admin_base_handler.AdminRightBaseHandler):
 
         ps['ExportType'] = self.check_oper_right_custom_right(self._rightKey, self._exportUserKey)
         ps['LockType'] = self.check_oper_right_custom_right(self._rightKey, self._lockUserKey)
-        user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email'], '')
+        user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email', 'createTimeBegin', 'createTimeEnd', 'lastUpdateTimeBegin', 'lastUpdateTimeEnd'], '')
         user['status'] = int(self.get_arg('status', '0'))
         user['departmentID'] = int(self.get_arg('departmentID', '0'))
         ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
@@ -30,7 +30,7 @@ class UserListHandler(admin_base_handler.AdminRightBaseHandler):
         ps['pagedata'] = user_logic.UserLogic.instance().query_page(id = user['id'],
                     name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
                      tel = user['tel'], mobile = user['mobile'], email = user['email'], 
-                     status = user['status'], page = ps['page'], size = ps['size'])
+                     status = user['status'], createTimeBegin = user['createTimeBegin'], createTimeEnd = user['createTimeEnd'], lastUpdateTimeBegin = user['lastUpdateTimeBegin'], lastUpdateTimeEnd = user['lastUpdateTimeEnd'], page = ps['page'], size = ps['size'])
         ps['user'] = user
         ps = self.format_none_to_empty(ps)
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        

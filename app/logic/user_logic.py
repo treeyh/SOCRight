@@ -130,7 +130,7 @@ class UserLogic():
     _query_col = str_helper.format_str_to_list_filter_empty('id , name, realName, parentID, departmentID, mobile, tel, email, status, lastLoginTime, lastLoginApp, lastLoginIp, loginCount, beginDate, endDate, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, departmentName', ',')
     ''' 分页查询用户信息 '''
     def query_page(self, id = '', name = '', realName = '', departmentID = 0, 
-                        tel = '', mobile = '', email = '', status = 0, page = 1, size = 12):
+                        tel = '', mobile = '', email = '', status = 0, createTimeBegin = 0, createTimeEnd = 0, lastUpdateTimeBegin = 0, lastUpdateTimeEnd = 0, page = 1, size = 12):
         sql = self._query_sql
         isdelete = state.Boole['false']
         ps = [isdelete]
@@ -158,6 +158,18 @@ class UserLogic():
         if '' != mobile:
             sql = sql + ' and u.mobile like %s '
             ps.append('%'+mobile+'%')
+        if None != createTimeBegin and '' != createTimeBegin:
+            sql = sql + ' and u.createTime >= %s '
+            ps.append(createTimeBegin)
+        if None != createTimeEnd and '' != createTimeEnd:
+            sql = sql + ' and u.createTime <= %s '
+            ps.append(createTimeEnd)
+        if None != lastUpdateTimeBegin and '' != lastUpdateTimeBegin:
+            sql = sql + ' and u.lastLoginTime >= %s '
+            ps.append(lastUpdateTimeBegin)
+        if None != lastUpdateTimeEnd and '' != lastUpdateTimeEnd:
+            sql = sql + ' and u.lastLoginTime <= %s '
+            ps.append(lastUpdateTimeEnd)
         yz = tuple(ps)
         sql = sql + ' order by u.id desc '
         users = mysql.find_page(sql, yz, self._query_col, page, size)
