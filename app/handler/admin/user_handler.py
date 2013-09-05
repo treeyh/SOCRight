@@ -59,11 +59,15 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             user['endDate'] = str_helper.get_add_datest(days = 365)
             user['status'] = int(self.get_arg('status', '0'))
         ps['user'] = user
+        ps['roleID'] = self.get_arg('roleID', '')
+        ps['userGroupID'] = self.get_arg('userGroupID', '')
         ps['userStatus'] = state.UserStatus
         ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
 
         ps = self.format_none_to_empty(ps)
         self.render('admin/user/add_or_edit.html', **ps)
+
+
 
     def post(self):
         ps = self.get_page_config('创建用户')
@@ -77,6 +81,8 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         user['parentID'] = int(self.get_arg('parentID', '0'))
         ps['user'] = user
         ps['userStatus'] = state.UserStatus
+        ps['roleID'] = self.get_arg('role', '')
+        ps['userGroupID'] = self.get_arg('userGroup', '')
         ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
         msg = self.check_str_empty_input(user, ['name', 'realName', 'email', 'mobile', 'beginDate', 'endDate'])
         if str_helper.is_null_or_empty(msg) == False:
@@ -97,6 +103,8 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                         endDate = user['endDate'], remark = user['remark'], user = user['user'])
                 if info:
                     nu = user_logic.UserLogic.instance().query_one_by_name(name = user['name'])
+                    self.bind_role(userID = nu['id'], roleID = ps['roleID'], user = user['user'])
+                    self.bind_user_group(userID = nu['id'], userGroupID = ps['userGroupID'], user = user['user'])
                     self.write_oper_log(action = 'userEdit', targetType = 1, targetID = str(nu['id']), targetName = nu['name'], startStatus = str_helper.json_encode(ou), endStatus= str_helper.json_encode(nu))
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
@@ -113,6 +121,8 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                             parentID = user['parentID'], user = user['user'])
                 if info > 0:
                     nu = user_logic.UserLogic.instance().query_one_by_name(name = user['name'])
+                    self.bind_role(userID = nu['id'], roleID = ps['roleID'], user = user['user'])
+                    self.bind_user_group(userID = nu['id'], userGroupID = ps['userGroupID'], user = user['user'])
                     self.write_oper_log(action = 'userCreate', targetType = 1, targetID = str(nu['id']), targetName = nu['name'], startStatus = '', endStatus= str_helper.json_encode(nu))
                     ps = self.get_ok_and_back_params(ps = ps)
                 else:
@@ -121,6 +131,22 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 ps['msg'] = e.msg
         ps = self.format_none_to_empty(ps)
         self.render('admin/user/add_or_edit.html', **ps)
+
+
+    def bind_role(self, userID, roleID, user):
+        if None == roleID or '' == roleID:
+            return
+        id = user_logic.UserLogic.instance().bind_user_role(userID = userID, roleID = roleID, user = self.get_oper_user())
+        if None != id and id > 0:
+            self.write_oper_log(action = 'userBindRole', targetType = 1, targetID = str(userID), targetName = '', startStatus = str(userID), endStatus= str(roleID))
+
+    def bind_user_group(self, userID, userGroupID, user):
+        if None == userGroupID or '' == userGroupID:
+            return
+        id = usergroup_logic.UserGroupLogic.instance().bind_group_user(userGroupID = userGroupID, userID = userID, user = self.get_oper_user())
+        if None != id and id > 0:
+            self.write_oper_log(action = 'userGroupBindUser', targetType = 6, targetID = str(userGroupID), targetName = str(userID), startStatus = str(userGroupID), endStatus= str(userID))
+
 
 
     
@@ -245,7 +271,7 @@ class UserRoleDelHandler(admin_base_handler.AdminRightBaseHandler):
         ur = user_logic.UserLogic.instance().get_user_role(id = id)
         type = user_logic.UserLogic.instance().del_user_role(id = id, user = self.get_oper_user())
         if type:
-            self.write_oper_log(action = 'userDeleteRole', targetType = 2, targetID = str(id), targetName = '', startStatus = str(ur['userID']), endStatus= str(ur['roleID']))
+            self.write_oper_log(action = 'userDeleteRole', targetType = 1, targetID = str(id), targetName = '', startStatus = str(ur['userID']), endStatus= str(ur['roleID']))
             self.out_ok()
         else:
             self.out_fail(code = 103006)
@@ -357,7 +383,7 @@ class UserExportHandler(admin_base_handler.AdminRightBaseHandler):
         reload(sys)                        
         sys.setdefaultencoding('utf-8')    
         ps = self.get_page_config('导出用户Excel')
-        user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email'], '')
+        user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email', 'createTimeBegin', 'createTimeEnd', 'lastUpdateTimeBegin', 'lastUpdateTimeEnd'], '')
         user['status'] = int(self.get_arg('status', '0'))
         user['departmentID'] = int(self.get_arg('departmentID', '0'))
         ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
@@ -366,7 +392,7 @@ class UserExportHandler(admin_base_handler.AdminRightBaseHandler):
         ps['pagedata'] = user_logic.UserLogic.instance().query_page(id = user['id'],
                     name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
                      tel = user['tel'], mobile = user['mobile'], email = user['email'], 
-                     status = user['status'], page = ps['page'], size = 9999)
+                     status = user['status'], createTimeBegin = user['createTimeBegin'], createTimeEnd = user['createTimeEnd'], lastUpdateTimeBegin = user['lastUpdateTimeBegin'], lastUpdateTimeEnd = user['lastUpdateTimeEnd'], page = ps['page'], size = 9999)
 
         users = ps['pagedata']['data']
 
