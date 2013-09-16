@@ -1,0 +1,84 @@
+{% extends "../../base.html" %} {% block head %} 
+<script language="JavaScript" type="text/javascript" src="{{ jsDomain }}js/My97DatePicker/WdatePicker.js?{{ version }}"></script>
+{% end %} {% block body %}
+<div class="titlediv">
+    <h1>
+        {{ title }}</h1>
+</div>
+<div class="inputdiv">    
+</div>
+<div class="showdiv">
+    {% raw pager[0: pager.find('跳转第')] + '</div>' %}
+    <table class="showtable">
+        <tr class="head">
+            <td style="width:20px">
+                编号
+            </td>
+            <td style="width:60px">
+                用户名
+            </td>
+            <td style="width:60px">
+                姓名
+            </td>
+            <td style="width:80px">
+                部门
+            </td>
+            <td style="width:20px">
+                状态
+            </td>
+            <td style="width:50px">
+                创建人
+            </td>
+            <td style="width:60px">
+                创建时间
+            </td>
+            <td style="width:50px">
+                最后更新人
+            </td>
+            <td style="width:60px">
+                最后更新时间
+            </td>
+            <td style="width:150px">
+                操作
+            </td>
+        </tr>
+        {% for r in pagedata['data'] %}
+        <tr>
+            <td>
+                {{ r['id'] }}
+            </td>
+            <td>
+                {{ r['name'] }}
+            </td>
+            <td>
+                {{ r['realName'] }}
+            </td>
+            <td>
+                {{ r['departmentName'] }}
+            </td>
+            <td>
+                {{ r['statusname'] }}
+            </td>
+            <td>
+                {{ r['creater'] }}
+            </td>
+            <td>
+                {{ str(r['createTime'])[0:-3] }}
+            </td>
+            <td>
+                {{ r['lastUpdater'] }}
+            </td>
+            <td>
+                {{ str(r['lastUpdateTime'])[0:-3] }}
+            </td>
+            <td>
+                <a href="{{siteDomain}}Admin/User/RightDetail?userID={{ r['id'] }}">权限预览</a>
+                <a href="{{siteDomain}}Admin/User/RoleList?userID={{ r['id'] }}">所属角色</a>
+                <a href="{{siteDomain}}Admin/User/GroupList?userID={{ r['id'] }}">所属用户组</a>
+            </td>
+        </tr>
+        {% end %}
+    </table>
+    {% raw pager %}
+</div>
+{% end %}

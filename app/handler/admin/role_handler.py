@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import admin_base_handler
 from common import redis_cache, state, error
 from helper import str_helper, http_helper
-from logic import role_logic, application_logic, func_logic
+from logic import role_logic, application_logic, func_logic, user_logic
 
 class RoleListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager'
@@ -223,3 +223,19 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         else:
             ps['msg'] = state.ResultInfo.get(104004, '')
         self.render('admin/role/right_edit.html', **ps)
+
+
+
+class RoleUserListHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
+    _right = state.operView
+    def get(self):
+        ps = self.get_page_config('角色用户列表')
+        role = {}
+        role['id'] = int(self.get_arg('id', '0'))        
+        ps['page'] = int(self.get_arg('page', '1'))
+        ps['pagedata'] = user_logic.UserLogic.instance().query_page_by_roleid(roleID = role['id'], page = ps['page'], size = ps['size'])
+        ps['role'] = role
+        ps = self.format_none_to_empty(ps)
+        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
+        self.render('admin/role/user_list.html', **ps)

@@ -181,6 +181,29 @@ class UserLogic():
         return users
 
 
+    _query_role_all_user_sql = ''' select u.id , u.name, u.realName, u.parentID, u.departmentID, u.mobile, u.tel, u.email, u.status, u.lastLoginTime, 
+ u.lastLoginApp, u.lastLoginIp, u.loginCount, u.beginDate, u.endDate, u.remark, u.isDelete, u.creater, u.createTime, u.lastUpdater, u.lastUpdateTime , d.name as departmentName from sso_user as u 
+left JOIN sso_department as d on d.id = u.departmentID 
+left JOIN sso_user_role as ur on ur.userID = u.id 
+where (ur.roleID = %s and ur.isDelete = %s) or ( exists  
+(select ugu.userID from sso_user_group_user ugu where ugu.userID = u.id and exists  
+(select ugr.id from sso_user_group_role ugr where ugr.id = ugu.userGroupID and ugr.roleID = %s and ugr.isDelete = %s))) 
+and u.isDelete = %s  order by u.departmentID asc , u.id desc '''
+    ''' 分页查询角色下所有用户信息 '''
+    def query_page_by_roleid(self, roleID = '', page = 1, size = 12):
+        sql = self._query_role_all_user_sql
+        isdelete = state.Boole['false']
+        yz = ( roleID, isdelete, roleID, isdelete, isdelete, ) 
+        users = mysql.find_page(sql, yz, self._query_col, page, size)
+        if None != users['data']:
+            for r in users['data']:
+                r['beginDate'] = str(r['beginDate'])[0:10]
+                r['endDate'] = str(r['endDate'])[0:10]
+                r['statusname'] = state.UserStatus.get(r['status'])
+        return users
+    
+
+
     ''' 根据userID查询用户 '''
     def query_one(self, id = 0):
         sql = self._query_sql

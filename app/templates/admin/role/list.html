@@ -94,6 +94,7 @@
                 <a href="{{siteDomain}}Admin/Role/RightEdit?roleID={{ r['id'] }}">权限设置</a>
                 <a href="{{siteDomain}}Admin/Role/RightDetail?roleID={{ r['id'] }}">权限预览</a>
                 <a href="{{siteDomain}}Admin/User/Add?roleID={{r['id']}}">创建该角色用户</a>
+                <a href="{{siteDomain}}Admin/Role/UserList?id={{r['id']}}">查看该角色用户</a>
                 <a href="{{siteDomain}}Admin/Role/Detail?id={{ r['id'] }}">详情</a>
                 <a href="{{siteDomain}}Admin/Role/Edit?id={{ r['id'] }}">编辑</a>
                 <a href="javascript:" onclick="Role.del('{{r['id']}}')">删除</a>
