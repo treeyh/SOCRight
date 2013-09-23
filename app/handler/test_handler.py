@@ -15,6 +15,7 @@ import base_handler
 
 class TestHandler(base_handler.BaseHandler):
     def get(self):
+
         self.out_ok('','')
     
     def post(self):

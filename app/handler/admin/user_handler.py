@@ -18,7 +18,7 @@ class UserListHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
     def get(self):
         ps = self.get_page_config('用户列表')
-
+        
         ps['ExportType'] = self.check_oper_right_custom_right(self._rightKey, self._exportUserKey)
         ps['LockType'] = self.check_oper_right_custom_right(self._rightKey, self._lockUserKey)
         user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email', 'createTimeBegin', 'createTimeEnd', 'lastUpdateTimeBegin', 'lastUpdateTimeEnd'], '')
@@ -42,6 +42,9 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _right = 0
     def get(self):
         ps = self.get_page_config('创建用户')
+
+        print self.request.headers.get('Referer','')
+
         ps['ResetPasswordType'] = self.check_oper_right_custom_right(self._rightKey, self._resetPwKey)
         if ps['isedit']:
             self.check_oper_right(right = state.operEdit)
