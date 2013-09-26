@@ -16,7 +16,7 @@ class DepartmentListHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config('部门列表')
+        ps = self.get_page_config(title = '部门列表')
         dep = {}
         dep['name'] = self.get_arg('name', '')
         dep['status'] = int(self.get_arg('status', '0'))
@@ -32,7 +32,7 @@ class DepartmentAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _right = 0
 
     def get(self):
-        ps = self.get_page_config('创建部门')
+        ps = self.get_page_config(title = '创建部门', refUrl = config.SOCRightConfig['siteDomain'] + 'Admin/Department/List')
         if ps['isedit']:
             self.check_oper_right(right = state.operEdit)
 
@@ -41,7 +41,6 @@ class DepartmentAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             dep = department_logic.DepartmentLogic.instance().query_one(id = id)
             if None == dep:
                 ps['msg'] = state.ResultInfo.get(1002, '')
-                ps['gotoUrl'] = ps['siteDomain'] + 'Admin/Department/List'
                 dep = {'id':'','name':'','remark':'','status':1,'creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         else:
             self.check_oper_right(right = state.operAdd)
@@ -51,10 +50,10 @@ class DepartmentAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         self.render('admin/department/add_or_edit.html', **ps)
 
     def post(self):
-        ps = self.get_page_config('创建部门')
+        ps = self.get_page_config(title = '创建部门')        
         if ps['isedit']:
             ps['title'] = self.get_page_title('编辑部门')
-
+        
         dep = self.get_args(['name', 'remark'], '')
         dep['status'] = int(self.get_arg('status', '0'))
         dep['id'] = int(self.get_arg('id', '0'))
@@ -76,7 +75,7 @@ class DepartmentAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 if info:
                     nd = department_logic.DepartmentLogic.instance().query_one(dep['id'])
                     self.write_oper_log(action = 'depEdit', targetType = 4, targetID = str(nd['id']), targetName = nd['name'], startStatus = str_helper.json_encode(od), endStatus= str_helper.json_encode(nd))
-                    ps = self.get_ok_and_back_params(ps = ps)
+                    ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -89,7 +88,7 @@ class DepartmentAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 if info:
                     nd = department_logic.DepartmentLogic.instance().query_one_by_name(dep['name'])
                     self.write_oper_log(action = 'depCreate', targetType = 4, targetID = str(nd['id']), targetName = nd['name'], startStatus = '', endStatus= str_helper.json_encode(nd))
-                    ps = self.get_ok_and_back_params(ps = ps)
+                    ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -115,7 +114,7 @@ class DepartmentDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.DepartmentManager'
     _right = state.operView
     def get(self):
-        ps = self.get_page_config('部门详情')
+        ps = self.get_page_config(title = '部门详情')
         id = int(self.get_arg('id', '0'))
         dep = department_logic.DepartmentLogic.instance().query_one(id = id)
         if None == dep:

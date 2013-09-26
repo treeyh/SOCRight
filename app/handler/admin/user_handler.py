@@ -17,7 +17,7 @@ class UserListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
     _right = state.operView
     def get(self):
-        ps = self.get_page_config('用户列表')
+        ps = self.get_page_config(title = '用户列表')
         
         ps['ExportType'] = self.check_oper_right_custom_right(self._rightKey, self._exportUserKey)
         ps['LockType'] = self.check_oper_right_custom_right(self._rightKey, self._lockUserKey)
@@ -33,7 +33,7 @@ class UserListHandler(admin_base_handler.AdminRightBaseHandler):
                      status = user['status'], createTimeBegin = user['createTimeBegin'], createTimeEnd = user['createTimeEnd'], lastUpdateTimeBegin = user['lastUpdateTimeBegin'], lastUpdateTimeEnd = user['lastUpdateTimeEnd'], page = ps['page'], size = ps['size'])
         ps['user'] = user
         ps = self.format_none_to_empty(ps)
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
+        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])
         self.render('admin/user/list.html', **ps)
 
 
@@ -41,9 +41,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
     _right = 0
     def get(self):
-        ps = self.get_page_config('创建用户')
-
-        print self.request.headers.get('Referer','')
+        ps = self.get_page_config(title = '创建用户', refUrl = config.SOCRightConfig['siteDomain'] + 'Admin/User/List')
 
         ps['ResetPasswordType'] = self.check_oper_right_custom_right(self._rightKey, self._resetPwKey)
         if ps['isedit']:
@@ -53,7 +51,6 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             user = user_logic.UserLogic.instance().query_one(id)
             if None == user:
                 ps['msg'] = state.ResultInfo.get(103002, '')
-                ps['gotoUrl'] = ps['siteDomain'] + 'Admin/User/List'
                 user = {'id':'', 'name':'', 'departmentID': '', 'realName':'','beginDate':'','endDate':'', 'passWord':'','mobile':'','tel':'','email':'','status':1,'lastLoginTime':'','lastLoginApp':'','lastLoginIp':'','remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         else:
             self.check_oper_right(right = state.operAdd)
@@ -73,7 +70,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
 
 
     def post(self):
-        ps = self.get_page_config('创建用户')
+        ps = self.get_page_config(title = '创建用户')
         ps['ResetPasswordType'] = self.check_oper_right_custom_right(self._rightKey, self._resetPwKey)
         if ps['isedit']:
             ps['title'] = self.get_page_title('编辑用户')
@@ -109,7 +106,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                     self.bind_role(userID = nu['id'], roleID = ps['roleID'], user = user['user'])
                     self.bind_user_group(userID = nu['id'], userGroupID = ps['userGroupID'], user = user['user'])
                     self.write_oper_log(action = 'userEdit', targetType = 1, targetID = str(nu['id']), targetName = nu['name'], startStatus = str_helper.json_encode(ou), endStatus= str_helper.json_encode(nu))
-                    ps = self.get_ok_and_back_params(ps = ps)
+                    ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -127,7 +124,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                     self.bind_role(userID = nu['id'], roleID = ps['roleID'], user = user['user'])
                     self.bind_user_group(userID = nu['id'], userGroupID = ps['userGroupID'], user = user['user'])
                     self.write_oper_log(action = 'userCreate', targetType = 1, targetID = str(nu['id']), targetName = nu['name'], startStatus = '', endStatus= str_helper.json_encode(nu))
-                    ps = self.get_ok_and_back_params(ps = ps)
+                    ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -177,7 +174,7 @@ class UserDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
     _right = state.operView
     def get(self):
-        ps = self.get_page_config('用户详情')
+        ps = self.get_page_config(title = '用户详情')
         id = int(self.get_arg('id', '0'))
         user = user_logic.UserLogic.instance().query_one(id)
         if None == user:
@@ -196,7 +193,7 @@ class UserRoleListHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config('用户绑定角色列表')
+        ps = self.get_page_config(title = '用户绑定角色列表')
         ps['userID'] = int(self.get_arg('userID', '0'))
         if 0 == ps['userID']:
             ps['msg'] = state.ResultInfo.get(105003, '')
@@ -220,7 +217,7 @@ class UserRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager.UserBindRoleManager'
     _right = state.operEdit
     def get(self):
-        ps = self.get_page_config('新增角色绑定用户')
+        ps = self.get_page_config(title = '新增角色绑定用户')
         ps['userID'] = int(self.get_arg('userID', '0'))
         if 0 == ps['userID']:
             ps['msg'] = state.ResultInfo.get(103003, '')
@@ -284,7 +281,7 @@ class UserRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager.UserBindRoleManager'
     _right = state.operView
     def get(self):
-        ps = self.get_page_config('用户应用权限信息')
+        ps = self.get_page_config(title = '用户应用权限信息')
         ps['userID'] = int(self.get_arg('userID', '0'))
         if 0 == ps['userID']:
             ps['msg'] = state.ResultInfo.get(103007, '')
@@ -323,7 +320,7 @@ class UserUserGroupListHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config('用户绑定用户组列表')
+        ps = self.get_page_config(title = '用户绑定用户组列表')
         ps['userID'] = int(self.get_arg('userID', '0'))
         if 0 == ps['userID']:
             ps['msg'] = state.ResultInfo.get(103007, '')
@@ -348,7 +345,7 @@ class UserResetPassWordHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def post(self):
-        # ps = self.get_page_config('重置用户密码')
+        # ps = self.get_page_config(title = '重置用户密码')
         name = self.get_arg('name', '')
 
         type = self.check_oper_right_custom_right(self._rightKey, self._resetPwKey)
@@ -385,7 +382,7 @@ class UserExportHandler(admin_base_handler.AdminRightBaseHandler):
         import sys
         reload(sys)                        
         sys.setdefaultencoding('utf-8')    
-        ps = self.get_page_config('导出用户Excel')
+        ps = self.get_page_config(title = '导出用户Excel')
         user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email', 'createTimeBegin', 'createTimeEnd', 'lastUpdateTimeBegin', 'lastUpdateTimeEnd'], '')
         user['status'] = int(self.get_arg('status', '0'))
         user['departmentID'] = int(self.get_arg('departmentID', '0'))

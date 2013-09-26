@@ -9,9 +9,12 @@
             <td style="width: 100px;">
                 用户：
             </td>
-            <td colspan="2">
+            <td>
                 <label id="userName" class="red">{{userName}}--{{userRealName}}</label>
                 <input type="hidden" id="userID" name="userID" value="{{userID}}" />
+            </td>
+            <td style="width: 50px;">
+                <a href="{{refUrl}}" id="aback">返回</a>
             </td>
         </tr>
         <tr>
@@ -115,7 +118,8 @@
         selectRoleApp: function () {
             var userID = $('#userID').val();
             var appCode = $('#apps').val();
-            window.location.href = '{{siteDomain}}Admin/User/RightDetail?userID=' + userID + '&appCode=' + appCode;
+            window.location.href = '{{siteDomain}}Admin/User/RightDetail?userID=' + userID + '&appCode=' + appCode + 
+                                    '&refUrl='+encodeURIComponent($('#aback')[0].href);
         }
     };
 

@@ -16,7 +16,7 @@ class UserGroupListHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config('用户组列表')
+        ps = self.get_page_config(title = '用户组列表')
         userGroup = self.get_args(['id', 'name'], '')
         userGroup['status'] = int(self.get_arg('status', '0'))
         ps['page'] = int(self.get_arg('page', '1'))
@@ -31,14 +31,13 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager'
     _right = 0
     def get(self):
-        ps = self.get_page_config('创建用户组')
+        ps = self.get_page_config(title = '创建用户组', refUrl = config.SOCRightConfig['siteDomain'] + 'Admin/UserGroup/List')
         if ps['isedit']:
             ps['title'] = self.get_page_title('编辑用户组')
             id = int(self.get_arg('id', '0'))
             usergroup = usergroup_logic.UserGroupLogic.instance().query_one(id)
             if None == usergroup:
-                ps['msg'] = state.ResultInfo.get(105002, '')
-                ps['gotoUrl'] =  ps['siteDomain'] + '/Admin/Role/List'
+                ps['msg'] = state.ResultInfo.get(105002, '')                
                 role = {'id':'','name':'','status':1,'remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         else:
             usergroup = self.get_args(['id', 'name', 'remark'], '')
@@ -48,13 +47,14 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         self.render('admin/usergroup/add_or_edit.html', **ps)
 
     def post(self):
-        ps = self.get_page_config('创建用户组')
+        ps = self.get_page_config(title = '创建用户组')
         if ps['isedit']:
             ps['title'] = self.get_page_title('编辑用户组')
         
         usergroup = self.get_args(['id', 'name', 'remark'], '')
         usergroup['status'] = int(self.get_arg('status', '0'))
         msg = self.check_str_empty_input(usergroup, ['name'])
+        ps['usergroup'] = usergroup
         if str_helper.is_null_or_empty(msg) == False:
             ps['msg'] = msg
             ps = self.format_none_to_empty(ps)
@@ -70,7 +70,7 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 if info:
                     ng = usergroup_logic.UserGroupLogic.instance().query_one(usergroup['id'])
                     self.write_oper_log(action = 'userGroupEdit', targetType = 6, targetID = str(ng['id']), targetName = ng['name'], startStatus = str_helper.json_encode(og), endStatus= str_helper.json_encode(ng))
-                    ps = self.get_ok_and_back_params(ps = ps)
+                    ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -82,7 +82,7 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 if info > 0:
                     ng = usergroup_logic.UserGroupLogic.instance().query_one_by_name(usergroup['name'])
                     self.write_oper_log(action = 'userGroupCreate', targetType = 6, targetID = str(ng['id']), targetName = ng['name'], startStatus = '', endStatus= str_helper.json_encode(ng))
-                    ps = self.get_ok_and_back_params(ps = ps)
+                    ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -111,7 +111,7 @@ class UserGroupDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager'
     _right = state.operView
     def get(self):
-        ps = self.get_page_config('用户组详情')
+        ps = self.get_page_config(title = '用户组详情')
         id = int(self.get_arg('id', '0'))
         usergroup = usergroup_logic.UserGroupLogic.instance().query_one(id)
         if None == usergroup:
@@ -128,7 +128,7 @@ class UserGroupUserListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindUserManager'
     _right = state.operView
     def get(self):
-        ps = self.get_page_config('用户组绑定用户列表')
+        ps = self.get_page_config(title = '用户组绑定用户列表')
         ps['userGroupID'] = int(self.get_arg('id', '0'))
         userGroups = usergroup_logic.UserGroupLogic.instance().query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
@@ -155,7 +155,7 @@ class UserGroupUserBindHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operEdit
 
     def get(self):
-        ps = self.get_page_config('新增用户绑定用户组')
+        ps = self.get_page_config(title = '新增用户绑定用户组')
         ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
         userGroups = usergroup_logic.UserGroupLogic.instance().query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
@@ -221,7 +221,7 @@ class UserGroupRoleListHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config('用户组绑定角色列表')
+        ps = self.get_page_config(title = '用户组绑定角色列表')
         ps['userGroupID'] = int(self.get_arg('id', '0'))
         userGroups = usergroup_logic.UserGroupLogic.instance().query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
@@ -247,7 +247,7 @@ class UserGroupRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operEdit
 
     def get(self):
-        ps = self.get_page_config('新增角色绑定用户组')
+        ps = self.get_page_config(title = '新增角色绑定用户组')
         ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
         userGroups = usergroup_logic.UserGroupLogic.instance().query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
@@ -313,7 +313,7 @@ class UserGroupRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config('用户组应用权限信息')
+        ps = self.get_page_config(title = '用户组应用权限信息')
         ps['userGroupID'] = int(self.get_arg('id', '0'))
         if 0 == ps['userGroupID']:
             ps['msg'] = state.ResultInfo.get(105010, '')

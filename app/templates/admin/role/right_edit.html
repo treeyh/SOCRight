@@ -85,6 +85,7 @@
                 <td colspan="2" style="padding-left: 120px; height: 40px;">
                     <input type="submit" style="width: 100px; height: 30px; line-height: 18px; cursor: pointer;margin-right: 3px;" {% if len(funcs) == 0%}disabled{% end %}  value="提交" />
                     <input type="button" style="width: 100px; height: 30px; line-height: 18px; cursor: pointer;margin-right: 3px;" onclick="window.history.go(-1);" value="返回" />
+                <input type="hidden" value="{{refUrl}}" name="refUrl" /> 
                 </td>
             </tr>
         </table>

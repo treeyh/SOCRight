@@ -16,7 +16,7 @@ class ApplicationListHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config('应用列表')
+        ps = self.get_page_config(title = '应用列表')
         app = self.get_args(['code', 'name'], '')
         app['status'] = int(self.get_arg('status', '0'))
         ps['page'] = int(self.get_arg('page', '1'))
@@ -31,7 +31,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _right = 0
 
     def get(self):
-        ps = self.get_page_config('创建应用')
+        ps = self.get_page_config(title = '创建应用', refUrl = config.SOCRightConfig['siteDomain'] + 'Admin/Application/List')
         if ps['isedit']:
             self.check_oper_right(right = state.operEdit)
 
@@ -39,9 +39,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             code = self.get_arg('code', '')
             app = application_logic.ApplicationLogic.instance().query_one(code)
             if None == app:
-                ps['msg'] = state.ResultInfo.get(1002, '')
-                # ps['gotoUrl'] = ps['siteDomain'] + 'Admin/Application/List'
-                ps['goLevel'] = '-2'
+                ps['msg'] = state.ResultInfo.get(1002, '')                
                 app = {'code':'','name':'','developer':'','url':'','remark':'','status':1,'creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         else:
             self.check_oper_right(right = state.operAdd)
@@ -51,7 +49,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         self.render('admin/application/add_or_edit.html', **ps)
 
     def post(self):
-        ps = self.get_page_config('创建应用')
+        ps = self.get_page_config(title = '创建应用')
         if ps['isedit']:
             ps['title'] = self.get_page_title('编辑应用')
 
@@ -78,7 +76,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 if info:
                     na = application_logic.ApplicationLogic.instance().query_one(app['code'])
                     self.write_oper_log(action = 'appEdit', targetType = 2, targetID = oa['code'], targetName = oa['name'], startStatus = str_helper.json_encode(oa), endStatus= str_helper.json_encode(na))
-                    ps = self.get_ok_and_back_params(ps = ps)
+                    ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -91,7 +89,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 if info:
                     na = application_logic.ApplicationLogic.instance().query_one(app['code'])
                     self.write_oper_log(action = 'appCreate', targetType = 2, targetID = na['code'], targetName = na['name'], startStatus = '', endStatus= str_helper.json_encode(na))
-                    ps = self.get_ok_and_back_params(ps = ps)
+                    ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -112,12 +110,13 @@ class ApplicationDelHandler(admin_base_handler.AdminRightBaseHandler):
             self.out_ok()
         else:
             self.out_fail(code = 101)
+            
 
 class ApplicationDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.AppManager'
     _right = state.operView
     def get(self):
-        ps = self.get_page_config('应用详情')
+        ps = self.get_page_config(title = '应用详情')
         code = self.get_arg('code', '')
         app = application_logic.ApplicationLogic.instance().query_one(code)
         if None == app:

@@ -16,7 +16,7 @@ class RoleListHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config('角色列表')
+        ps = self.get_page_config(title = '角色列表')
         role = self.get_args(['id', 'name'], '')
         role['status'] = int(self.get_arg('status', '0'))
         ps['page'] = int(self.get_arg('page', '1'))
@@ -30,7 +30,7 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager'
     _right = 0
     def get(self):
-        ps = self.get_page_config('创建角色')
+        ps = self.get_page_config(title = '创建角色', refUrl = config.SOCRightConfig['siteDomain'] + 'Admin/Role/List')
         if ps['isedit']:
             self.check_oper_right(right = state.operEdit)
             ps['title'] = self.get_page_title('编辑角色')
@@ -38,7 +38,6 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             role = role_logic.RoleLogic.instance().query_one(id)
             if None == role:
                 ps['msg'] = state.ResultInfo.get(104002, '')
-                ps['gotoUrl'] =  ps['siteDomain'] + 'Admin/Role/List'
                 role = {'id':'','name':'','status':1,'remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         else:
             self.check_oper_right(right = state.operAdd)
@@ -49,7 +48,7 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         self.render('admin/role/add_or_edit.html', **ps)
 
     def post(self):
-        ps = self.get_page_config('创建角色')
+        ps = self.get_page_config(title = '创建角色')
         if ps['isedit']:
             ps['title'] = self.get_page_title('编辑角色')
 
@@ -73,7 +72,7 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 if info:                    
                     nro = role_logic.RoleLogic.instance().query_one(role['id'])
                     self.write_oper_log(action = 'roleEdit', targetType = 5, targetID = str(nro['id']), targetName = nro['name'], startStatus = str_helper.json_encode(oro), endStatus= str_helper.json_encode(nro))
-                    ps = self.get_ok_and_back_params(ps = ps)
+                    ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -86,7 +85,7 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 if info > 0:
                     nro = role_logic.RoleLogic.instance().query_one_by_name(role['name'])
                     self.write_oper_log(action = 'roleEdit', targetType = 5, targetID = str(nro['id']), targetName = nro['name'], startStatus = '', endStatus= str_helper.json_encode(nro))
-                    ps = self.get_ok_and_back_params(ps = ps)
+                    ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
                     ps['msg'] = state.ResultInfo.get(101, '')
             except error.RightError as e:
@@ -114,7 +113,7 @@ class RoleDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager'
     _right = state.operView
     def get(self):
-        ps = self.get_page_config('角色详情')
+        ps = self.get_page_config(title = '角色详情')
         id = int(self.get_arg('id', '0'))
         role = role_logic.RoleLogic.instance().query_one(id)
         if None == role:
@@ -131,7 +130,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config('编辑角色权限')
+        ps = self.get_page_config(title = '编辑角色权限', refUrl = config.SOCRightConfig['siteDomain'] + 'Admin/Role/List')
         ps['roleID'] = int(self.get_arg('roleID', '0'))
         ps['appCode'] = self.get_arg('appCode', '')
         ps['roles'] = []
@@ -139,7 +138,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         roles = role_logic.RoleLogic.instance().query_all_by_active()
         if None == roles or len(roles) == 0:
             ps['msg'] = state.ResultInfo.get(104003, '')
-            ps['gotoUrl'] = ps['siteDomain'] +'Admin/Role/Add'
+            ps['refUrl'] = ps['siteDomain'] +'Admin/Role/Add'
             self.render('admin/role/right_edit.html', **ps)
             return
         else:
@@ -148,7 +147,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         apps = application_logic.ApplicationLogic.instance().query_all_by_active()
         if None == apps or len(apps) == 0:
             ps['msg'] = state.ResultInfo.get(104003, '')
-            ps['gotoUrl'] = ps['siteDomain'] +'Admin/Application/Add'
+            ps['refUrl'] = ps['siteDomain'] +'Admin/Application/Add'
             self.render('admin/role/right_edit.html', **ps)
             return
         else:
@@ -174,7 +173,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
 
     def post(self):
         self.check_oper_right(right = state.operEdit)
-        ps = self.get_page_config('编辑角色权限')
+        ps = self.get_page_config(title = '编辑角色权限')
         ps['roleID'] = int(self.get_arg('roleID', '0'))
         ps['appCode'] = self.get_arg('appCode', '')
         funcs = func_logic.FuncLogic.instance().query_all_by_app(ps['appCode'])     #获得应用下的所有功能
@@ -219,7 +218,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
 
         if type:
             self.write_oper_log(action = 'roleSetRight', targetType = 5, targetID = str(ps['roleID']), targetName = ps['appCode'], startStatus = '', endStatus= str_helper.json_encode(rights))
-            ps = self.get_ok_and_back_params(ps = ps)
+            ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
         else:
             ps['msg'] = state.ResultInfo.get(104004, '')
         self.render('admin/role/right_edit.html', **ps)
@@ -230,7 +229,7 @@ class RoleUserListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
     _right = state.operView
     def get(self):
-        ps = self.get_page_config('角色用户列表')
+        ps = self.get_page_config(title = '角色用户列表')
         role = {}
         role['id'] = int(self.get_arg('id', '0'))        
         ps['page'] = int(self.get_arg('page', '1'))

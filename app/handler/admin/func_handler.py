@@ -19,7 +19,7 @@ class FuncListHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config('应用功能列表')
+        ps = self.get_page_config(title = '应用功能列表')
         apps = application_logic.ApplicationLogic.instance().query_all_by_active()
         if None == apps or len(apps) <= 0:
             ps['msg'] = state.ResultInfo.get(101004, '')
@@ -44,7 +44,7 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.FuncManager'
     _right = 0
     def get(self):
-        ps = self.get_page_config('应用功能编辑')
+        ps = self.get_page_config(title = '应用功能编辑')
         apps = application_logic.ApplicationLogic.instance().query_all_by_active()
         if None == apps or len(apps) <= 0:
             ps['msg'] = state.ResultInfo.get(101004, '')

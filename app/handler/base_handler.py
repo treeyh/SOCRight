@@ -43,9 +43,9 @@ class BaseHandler(tornado.web.RequestHandler):
             ps['msg'] = ''
         return ps
 
-    def get_ok_and_back_params(self, ps):
+    def get_ok_and_back_params(self, ps, refUrl = ''):
         ps['msg'] = state.ResultInfo.get(0, '')
-        ps['goLevel'] = '-2'
+        ps['gotoUrl'] = refUrl
         return ps
 
     def get_header(self, name, default=None): 

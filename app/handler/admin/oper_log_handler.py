@@ -17,7 +17,7 @@ class OperLogListHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config('操作日志列表')
+        ps = self.get_page_config(title = '操作日志列表')
         ps['ExportType'] = self.check_oper_right_custom_right(self._rightKey, self._exportUserKey)
         operLog = self.get_args(['operUserName', 'action', 'beginTime', 'endTime'], '')
         operLog['operID'] = int(self.get_arg('operID', '0'))
@@ -43,7 +43,7 @@ class OperLogExportHandler(admin_base_handler.AdminRightBaseHandler):
         import sys
         reload(sys)                        
         sys.setdefaultencoding('utf-8')   
-        ps = self.get_page_config('导出操作日志列表')
+        ps = self.get_page_config(title = '导出操作日志列表')
 
         operLog = self.get_args(['operUserName', 'action', 'beginTime', 'endTime'], '')
         operLog['operID'] = int(self.get_arg('operID', '0'))

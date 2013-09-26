@@ -22,9 +22,18 @@ class AdminBaseHandler(base_handler.BaseHandler):
     def is_edit(self):        
         return 'edit' in self.request.path.lower()
 
-    def get_page_config(self, title):
+    def get_page_config(self, title, refUrl = ''):
         ps = base_handler.BaseHandler.get_page_config(self, title)
         ps['isedit'] = self.is_edit()
+        ru = self.get_arg('refUrl', '')
+        if None != ru and '' != ru:
+            ps['refUrl'] = ru
+        else:
+            ru = self.request.headers.get('Referer', refUrl)
+            if None != ru and '' != ru and '/Admin/Main' not in ru:
+                ps['refUrl'] = ru
+            else:
+                ps['refUrl'] = refUrl
         return ps
 
     def get_oper_user(self):

@@ -20,7 +20,7 @@ class MainHandler(admin_base_handler.AdminBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config('后台')
+        ps = self.get_page_config(title = '后台')
         token = self.get_args(['token'], '')
         ps['token'] = token['token']
         user = self.current_user        
@@ -61,5 +61,5 @@ class LogoutHandler(admin_base_handler.AdminBaseHandler):
 
 class NotRightHandler(admin_base_handler.AdminBaseHandler):
     def get(self):
-        ps = self.get_page_config('无该操作权限')
+        ps = self.get_page_config(title = '无该操作权限')
         self.render('admin/not_right.html', **ps)
