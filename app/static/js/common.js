@@ -15,6 +15,12 @@ var Common = {
             Common.alert('填入数量不符合要求.');
             return;
         }
-        window.location.href = url+p;
+        url = url + p;
+        if($('#aback').length > 0 && url.indexOf('refUrl=') < 0){
+            var aback = $('#aback')[0].href;
+            url = "&refUrl="+enencodeURIComponent(aback);
+        }
+
+        window.location.href = url;
     }
 };
