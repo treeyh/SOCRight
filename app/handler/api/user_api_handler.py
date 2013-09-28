@@ -35,7 +35,7 @@ class UserByUserGroupHandler(base_handler.BaseHandler):
             self.out_fail(code = 1001, msg = 'userGroupID')
             return
 
-        json = usergroup_logic.UserGroupLogic.instance().query_users_by_user_group_cache(userGroupID = userGroupID)
+        json = usergroup_logic.query_users_by_user_group_cache(userGroupID = userGroupID)
         self.out_ok(data = json)
         return
 
@@ -47,7 +47,7 @@ class UserByUserNameHandler(base_handler.BaseHandler):
             self.out_fail(code = 1001, msg = 'userName')
             return
 
-        user = user_logic.UserLogic.instance().query_user_by_name_cache(name = userName)
+        user = user_logic.query_user_by_name_cache(name = userName)
         if None == users:
             self.out_ok(data = '{}')
             return
@@ -69,7 +69,7 @@ class UsersByUserNamesHandler(base_handler.BaseHandler):
         for name in names:
             if str_helper.is_null_or_empty(name):
                 continue
-            user = user_logic.UserLogic.instance().query_user_by_name_cache(name = name)    
+            user = user_logic.query_user_by_name_cache(name = name)    
             if None != user:
                 users.append(user)
                 

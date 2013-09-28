@@ -20,7 +20,7 @@ class RoleListHandler(admin_base_handler.AdminRightBaseHandler):
         role = self.get_args(['id', 'name'], '')
         role['status'] = int(self.get_arg('status', '0'))
         ps['page'] = int(self.get_arg('page', '1'))
-        ps['pagedata'] = role_logic.RoleLogic.instance().query_page(id = role['id'], 
+        ps['pagedata'] = role_logic.query_page(id = role['id'], 
                     name = role['name'], status = role['status'], page = ps['page'], size = ps['size'])
         ps['role'] = role
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
@@ -35,7 +35,7 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             self.check_oper_right(right = state.operEdit)
             ps['title'] = self.get_page_title('编辑角色')
             id = int(self.get_arg('id', '0'))
-            role = role_logic.RoleLogic.instance().query_one(id)
+            role = role_logic.query_one(id)
             if None == role:
                 ps['msg'] = state.ResultInfo.get(104002, '')
                 role = {'id':'','name':'','status':1,'remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
@@ -66,11 +66,11 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         if ps['isedit']:
             self.check_oper_right(right = state.operEdit)
             try:
-                oro = role_logic.RoleLogic.instance().query_one(role['id'])
-                info = role_logic.RoleLogic.instance().update(id = role['id'], name = role['name'], 
+                oro = role_logic.query_one(role['id'])
+                info = role_logic.update(id = role['id'], name = role['name'], 
                         status = role['status'], remark = role['remark'], user = role['user'])                
                 if info:                    
-                    nro = role_logic.RoleLogic.instance().query_one(role['id'])
+                    nro = role_logic.query_one(role['id'])
                     self.write_oper_log(action = 'roleEdit', targetType = 5, targetID = str(nro['id']), targetName = nro['name'], startStatus = str_helper.json_encode(oro), endStatus= str_helper.json_encode(nro))
                     ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
@@ -80,10 +80,10 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         else:
             self.check_oper_right(right = state.operAdd)
             try:
-                info = role_logic.RoleLogic.instance().add(name = role['name'], 
+                info = role_logic.add(name = role['name'], 
                         status = role['status'], remark = role['remark'], user = role['user'])
                 if info > 0:
-                    nro = role_logic.RoleLogic.instance().query_one_by_name(role['name'])
+                    nro = role_logic.query_one_by_name(role['name'])
                     self.write_oper_log(action = 'roleEdit', targetType = 5, targetID = str(nro['id']), targetName = nro['name'], startStatus = '', endStatus= str_helper.json_encode(nro))
                     ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
@@ -101,8 +101,8 @@ class RoleDelHandler(admin_base_handler.AdminRightBaseHandler):
     def post(self):
         id = int(self.get_arg('id', '0'))
         user = self.get_oper_user()
-        oro = role_logic.RoleLogic.instance().query_one(id)
-        type = role_logic.RoleLogic.instance().delete(id = id, user = user)
+        oro = role_logic.query_one(id)
+        type = role_logic.delete(id = id, user = user)
         if type:
             self.write_oper_log(action = 'roleDelete', targetType = 5, targetID = str(oro['id']), targetName = oro['name'], startStatus = str_helper.json_encode(oro), endStatus= '')
             self.out_ok()
@@ -115,7 +115,7 @@ class RoleDetailHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config(title = '角色详情')
         id = int(self.get_arg('id', '0'))
-        role = role_logic.RoleLogic.instance().query_one(id)
+        role = role_logic.query_one(id)
         if None == role:
             ps['msg'] = state.ResultInfo.get(104002, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/Role/List'
@@ -135,7 +135,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         ps['appCode'] = self.get_arg('appCode', '')
         ps['roles'] = []
         ps['apps'] = []
-        roles = role_logic.RoleLogic.instance().query_all_by_active()
+        roles = role_logic.query_all_by_active()
         if None == roles or len(roles) == 0:
             ps['msg'] = state.ResultInfo.get(104003, '')
             ps['refUrl'] = ps['siteDomain'] +'Admin/Role/Add'
@@ -144,7 +144,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         else:
             if 0 == ps['roleID']:
                 ps['roleID'] = roles[0]['id']    
-        apps = application_logic.ApplicationLogic.instance().query_all_by_active()
+        apps = application_logic.query_all_by_active()
         if None == apps or len(apps) == 0:
             ps['msg'] = state.ResultInfo.get(104003, '')
             ps['refUrl'] = ps['siteDomain'] +'Admin/Application/Add'
@@ -157,10 +157,10 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         ps['roles'] = roles
         ps = self.format_none_to_empty(ps)
 
-        funcs = func_logic.FuncLogic.instance().query_all_by_app(ps['appCode'])     #获得应用下的所有功能
+        funcs = func_logic.query_all_by_app(ps['appCode'])     #获得应用下的所有功能
         if None != funcs and len(funcs) > 0:
-            funcs = role_logic.RoleLogic.instance().init_func_right(funcs)
-            funcs = role_logic.RoleLogic.instance().format_role_func_right(appCode = ps['appCode'], roleID = ps['roleID'], funcs = funcs)
+            funcs = role_logic.init_func_right(funcs)
+            funcs = role_logic.format_role_func_right(appCode = ps['appCode'], roleID = ps['roleID'], funcs = funcs)
         else:
             funcs = []
         ps['funcs'] = funcs
@@ -176,9 +176,9 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         ps = self.get_page_config(title = '编辑角色权限')
         ps['roleID'] = int(self.get_arg('roleID', '0'))
         ps['appCode'] = self.get_arg('appCode', '')
-        funcs = func_logic.FuncLogic.instance().query_all_by_app(ps['appCode'])     #获得应用下的所有功能
+        funcs = func_logic.query_all_by_app(ps['appCode'])     #获得应用下的所有功能
 
-        funcs = role_logic.RoleLogic.instance().init_func_right(funcs)
+        funcs = role_logic.init_func_right(funcs)
         rights = []
 
         for func in funcs:      #收集权限数据
@@ -206,11 +206,11 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
             rights.append(map)
 
         #保存权限信息
-        type = role_logic.RoleLogic.instance().add_right_by_role_app(appCode = ps['appCode'], 
+        type = role_logic.add_right_by_role_app(appCode = ps['appCode'], 
             roleID = ps['roleID'], rights = rights, user = self.get_oper_user())
         
-        roles = role_logic.RoleLogic.instance().query_all_by_active()
-        apps = application_logic.ApplicationLogic.instance().query_all_by_active()
+        roles = role_logic.query_all_by_active()
+        apps = application_logic.query_all_by_active()
         ps['apps'] = apps
         ps['roles'] = roles
         ps = self.format_none_to_empty(ps)
@@ -233,7 +233,7 @@ class RoleUserListHandler(admin_base_handler.AdminRightBaseHandler):
         role = {}
         role['id'] = int(self.get_arg('id', '0'))        
         ps['page'] = int(self.get_arg('page', '1'))
-        ps['pagedata'] = user_logic.UserLogic.instance().query_page_by_roleid(roleID = role['id'], page = ps['page'], size = ps['size'])
+        ps['pagedata'] = user_logic.query_page_by_roleid(roleID = role['id'], page = ps['page'], size = ps['size'])
         ps['role'] = role
         ps = self.format_none_to_empty(ps)
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        

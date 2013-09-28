@@ -24,10 +24,10 @@ class UserListHandler(admin_base_handler.AdminRightBaseHandler):
         user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email', 'createTimeBegin', 'createTimeEnd', 'lastUpdateTimeBegin', 'lastUpdateTimeEnd'], '')
         user['status'] = int(self.get_arg('status', '0'))
         user['departmentID'] = int(self.get_arg('departmentID', '0'))
-        ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
+        ps['deps'] = department_logic.query_all_by_active()
         ps['page'] = int(self.get_arg('page', '1'))
         ps['userStatus'] = state.UserStatus
-        ps['pagedata'] = user_logic.UserLogic.instance().query_page(id = user['id'],
+        ps['pagedata'] = user_logic.query_page(id = user['id'],
                     name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
                      tel = user['tel'], mobile = user['mobile'], email = user['email'], 
                      status = user['status'], createTimeBegin = user['createTimeBegin'], createTimeEnd = user['createTimeEnd'], lastUpdateTimeBegin = user['lastUpdateTimeBegin'], lastUpdateTimeEnd = user['lastUpdateTimeEnd'], page = ps['page'], size = ps['size'])
@@ -48,7 +48,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             self.check_oper_right(right = state.operEdit)
             ps['title'] = self.get_page_title('编辑用户')
             id = int(self.get_arg('id', '0'))
-            user = user_logic.UserLogic.instance().query_one(id)
+            user = user_logic.query_one(id)
             if None == user:
                 ps['msg'] = state.ResultInfo.get(103002, '')
                 user = {'id':'', 'name':'', 'departmentID': '', 'realName':'','beginDate':'','endDate':'', 'passWord':'','mobile':'','tel':'','email':'','status':1,'lastLoginTime':'','lastLoginApp':'','lastLoginIp':'','remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
@@ -62,7 +62,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         ps['roleID'] = self.get_arg('roleID', '')
         ps['userGroupID'] = self.get_arg('userGroupID', '')
         ps['userStatus'] = state.UserStatus
-        ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
+        ps['deps'] = department_logic.query_all_by_active()
 
         ps = self.format_none_to_empty(ps)
         self.render('admin/user/add_or_edit.html', **ps)
@@ -83,7 +83,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         ps['userStatus'] = state.UserStatus
         ps['roleID'] = self.get_arg('role', '')
         ps['userGroupID'] = self.get_arg('userGroup', '')
-        ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
+        ps['deps'] = department_logic.query_all_by_active()
         msg = self.check_str_empty_input(user, ['name', 'realName', 'email', 'mobile', 'beginDate', 'endDate'])
         if str_helper.is_null_or_empty(msg) == False:
             ps['msg'] = msg
@@ -96,13 +96,13 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         if ps['isedit']:
             self.check_oper_right(right = state.operEdit)
             try:
-                ou = user_logic.UserLogic.instance().query_one_by_name(name = user['name'])
-                info = user_logic.UserLogic.instance().update(id = user['id'], realName = user['realName'], 
+                ou = user_logic.query_one_by_name(name = user['name'])
+                info = user_logic.update(id = user['id'], realName = user['realName'], 
                         departmentID = user['departmentID'], parentID = user['parentID'], mobile = user['mobile'], 
                         tel = user['tel'], email = user['email'], status = user['status'], beginDate = user['beginDate'], 
                         endDate = user['endDate'], remark = user['remark'], user = user['user'])
                 if info:
-                    nu = user_logic.UserLogic.instance().query_one_by_name(name = user['name'])
+                    nu = user_logic.query_one_by_name(name = user['name'])
                     self.bind_role(userID = nu['id'], roleID = ps['roleID'], user = user['user'])
                     self.bind_user_group(userID = nu['id'], userGroupID = ps['userGroupID'], user = user['user'])
                     self.write_oper_log(action = 'userEdit', targetType = 1, targetID = str(nu['id']), targetName = nu['name'], startStatus = str_helper.json_encode(ou), endStatus= str_helper.json_encode(nu))
@@ -114,13 +114,13 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         else:
             self.check_oper_right(right = state.operEdit)            
             try:
-                info = user_logic.UserLogic.instance().add(name = user['name'], passWord = user['passWord'], 
+                info = user_logic.add(name = user['name'], passWord = user['passWord'], 
                             realName = user['realName'], departmentID = user['departmentID'], mobile = user['mobile'], 
                             tel = user['tel'], email = user['email'],beginDate = user['beginDate'], 
                             endDate = user['endDate'], status = user['status'], remark = user['remark'], 
                             parentID = user['parentID'], user = user['user'])
                 if info > 0:
-                    nu = user_logic.UserLogic.instance().query_one_by_name(name = user['name'])
+                    nu = user_logic.query_one_by_name(name = user['name'])
                     self.bind_role(userID = nu['id'], roleID = ps['roleID'], user = user['user'])
                     self.bind_user_group(userID = nu['id'], userGroupID = ps['userGroupID'], user = user['user'])
                     self.write_oper_log(action = 'userCreate', targetType = 1, targetID = str(nu['id']), targetName = nu['name'], startStatus = '', endStatus= str_helper.json_encode(nu))
@@ -136,14 +136,14 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     def bind_role(self, userID, roleID, user):
         if None == roleID or '' == roleID:
             return
-        id = user_logic.UserLogic.instance().bind_user_role(userID = userID, roleID = roleID, user = self.get_oper_user())
+        id = user_logic.bind_user_role(userID = userID, roleID = roleID, user = self.get_oper_user())
         if None != id and id > 0:
             self.write_oper_log(action = 'userBindRole', targetType = 1, targetID = str(userID), targetName = '', startStatus = str(userID), endStatus= str(roleID))
 
     def bind_user_group(self, userID, userGroupID, user):
         if None == userGroupID or '' == userGroupID:
             return
-        id = usergroup_logic.UserGroupLogic.instance().bind_group_user(userGroupID = userGroupID, userID = userID, user = self.get_oper_user())
+        id = usergroup_logic.bind_group_user(userGroupID = userGroupID, userID = userID, user = self.get_oper_user())
         if None != id and id > 0:
             self.write_oper_log(action = 'userGroupBindUser', targetType = 6, targetID = str(userGroupID), targetName = str(userID), startStatus = str(userGroupID), endStatus= str(userID))
 
@@ -159,8 +159,8 @@ class UserDelHandler(admin_base_handler.AdminRightBaseHandler):
     def post(self):
         id = int(self.get_arg('id', '0'))
         user = self.get_oper_user()
-        ou = user_logic.UserLogic.instance().query_one(id = id)
-        type = user_logic.UserLogic.instance().delete(id = id, user = user)
+        ou = user_logic.query_one(id = id)
+        type = user_logic.delete(id = id, user = user)
         if type:
             try:
                 self.write_oper_log(action = 'userDelete', targetType = 1, targetID = str(id), targetName = ou['name'], startStatus = str_helper.json_encode(ou), endStatus= '')
@@ -176,7 +176,7 @@ class UserDetailHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config(title = '用户详情')
         id = int(self.get_arg('id', '0'))
-        user = user_logic.UserLogic.instance().query_one(id)
+        user = user_logic.query_one(id)
         if None == user:
             ps['msg'] = state.ResultInfo.get(103002, '')
             ps['gotoUrl'] = ps['siteDomain'] + 'Admin/User/List'
@@ -202,9 +202,9 @@ class UserRoleListHandler(admin_base_handler.AdminRightBaseHandler):
             return
         
         ps['page'] = int(self.get_arg('page', '1'))
-        ps['pagedata'] = user_logic.UserLogic.instance().query_page_user_roles(
+        ps['pagedata'] = user_logic.query_page_user_roles(
                 userID = ps['userID'], page = ps['page'], size = ps['size'])
-        user = user_logic.UserLogic.instance().query_one(id = ps['userID'])
+        user = user_logic.query_one(id = ps['userID'])
         ps['userName'] = user['name']
         ps['userRealName'] = user['realName']
         ps = self.format_none_to_empty(ps)
@@ -230,13 +230,13 @@ class UserRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
         ps['roleID'] = int(self.get_arg('roleID', '0'))
         ps['roleInfo'] = ''
         if ps['roleID'] > 0:
-            roleInfo = role_logic.RoleLogic.instance().query_one(id = ps['roleID'])
+            roleInfo = role_logic.query_one(id = ps['roleID'])
             ps['roleInfo'] = roleInfo['name']        
 
-        ps['pagedata'] = role_logic.RoleLogic.instance().query_page(name = ps['roleName'], 
+        ps['pagedata'] = role_logic.query_page(name = ps['roleName'], 
             status = state.statusActive, page = ps['page'], size = ps['size'])
         
-        user = user_logic.UserLogic.instance().query_one(id = ps['userID'])
+        user = user_logic.query_one(id = ps['userID'])
         ps['userInfo'] = user['name']
         ps['userRealName'] = user['realName']
 
@@ -251,7 +251,7 @@ class UserRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
         if userID <= 0 or roleID <= 0:
             self.out_fail(code = 103004)
             return
-        id = user_logic.UserLogic.instance().bind_user_role(userID = userID, roleID = roleID, user = self.get_oper_user())
+        id = user_logic.bind_user_role(userID = userID, roleID = roleID, user = self.get_oper_user())
         if None != id and id > 0:
             self.write_oper_log(action = 'userBindRole', targetType = 1, targetID = str(userID), targetName = '', startStatus = str(userID), endStatus= str(roleID))
             self.out_ok()
@@ -268,8 +268,8 @@ class UserRoleDelHandler(admin_base_handler.AdminRightBaseHandler):
         if id <= 0:
             self.out_fail(code = 103006)
             return
-        ur = user_logic.UserLogic.instance().get_user_role(id = id)
-        type = user_logic.UserLogic.instance().del_user_role(id = id, user = self.get_oper_user())
+        ur = user_logic.get_user_role(id = id)
+        type = user_logic.del_user_role(id = id, user = self.get_oper_user())
         if type:
             self.write_oper_log(action = 'userDeleteRole', targetType = 1, targetID = str(id), targetName = '', startStatus = str(ur['userID']), endStatus= str(ur['roleID']))
             self.out_ok()
@@ -290,7 +290,7 @@ class UserRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
             return
         
         ps['appCode'] = self.get_arg('appCode', '')
-        ps['apps'] = application_logic.ApplicationLogic.instance().query_all_by_active()
+        ps['apps'] = application_logic.query_all_by_active()
         if None == ps['apps'] or len(ps['apps']) <= 0:
             ps['msg'] = state.ResultInfo.get(101004, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/Application/Add'
@@ -300,16 +300,16 @@ class UserRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
             if '' == ps['appCode']:
                 ps['appCode'] = ps['apps'][0]['code']
         
-        ps['roles'] = user_logic.UserLogic.instance().query_all_user_roles(
+        ps['roles'] = user_logic.query_all_user_roles(
                 userID = ps['userID'])
-        user = user_logic.UserLogic.instance().query_one(id = ps['userID'])
+        user = user_logic.query_one(id = ps['userID'])
         ps['userName'] = user['name']
         ps['userRealName'] = user['realName']
-        ps['userGroups'] = usergroup_logic.UserGroupLogic.instance().query_all_user_groups(
+        ps['userGroups'] = usergroup_logic.query_all_user_groups(
                 userID = ps['userID'])
         
         ps = self.format_none_to_empty(ps)
-        funcs = user_logic.UserLogic.instance().query_user_app_right(userID = ps['userID'], appCode = ps['appCode'])
+        funcs = user_logic.query_user_app_right(userID = ps['userID'], appCode = ps['appCode'])
         ps['funcs'] = funcs
         
         self.render('admin/user/right_detail.html', **ps)
@@ -328,12 +328,12 @@ class UserUserGroupListHandler(admin_base_handler.AdminRightBaseHandler):
             self.render('admin/user/right.html', **ps)
             return
         
-        user = user_logic.UserLogic.instance().query_one(id = ps['userID'])
+        user = user_logic.query_one(id = ps['userID'])
         ps['userName'] = user['name']
         ps['userRealName'] = user['realName']
 
         ps['page'] = int(self.get_arg('page', '1'))
-        ps['pagedata'] = usergroup_logic.UserGroupLogic.instance().query_page_user_groups(
+        ps['pagedata'] = usergroup_logic.query_page_user_groups(
                 userID = ps['userID'], page = ps['page'], size = ps['size'])        
         ps = self.format_none_to_empty(ps)
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])
@@ -358,12 +358,12 @@ class UserResetPassWordHandler(admin_base_handler.AdminRightBaseHandler):
             self.out_fail(code = 103007)
             return
         
-        newPW = user_logic.UserLogic.instance().reset_password(name)
+        newPW = user_logic.reset_password(name)
         if None == newPW or '' == newPW:
             self.out_fail(code = 101)
             return
 
-        ou = user_logic.UserLogic.instance().query_one_by_name(name = name)
+        ou = user_logic.query_one_by_name(name = name)
         self.write_oper_log(action = 'userResetPw', targetType = 1, targetID = str(ou['id']), targetName = name, startStatus = '', endStatus= '')
         self.out_ok(data = '{"newpw":"'+newPW+'"}')
 
@@ -386,10 +386,10 @@ class UserExportHandler(admin_base_handler.AdminRightBaseHandler):
         user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email', 'createTimeBegin', 'createTimeEnd', 'lastUpdateTimeBegin', 'lastUpdateTimeEnd'], '')
         user['status'] = int(self.get_arg('status', '0'))
         user['departmentID'] = int(self.get_arg('departmentID', '0'))
-        ps['deps'] = department_logic.DepartmentLogic.instance().query_all_by_active()
+        ps['deps'] = department_logic.query_all_by_active()
         ps['page'] = int(self.get_arg('page', '1'))
         ps['userStatus'] = state.UserStatus
-        ps['pagedata'] = user_logic.UserLogic.instance().query_page(id = user['id'],
+        ps['pagedata'] = user_logic.query_page(id = user['id'],
                     name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
                      tel = user['tel'], mobile = user['mobile'], email = user['email'], 
                      status = user['status'], createTimeBegin = user['createTimeBegin'], createTimeEnd = user['createTimeEnd'], lastUpdateTimeBegin = user['lastUpdateTimeBegin'], lastUpdateTimeEnd = user['lastUpdateTimeEnd'], page = ps['page'], size = 9999)
@@ -426,8 +426,8 @@ class UserUnLockHandler(admin_base_handler.AdminRightBaseHandler):
             return
         id = int(self.get_arg('id', '0'))
         user = self.get_oper_user()
-        ou = user_logic.UserLogic.instance().query_one(id = id)
-        type = user_logic.UserLogic.instance().update_status(id = id, status = 1, user = user)
+        ou = user_logic.query_one(id = id)
+        type = user_logic.update_status(id = id, status = 1, user = user)
         if type:
             try:
                 self.write_oper_log(action = 'userUnLock', targetType = 1, targetID = str(id), targetName = ou['name'], startStatus = str_helper.json_encode(ou), endStatus= '')
@@ -448,8 +448,8 @@ class UserLockHandler(admin_base_handler.AdminRightBaseHandler):
             return
         id = int(self.get_arg('id', '0'))
         user = self.get_oper_user()
-        ou = user_logic.UserLogic.instance().query_one(id = id)
-        type = user_logic.UserLogic.instance().update_status(id = id, status = 3, user = user)
+        ou = user_logic.query_one(id = id)
+        type = user_logic.update_status(id = id, status = 3, user = user)
         if type:
             try:
                 self.write_oper_log(action = 'userLock', targetType = 1, targetID = str(id), targetName = ou['name'], startStatus = str_helper.json_encode(ou), endStatus= '')

@@ -26,7 +26,7 @@ class TestHandler(base_handler.BaseHandler):
         if username == '' or password == '':
             self.redirect("/Login?msg=100001")
             return
-        user = user_logic.UserLogic.instance().login(username, password, ps['appcode'])
+        user = user_logic.login(username, password, ps['appcode'])
         if None == user:
             self.redirect("/Login?msg=100002")
             return

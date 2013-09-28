@@ -22,7 +22,7 @@ class OperLogListHandler(admin_base_handler.AdminRightBaseHandler):
         operLog = self.get_args(['operUserName', 'action', 'beginTime', 'endTime'], '')
         operLog['operID'] = int(self.get_arg('operID', '0'))
         ps['page'] = int(self.get_arg('page', '1'))
-        ps['pagedata'] = oper_log_logic.OperLogLogic.instance().query_page(operID = operLog['operID'], operUserName = operLog['operUserName'], appCode = '', funcPath = '', action = operLog['action'], operIp = '', beginTime = operLog['beginTime'], endTime = operLog['endTime'], page = ps['page'], size = ps['size'])
+        ps['pagedata'] = oper_log_logic.query_page(operID = operLog['operID'], operUserName = operLog['operUserName'], appCode = '', funcPath = '', action = operLog['action'], operIp = '', beginTime = operLog['beginTime'], endTime = operLog['endTime'], page = ps['page'], size = ps['size'])
         ps['operLog'] = operLog
         ps['actions'] = state.logAction2
         ps['pager'] = self.build_page_html(page=ps['page'], size=ps[
@@ -48,7 +48,7 @@ class OperLogExportHandler(admin_base_handler.AdminRightBaseHandler):
         operLog = self.get_args(['operUserName', 'action', 'beginTime', 'endTime'], '')
         operLog['operID'] = int(self.get_arg('operID', '0'))
         ps['page'] = int(self.get_arg('page', '1'))
-        ps['pagedata'] = oper_log_logic.OperLogLogic.instance().query_page(operID = operLog['operID'], operUserName = operLog['operUserName'], appCode = '', funcPath = '', action = operLog['action'], operIp = '', beginTime = operLog['beginTime'], endTime = operLog['endTime'], page = ps['page'], size = 99999)
+        ps['pagedata'] = oper_log_logic.query_page(operID = operLog['operID'], operUserName = operLog['operUserName'], appCode = '', funcPath = '', action = operLog['action'], operIp = '', beginTime = operLog['beginTime'], endTime = operLog['endTime'], page = ps['page'], size = 99999)
         
         #生成excel文件
         logs = ps['pagedata']['data']

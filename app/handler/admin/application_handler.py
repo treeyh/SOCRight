@@ -20,7 +20,7 @@ class ApplicationListHandler(admin_base_handler.AdminRightBaseHandler):
         app = self.get_args(['code', 'name'], '')
         app['status'] = int(self.get_arg('status', '0'))
         ps['page'] = int(self.get_arg('page', '1'))
-        ps['pagedata'] = application_logic.ApplicationLogic.instance().query_page(name = app['name'], 
+        ps['pagedata'] = application_logic.query_page(name = app['name'], 
                         code = app['code'], status= app['status'], page = ps['page'], size = ps['size'])
         ps['app'] = app
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
@@ -37,7 +37,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
 
             ps['title'] = self.get_page_title('编辑应用')
             code = self.get_arg('code', '')
-            app = application_logic.ApplicationLogic.instance().query_one(code)
+            app = application_logic.query_one(code)
             if None == app:
                 ps['msg'] = state.ResultInfo.get(1002, '')                
                 app = {'code':'','name':'','developer':'','url':'','remark':'','status':1,'creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
@@ -70,11 +70,11 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         if ps['isedit']:
             self.check_oper_right(right = state.operEdit)
             try:
-                oa = application_logic.ApplicationLogic.instance().query_one(app['code'])
-                info = application_logic.ApplicationLogic.instance().update(name = app['name'], code = app['code'], 
+                oa = application_logic.query_one(app['code'])
+                info = application_logic.update(name = app['name'], code = app['code'], 
                         developer = app['developer'], url = app['url'], status = app['status'], remark = app['remark'], user = app['user'])
                 if info:
-                    na = application_logic.ApplicationLogic.instance().query_one(app['code'])
+                    na = application_logic.query_one(app['code'])
                     self.write_oper_log(action = 'appEdit', targetType = 2, targetID = oa['code'], targetName = oa['name'], startStatus = str_helper.json_encode(oa), endStatus= str_helper.json_encode(na))
                     ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
@@ -84,10 +84,10 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         else:
             self.check_oper_right(right = state.operAdd)
             try:
-                info = application_logic.ApplicationLogic.instance().add(name = app['name'], code = app['code'], 
+                info = application_logic.add(name = app['name'], code = app['code'], 
                     developer = app['developer'], url = app['url'], status = app['status'], remark = app['remark'], user = app['user'])
                 if info:
-                    na = application_logic.ApplicationLogic.instance().query_one(app['code'])
+                    na = application_logic.query_one(app['code'])
                     self.write_oper_log(action = 'appCreate', targetType = 2, targetID = na['code'], targetName = na['name'], startStatus = '', endStatus= str_helper.json_encode(na))
                     ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
@@ -105,7 +105,7 @@ class ApplicationDelHandler(admin_base_handler.AdminRightBaseHandler):
     def post(self):
         code = self.get_arg('code', '')
         user = self.get_oper_user()
-        type = application_logic.ApplicationLogic.instance().delete(code = code, user = user)
+        type = application_logic.delete(code = code, user = user)
         if type:
             self.out_ok()
         else:
@@ -118,7 +118,7 @@ class ApplicationDetailHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config(title = '应用详情')
         code = self.get_arg('code', '')
-        app = application_logic.ApplicationLogic.instance().query_one(code)
+        app = application_logic.query_one(code)
         if None == app:
             ps['msg'] = state.ResultInfo.get(1002, '')
             ps['gotoUrl'] = ps['siteDomain'] + 'Admin/Application/List'

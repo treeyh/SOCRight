@@ -109,5 +109,5 @@ class AdminRightBaseHandler(AdminBaseHandler):
 
     def write_oper_log(self, action, targetType = 0, targetID = '', targetName = '', startStatus = '', endStatus= ''):
         u = self.current_user
-        oper_log_logic.OperLogLogic.instance().add(operID=u['id'], operUserName=u['name'], operRealName=u[
+        oper_log_logic.add(operID=u['id'], operUserName=u['name'], operRealName=u[
                                                 'realName'], appCode='SOCRight', funcPath=self._rightKey, action=action, targetType=targetType, targetID=targetID, targetName=targetName, startStatus=startStatus, endStatus=endStatus, operIp=self.get_user_ip())

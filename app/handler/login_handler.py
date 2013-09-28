@@ -22,7 +22,7 @@ class LoginHandler(base_handler.BaseHandler):
             if '' == ps['appCode']:
                 self.redirect(ps['serviceSiteDomain'] + 'AppList')
             else:
-                backUrl = user_logic.UserLogic.instance().get_goto_user_url(
+                backUrl = user_logic.get_goto_user_url(
                     userID=user['id'], appCode=ps['appCode'], ip=self.get_user_ip(), backUrl=ps['backUrl'])
                 self.redirect(backUrl)
             return
@@ -35,7 +35,7 @@ class LoginHandler(base_handler.BaseHandler):
         if ps['userName'] == '' or ps['passWord'] == '':
             self.redirect(ps['serviceSiteDomain'] + 'Login?msg=100001')
             return
-        user = user_logic.UserLogic.instance().login(
+        user = user_logic.login(
             ps['userName'], ps['passWord'])
         if None == user:
             self.redirect(ps['serviceSiteDomain'] + 'Login?msg=100002')
@@ -52,7 +52,7 @@ class LoginHandler(base_handler.BaseHandler):
         ac = ps['appCode']
         if None == ac or '' == ac:
             ac = 'SOCRight'
-        oper_log_logic.OperLogLogic.instance().add(operID=user['id'], operUserName=user['name'], operRealName=user[
+        oper_log_logic.add(operID=user['id'], operUserName=user['name'], operRealName=user[
                                                    'realName'], appCode=ac, funcPath='', action='userLogin', targetType=0, targetID='', targetName='', startStatus='', endStatus='', operIp=self.get_user_ip())
 
 
@@ -70,7 +70,7 @@ class LoginHandler(base_handler.BaseHandler):
                               str_helper.url_escape(ps['backUrl']))
             return
 
-            backUrl = user_logic.UserLogic.instance().get_goto_user_url(
+            backUrl = user_logic.get_goto_user_url(
                 userID=user['id'], appCode=ps['appCode'], ip=self.get_user_ip(), backUrl=ps['backUrl'])
 
             self.redirect(backUrl)
@@ -106,9 +106,9 @@ class AppGotoHandler(base_handler.BaseRightHandler):
             self.redirect(ps['serviceSiteDomain'] + 'AppList')
             return
 
-        gotoUrl = user_logic.UserLogic.instance().get_goto_user_url(
+        gotoUrl = user_logic.get_goto_user_url(
             userID=user['id'], appCode=ps['appCode'], ip=self.get_user_ip(), backUrl='')
-        oper_log_logic.OperLogLogic.instance().add(operID=user['id'], operUserName=user['name'], operRealName=user[
+        oper_log_logic.add(operID=user['id'], operUserName=user['name'], operRealName=user[
                                                    'realName'], appCode=ps['appCode'], funcPath='', action='userLogin', targetType=0, targetID='', targetName='', startStatus='', endStatus='', operIp=self.get_user_ip())
         self.redirect(gotoUrl)
 
@@ -144,9 +144,9 @@ class PassWordEditHandler(base_handler.BaseRightHandler):
             if type:
                 if None != user['loginCount'] and 0 >= user['loginCount']:
                     ''' 第一次强制修改密码后更新登录计数  '''
-                    user_logic.UserLogic.instance().update_goto_app(
+                    user_logic.update_goto_app(
                         user['name'], config.SOCRightConfig['appCode'], ip=self.get_user_ip())
-                    oper_log_logic.OperLogLogic.instance().add(operID=user['id'], operUserName=user['name'], operRealName=user[
+                    oper_log_logic.add(operID=user['id'], operUserName=user['name'], operRealName=user[
                                                                'realName'], appCode='SOCRight', funcPath='', action='userActivate', targetType=0, targetID='', targetName='', startStatus='', endStatus='', operIp=self.get_user_ip())
 
                 self.clear_user_info()

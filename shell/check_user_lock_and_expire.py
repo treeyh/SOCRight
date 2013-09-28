@@ -23,7 +23,7 @@ def get_today():
 
 
 def _get_user_info(page, size):
-	userPage = user_logic.UserLogic.instance().query_page(id = '', name = '', realName = '', departmentID = 0, 
+	userPage = user_logic.query_page(id = '', name = '', realName = '', departmentID = 0, 
                         tel = '', mobile = '', email = '', status = state.statusUserActive, page = page, size = size)
 	return userPage
 
@@ -44,7 +44,7 @@ if __name__ == '__main__':
 			'''  验证是否超过截止日期  begin '''			
 			inv = endDate - today
 			if inv.days < 0:
-				user_logic.UserLogic.instance().update_status(id = user['id'], status = state.statusUserExpire, user = 'sys')
+				user_logic.update_status(id = user['id'], status = state.statusUserExpire, user = 'sys')
 
 
 			'''  验证是否登录超过30天  end '''
@@ -54,7 +54,7 @@ if __name__ == '__main__':
 			inv2 = today - lastLoginTime
 			print '%s--%s--%d' % (user['name'], str(lastLoginTime) ,inv2.days)
 			if inv2.days > lockDay:
-				user_logic.UserLogic.instance().update_status(id = user['id'], status = state.statusUserLock, user = 'sys')
+				user_logic.update_status(id = user['id'], status = state.statusUserLock, user = 'sys')
 
 
 

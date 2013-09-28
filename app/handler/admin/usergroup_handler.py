@@ -20,7 +20,7 @@ class UserGroupListHandler(admin_base_handler.AdminRightBaseHandler):
         userGroup = self.get_args(['id', 'name'], '')
         userGroup['status'] = int(self.get_arg('status', '0'))
         ps['page'] = int(self.get_arg('page', '1'))
-        ps['pagedata'] = usergroup_logic.UserGroupLogic.instance().query_page(id = userGroup['id'], 
+        ps['pagedata'] = usergroup_logic.query_page(id = userGroup['id'], 
                     name = userGroup['name'], status = userGroup['status'], page = ps['page'], size = ps['size'])
         ps['userGroup'] = userGroup
         ps = self.format_none_to_empty(ps)
@@ -35,7 +35,7 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         if ps['isedit']:
             ps['title'] = self.get_page_title('编辑用户组')
             id = int(self.get_arg('id', '0'))
-            usergroup = usergroup_logic.UserGroupLogic.instance().query_one(id)
+            usergroup = usergroup_logic.query_one(id)
             if None == usergroup:
                 ps['msg'] = state.ResultInfo.get(105002, '')                
                 role = {'id':'','name':'','status':1,'remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
@@ -64,11 +64,11 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         
         if ps['isedit']:
             try:
-                og = usergroup_logic.UserGroupLogic.instance().query_one(usergroup['id'])
-                info = usergroup_logic.UserGroupLogic.instance().update(id = usergroup['id'], name = usergroup['name'], 
+                og = usergroup_logic.query_one(usergroup['id'])
+                info = usergroup_logic.update(id = usergroup['id'], name = usergroup['name'], 
                     status = usergroup['status'], remark = usergroup['remark'], user = usergroup['user'])
                 if info:
-                    ng = usergroup_logic.UserGroupLogic.instance().query_one(usergroup['id'])
+                    ng = usergroup_logic.query_one(usergroup['id'])
                     self.write_oper_log(action = 'userGroupEdit', targetType = 6, targetID = str(ng['id']), targetName = ng['name'], startStatus = str_helper.json_encode(og), endStatus= str_helper.json_encode(ng))
                     ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
@@ -77,10 +77,10 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 ps['msg'] = e.msg
         else:
             try:
-                info = usergroup_logic.UserGroupLogic.instance().add(name = usergroup['name'], 
+                info = usergroup_logic.add(name = usergroup['name'], 
                     status = usergroup['status'], remark = usergroup['remark'], user = usergroup['user'])
                 if info > 0:
-                    ng = usergroup_logic.UserGroupLogic.instance().query_one_by_name(usergroup['name'])
+                    ng = usergroup_logic.query_one_by_name(usergroup['name'])
                     self.write_oper_log(action = 'userGroupCreate', targetType = 6, targetID = str(ng['id']), targetName = ng['name'], startStatus = '', endStatus= str_helper.json_encode(ng))
                     ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
                 else:
@@ -99,8 +99,8 @@ class UserGroupDelHandler(admin_base_handler.AdminRightBaseHandler):
     def post(self):
         id = int(self.get_arg('id', '0'))
         user = self.get_oper_user()
-        og = usergroup_logic.UserGroupLogic.instance().query_one(id)
-        type = usergroup_logic.UserGroupLogic.instance().delete(id = id, user = user)
+        og = usergroup_logic.query_one(id)
+        type = usergroup_logic.delete(id = id, user = user)
         if type:
             self.write_oper_log(action = 'userGroupDelete', targetType = 6, targetID = str(og['id']), targetName = og['name'], startStatus = str_helper.json_encode(og), endStatus= '')
             self.out_ok()
@@ -113,7 +113,7 @@ class UserGroupDetailHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config(title = '用户组详情')
         id = int(self.get_arg('id', '0'))
-        usergroup = usergroup_logic.UserGroupLogic.instance().query_one(id)
+        usergroup = usergroup_logic.query_one(id)
         if None == usergroup:
             ps['msg'] = state.ResultInfo.get(105002, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/List'
@@ -130,7 +130,7 @@ class UserGroupUserListHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config(title = '用户组绑定用户列表')
         ps['userGroupID'] = int(self.get_arg('id', '0'))
-        userGroups = usergroup_logic.UserGroupLogic.instance().query_all_by_active()
+        userGroups = usergroup_logic.query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
             ps['msg'] = state.ResultInfo.get(105003, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/Add'
@@ -141,7 +141,7 @@ class UserGroupUserListHandler(admin_base_handler.AdminRightBaseHandler):
                 ps['userGroupID'] = userGroups[0]['id']
         
         ps['page'] = int(self.get_arg('page', '1'))
-        ps['pagedata'] = usergroup_logic.UserGroupLogic.instance().query_page_group_users(
+        ps['pagedata'] = usergroup_logic.query_page_group_users(
                 userGroupID = ps['userGroupID'], page = ps['page'], size = ps['size'])
     
         ps['userGroups'] = userGroups
@@ -157,7 +157,7 @@ class UserGroupUserBindHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config(title = '新增用户绑定用户组')
         ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
-        userGroups = usergroup_logic.UserGroupLogic.instance().query_all_by_active()
+        userGroups = usergroup_logic.query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
             ps['msg'] = state.ResultInfo.get(105003, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/Add'
@@ -173,10 +173,10 @@ class UserGroupUserBindHandler(admin_base_handler.AdminRightBaseHandler):
         ps['userID'] = int(self.get_arg('userID', '0'))
         ps['userInfo'] = ''
         if ps['userID'] > 0:
-            userInfo = user_logic.UserLogic.instance().query_one(id = ps['userID'])
+            userInfo = user_logic.query_one(id = ps['userID'])
             ps['userInfo'] = userInfo['name']        
 
-        ps['pagedata'] = user_logic.UserLogic.instance().query_page(name = ps['userName'], 
+        ps['pagedata'] = user_logic.query_page(name = ps['userName'], 
             status = state.statusActive, page = ps['page'], size = ps['size'])
         ps = self.format_none_to_empty(ps)
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
@@ -189,7 +189,7 @@ class UserGroupUserBindHandler(admin_base_handler.AdminRightBaseHandler):
         if userGroupID <= 0 or userID <= 0:
             self.out_fail(code = 105004)
             return
-        id = usergroup_logic.UserGroupLogic.instance().bind_group_user(userGroupID = userGroupID, userID = userID, user = self.get_oper_user())
+        id = usergroup_logic.bind_group_user(userGroupID = userGroupID, userID = userID, user = self.get_oper_user())
         if None != id and id > 0:
             self.write_oper_log(action = 'userGroupBindUser', targetType = 6, targetID = str(userGroupID), targetName = str(userID), startStatus = str(userGroupID), endStatus= str(userID))
             self.out_ok()
@@ -206,8 +206,8 @@ class UserGroupUserDelHandler(admin_base_handler.AdminRightBaseHandler):
         if id <= 0 or userGroupID <= 0:
             self.out_fail(code = 105006)
             return
-        oug = usergroup_logic.UserGroupLogic.instance().get_group_user(id = id)
-        type = usergroup_logic.UserGroupLogic.instance().del_group_user(id = id, userGroupID = userGroupID, user = self.get_oper_user())
+        oug = usergroup_logic.get_group_user(id = id)
+        type = usergroup_logic.del_group_user(id = id, userGroupID = userGroupID, user = self.get_oper_user())
         if type:
             self.write_oper_log(action = 'userGroupDeleteUser', targetType = 6, targetID = str(id), targetName = '', startStatus = str(oug['userGroupID']), endStatus= str(oug['userID']))
             self.out_ok()
@@ -223,7 +223,7 @@ class UserGroupRoleListHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config(title = '用户组绑定角色列表')
         ps['userGroupID'] = int(self.get_arg('id', '0'))
-        userGroups = usergroup_logic.UserGroupLogic.instance().query_all_by_active()
+        userGroups = usergroup_logic.query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
             ps['msg'] = state.ResultInfo.get(105003, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/Add'
@@ -234,7 +234,7 @@ class UserGroupRoleListHandler(admin_base_handler.AdminRightBaseHandler):
                 ps['userGroupID'] = userGroups[0]['id']
         
         ps['page'] = int(self.get_arg('page', '1'))
-        ps['pagedata'] = usergroup_logic.UserGroupLogic.instance().query_page_group_roles(
+        ps['pagedata'] = usergroup_logic.query_page_group_roles(
                 userGroupID = ps['userGroupID'], page = ps['page'], size = ps['size'])
         ps = self.format_none_to_empty(ps)
         ps['userGroups'] = userGroups
@@ -249,7 +249,7 @@ class UserGroupRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config(title = '新增角色绑定用户组')
         ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
-        userGroups = usergroup_logic.UserGroupLogic.instance().query_all_by_active()
+        userGroups = usergroup_logic.query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
             ps['msg'] = state.ResultInfo.get(105003, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/Add'
@@ -265,10 +265,10 @@ class UserGroupRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
         ps['roleID'] = int(self.get_arg('roleID', '0'))
         ps['roleInfo'] = ''
         if ps['roleID'] > 0:
-            roleInfo = role_logic.RoleLogic.instance().query_one(id = ps['roleID'])
+            roleInfo = role_logic.query_one(id = ps['roleID'])
             ps['roleInfo'] = roleInfo['name']        
 
-        ps['pagedata'] = role_logic.RoleLogic.instance().query_page(name = ps['roleName'], 
+        ps['pagedata'] = role_logic.query_page(name = ps['roleName'], 
             status = state.statusActive, page = ps['page'], size = ps['size'])
         ps = self.format_none_to_empty(ps)
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
@@ -281,7 +281,7 @@ class UserGroupRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
         if userGroupID <= 0 or roleID <= 0:
             self.out_fail(code = 105007)
             return
-        id = usergroup_logic.UserGroupLogic.instance().bind_group_role(userGroupID = userGroupID, roleID = roleID, user = self.get_oper_user())
+        id = usergroup_logic.bind_group_role(userGroupID = userGroupID, roleID = roleID, user = self.get_oper_user())
         if None != id and id >= 0:
             self.write_oper_log(action = 'userGroupBindRole', targetType = 6, targetID = str(id), targetName = '', startStatus = str(userGroupID), endStatus= str(roleID))
             self.out_ok()
@@ -299,8 +299,8 @@ class UserGroupRoleDelHandler(admin_base_handler.AdminRightBaseHandler):
         if id <= 0 or userGroupID <= 0:
             self.out_fail(code = 105009)
             return
-        ogr = usergroup_logic.UserGroupLogic.instance().get_group_role(id = id)
-        type = usergroup_logic.UserGroupLogic.instance().del_group_role(id = id, userGroupID = userGroupID, user = self.get_oper_user())
+        ogr = usergroup_logic.get_group_role(id = id)
+        type = usergroup_logic.del_group_role(id = id, userGroupID = userGroupID, user = self.get_oper_user())
         if type:
             self.write_oper_log(action = 'userGroupDeleteRole', targetType = 6, targetID = str(id), targetName = '', startStatus = str(ogr['userGroupID']), endStatus= str(ogr['roleID']))
             self.out_ok()
@@ -322,7 +322,7 @@ class UserGroupRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
             return
 
         ps['appCode'] = self.get_arg('appCode', '')
-        ps['apps'] = application_logic.ApplicationLogic.instance().query_all_by_active()
+        ps['apps'] = application_logic.query_all_by_active()
         if None == ps['apps'] or len(ps['apps']) <= 0:
             ps['msg'] = state.ResultInfo.get(101004, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/Application/Add'
@@ -332,13 +332,13 @@ class UserGroupRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
             if '' == ps['appCode']:
                 ps['appCode'] = ps['apps'][0]['code']
 
-        userGroup = usergroup_logic.UserGroupLogic.instance().query_one(ps['userGroupID'])
+        userGroup = usergroup_logic.query_one(ps['userGroupID'])
         ps['userGroupName'] = userGroup['name'] if None != userGroup else ''
         
-        ps['roles'] = usergroup_logic.UserGroupLogic.instance().query_all_group_roles(userGroupID = ps['userGroupID'])
+        ps['roles'] = usergroup_logic.query_all_group_roles(userGroupID = ps['userGroupID'])
         
         ps = self.format_none_to_empty(ps)
-        funcs = usergroup_logic.UserGroupLogic.instance().query_user_group_app_right(userGroupID = ps['userGroupID'], appCode = ps['appCode'])
+        funcs = usergroup_logic.query_user_group_app_right(userGroupID = ps['userGroupID'], appCode = ps['appCode'])
         ps['funcs'] = funcs
         
         self.render('admin/usergroup/right_detail.html', **ps)

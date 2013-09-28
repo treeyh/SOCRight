@@ -20,7 +20,7 @@ class FuncListHandler(admin_base_handler.AdminRightBaseHandler):
 
     def get(self):
         ps = self.get_page_config(title = '应用功能列表')
-        apps = application_logic.ApplicationLogic.instance().query_all_by_active()
+        apps = application_logic.query_all_by_active()
         if None == apps or len(apps) <= 0:
             ps['msg'] = state.ResultInfo.get(101004, '')
             ps['gotoUrl'] = ps['siteDomain'] + 'Admin/Application/Add'
@@ -35,7 +35,7 @@ class FuncListHandler(admin_base_handler.AdminRightBaseHandler):
             if app['code'] == appCode:
                 appName = app['name']
                 break
-        ps['funcs'] = func_logic.FuncLogic.instance().query_all_by_app(appCode)
+        ps['funcs'] = func_logic.query_all_by_app(appCode)
         ps['appCode'] = appCode
         self.render('admin/func/list.html', **ps)
 
@@ -45,7 +45,7 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _right = 0
     def get(self):
         ps = self.get_page_config(title = '应用功能编辑')
-        apps = application_logic.ApplicationLogic.instance().query_all_by_active()
+        apps = application_logic.query_all_by_active()
         if None == apps or len(apps) <= 0:
             ps['msg'] = state.ResultInfo.get(101004, '')
             ps['gotoUrl'] = ps['siteDomain'] + 'Admin/Application/Add'
@@ -66,7 +66,7 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         self.render('admin/func/detail.html', **ps)
 
     def get_funcs_tree_by_appCode(self, appCode, appName):
-        funcs = func_logic.FuncLogic.instance().query_all_by_app(appCode)
+        funcs = func_logic.query_all_by_app(appCode)
         if None == funcs:
             funcs = []
         funcs.insert(0, {'id':0, 'parentID': -1, 'name': appName, 'open': True})
@@ -101,18 +101,18 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             if func['parentID'] <= 0:
                 func['path'] = '%s.%s' % (func['appCode'], func['code'])
             else:
-                func['path'] = '%s.%s' % ((func_logic.FuncLogic.instance().query_one_by_id(func['parentID'])).get('path'), func['code'])
+                func['path'] = '%s.%s' % ((func_logic.query_one_by_id(func['parentID'])).get('path'), func['code'])
             func['status'] = state.Boole['true']
 
-            f = func_logic.FuncLogic.instance().query_one_by_path(path = func['path'])
+            f = func_logic.query_one_by_path(path = func['path'])
             if None != f:
                 self.out_fail(code = 102003)
                 return
             try:
-                result = func_logic.FuncLogic.instance().add(appCode = func['appCode'], name = func['name'], code = func['code'], 
+                result = func_logic.add(appCode = func['appCode'], name = func['name'], code = func['code'], 
                             parentID = func['parentID'], path = func['path'], customJson = func['customJson'], sort = func['sort'], 
                             status = func['status'], remark = func['remark'], user = func['user'])
-                nf = func_logic.FuncLogic.instance().query_one_by_path(func['path'])
+                nf = func_logic.query_one_by_path(func['path'])
                 self.write_oper_log(action = 'funcCreate', targetType = 3, targetID = str(nf['id']), targetName = nf['name'], startStatus = '', endStatus= str_helper.json_encode(nf))
             except error.RightError as e:
                 self.out_fail(code=e.code)
@@ -120,10 +120,10 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         else:
             self.check_oper_right(right = state.operEdit)
             try:
-                of = func_logic.FuncLogic.instance().query_one_by_id(func['id'])
-                func_logic.FuncLogic.instance().update(id = func['id'], name = func['name'],sort = func['sort'], 
+                of = func_logic.query_one_by_id(func['id'])
+                func_logic.update(id = func['id'], name = func['name'],sort = func['sort'], 
                                 customJson = func['customJson'],remark = func['remark'],user = func['user'])
-                nf = func_logic.FuncLogic.instance().query_one_by_id(func['id'])
+                nf = func_logic.query_one_by_id(func['id'])
                 self.write_oper_log(action = 'funcEdit', targetType = 3, targetID = str(nf['id']), targetName = nf['name'], startStatus = str_helper.json_encode(of), endStatus= str_helper.json_encode(nf))
             except error.RightError as e:
                 self.out_fail(code=e.code)
@@ -140,8 +140,8 @@ class FuncDelHandler(admin_base_handler.AdminRightBaseHandler):
 
         user = self.get_oper_user()
         try:
-            of = func_logic.FuncLogic.instance().query_one_by_id(id)
-            type = func_logic.FuncLogic.instance().delete(id = id, user = user)
+            of = func_logic.query_one_by_id(id)
+            type = func_logic.delete(id = id, user = user)
             if type:
                 self.write_oper_log(action = 'funcDelete', targetType = 3, targetID = str(of['id']), targetName = of['name'], startStatus = str_helper.json_encode(of), endStatus= '')
                 self.out_ok()
@@ -156,7 +156,7 @@ class FuncGetHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
     def get(self):
         id = int(self.get_arg('id', '0'))
-        func = func_logic.FuncLogic.instance().query_one_by_id(id)
+        func = func_logic.query_one_by_id(id)
         if None != func:
             json = str_helper.json_encode(func)
             self.out_ok(data=json)
