@@ -91,8 +91,7 @@ class AppListHandler(base_handler.BaseRightHandler):
         ps = self.get_page_config('应用集合列表')
         user = self.current_user
         ps['user'] = user
-        ps['apps'] = application_logic.ApplicationLogic.instance(
-        ).query_all_by_active();
+        ps['apps'] = application_logic.query_all_by_active();
         self.render('app_list.html', **ps)
 
 
