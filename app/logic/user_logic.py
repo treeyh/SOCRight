@@ -173,15 +173,20 @@ _query_role_all_user_sql = ''' select u.id , u.name, u.realName, u.parentID, u.d
 u.lastLoginApp, u.lastLoginIp, u.loginCount, u.beginDate, u.endDate, u.remark, u.isDelete, u.creater, u.createTime, u.lastUpdater, u.lastUpdateTime , d.name as departmentName from sso_user as u 
 left JOIN sso_department as d on d.id = u.departmentID 
 left JOIN sso_user_role as ur on ur.userID = u.id 
-where (ur.roleID = %s and ur.isDelete = %s) or ( exists  
+where ((ur.roleID = %s and ur.isDelete = %s) or ( exists  
 (select ugu.userID from sso_user_group_user ugu where ugu.userID = u.id and exists  
-(select ugr.id from sso_user_group_role ugr where ugr.id = ugu.userGroupID and ugr.roleID = %s and ugr.isDelete = %s))) 
-and u.isDelete = %s  order by u.departmentID asc , u.id desc '''
+(select ugr.id from sso_user_group_role ugr where ugr.id = ugu.userGroupID and ugr.roleID = %s and ugr.isDelete = %s)))) 
+and u.isDelete = %s  '''
 ''' 分页查询角色下所有用户信息 '''
-def query_page_by_roleid( roleID = '', page = 1, size = 12):
+def query_page_by_roleid( roleID = '', userName = '', page = 1, size = 12):
     sql = _query_role_all_user_sql
     isdelete = state.Boole['false']
-    yz = ( roleID, isdelete, roleID, isdelete, isdelete, ) 
+    ps = [ roleID, isdelete, roleID, isdelete, isdelete ]
+    if not str_helper.is_null_or_empty(userName):
+        sql = sql + ' and  u.name = %s  '
+        ps.append(userName)
+    yz = tuple(ps)
+    sql = sql + '  order by u.departmentID asc , u.id desc '
     users = mysql.find_page(sql, yz, _query_col, page, size)
     if None != users['data']:
         for r in users['data']:

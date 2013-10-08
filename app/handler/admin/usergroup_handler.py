@@ -128,7 +128,7 @@ class UserGroupUserListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindUserManager'
     _right = state.operView
     def get(self):
-        ps = self.get_page_config(title = '用户组绑定用户列表')
+        ps = self.get_page_config(title = '用户组绑定用户列表', refUrl = config.SOCRightConfig['siteDomain'] + 'Admin/UserGroup/List')
         ps['userGroupID'] = int(self.get_arg('id', '0'))
         userGroups = usergroup_logic.query_all_by_active()
         if None == userGroups or len(userGroups) == 0:
@@ -221,7 +221,7 @@ class UserGroupRoleListHandler(admin_base_handler.AdminRightBaseHandler):
     _right = state.operView
 
     def get(self):
-        ps = self.get_page_config(title = '用户组绑定角色列表')
+        ps = self.get_page_config(title = '用户组绑定角色列表', refUrl = config.SOCRightConfig['siteDomain'] + 'Admin/UserGroup/List')
         ps['userGroupID'] = int(self.get_arg('id', '0'))
         userGroups = usergroup_logic.query_all_by_active()
         if None == userGroups or len(userGroups) == 0:

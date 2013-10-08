@@ -167,6 +167,7 @@ logAction2=[
     {'k' : 'roleCreate' , 'v' : u'角色管理_创建'},#5
     {'k' : 'roleEdit' , 'v' : u'角色管理_编辑'},
     {'k' : 'roleDelete' , 'v' : u'角色管理_删除'},
+    {'k' : 'roleUserDelete' , 'v' : u'角色管理_角色用户解除绑定'},
     #'roleBindUserGroup' : u'角色管理_绑定用户组',
     #'roleDeleteUserGroup' : u'角色管理_删除绑定用户组',
     {'k' : 'roleSetRight' , 'v' : u'角色管理_权限设置'},

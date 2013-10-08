@@ -76,6 +76,9 @@ route.append((r'^/Admin/Role/Del', role_handler.RoleDelHandler))
 route.append((r'^/Admin/Role/RightEdit', role_handler.RoleRightHandler))
 route.append((r'^/Admin/Role/RightDetail', role_handler.RoleRightHandler))
 route.append((r'^/Admin/Role/UserList', role_handler.RoleUserListHandler))
+route.append((r'^/Admin/Role/UserListExport', role_handler.RoleUserListExportHandler))
+route.append((r'^/Admin/Role/UserBindDel', role_handler.RoleUserBindDelHandler))
+
 
 
 route.append((r'^/Admin/UserGroup/List', usergroup_handler.UserGroupListHandler))

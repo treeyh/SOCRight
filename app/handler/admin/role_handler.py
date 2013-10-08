@@ -226,15 +226,79 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
 
 
 class RoleUserListHandler(admin_base_handler.AdminRightBaseHandler):
-    _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
+    _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager'
     _right = state.operView
     def get(self):
         ps = self.get_page_config(title = '角色用户列表')
+        ps['ExportType'] = True
         role = {}
-        role['id'] = int(self.get_arg('id', '0'))        
+        role['id'] = int(self.get_arg('id', '0'))
+        role = role_logic.query_one(id = role['id'])
+        ps['userName'] = self.get_arg('userName', '')        
         ps['page'] = int(self.get_arg('page', '1'))
-        ps['pagedata'] = user_logic.query_page_by_roleid(roleID = role['id'], page = ps['page'], size = ps['size'])
+        ps['pagedata'] = user_logic.query_page_by_roleid(roleID = role['id'], userName = ps['userName'], page = ps['page'], size = ps['size'])
         ps['role'] = role
         ps = self.format_none_to_empty(ps)
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
         self.render('admin/role/user_list.html', **ps)
+
+
+
+class RoleUserListExportHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager'
+    _right = state.operView
+    def get(self):
+        # type = self.check_oper_right_custom_right(self._rightKey, self._exportUserKey)
+        # if type == False:
+        #     self.redirect(config.SOCRightConfig['siteDomain']+'Admin/NotRight')
+        #     return
+
+        import sys
+        reload(sys)                        
+        sys.setdefaultencoding('utf-8')    
+        ps = self.get_page_config(title = '导出角色用户列表Excel')
+
+        role = {}
+        role['id'] = int(self.get_arg('id', '0'))
+        role = role_logic.query_one(id = role['id'])
+        ps['userName'] = self.get_arg('userName', '')        
+        ps['page'] = int(self.get_arg('page', '1'))
+        ps['pagedata'] = user_logic.query_page_by_roleid(roleID = role['id'], userName = ps['userName'], page = 1, size = 99999)
+
+        users = ps['pagedata']['data']
+
+        #生成excel文件
+        info = u'''<table><tr><td>用户ID</td><td>用户名</td><td>姓名</td><td>部门名称</td><td>角色ID</td><td>角色名</td></tr>'''
+
+        for user in users:
+            u = u'''<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>''' % (str(user['id']), user['name'], user['realName'], 
+                        user['departmentName'], role['id'], role['name'] )
+            info = info + u
+        info = info + u'</table>'
+        fileName = config.SOCRightConfig['exportUserPath'] + str_helper.get_now_datestr() +'_'+ str_helper.get_uuid() + '.xls'
+
+        path = config.SOCRightConfig['realPath'] + fileName
+        file_object = open(path, 'w')
+        file_object.write(info)
+        file_object.close( )    
+        self.redirect(config.SOCRightConfig['siteDomain']+fileName)
+
+
+class RoleUserBindDelHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager'
+    _right = state.operDel
+    def post(self):
+        userID = int(self.get_arg('userID', '0'))
+        roleID = int(self.get_arg('roleID', '0'))
+        if 0 == userID or 0 == roleID:
+            self.out_fail(code = 1001)
+            return
+
+        user = self.get_oper_user()
+        oro = role_logic.query_one(roleID)
+        type = role_logic.delete_user_bind(userID = userID, roleID = roleID, user = user)
+        if type:
+            self.write_oper_log(action = 'roleUserDelete', targetType = 5, targetID = str(oro['id']), targetName = oro['name'], startStatus = str(userID), endStatus= '')
+            self.out_ok()
+        else:
+            self.out_fail(code = 101)

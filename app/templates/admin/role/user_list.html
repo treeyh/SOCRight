@@ -5,7 +5,37 @@
     <h1>
         {{ title }}</h1>
 </div>
-<div class="inputdiv">    
+<div class="inputdiv">
+    <form action="{{ request.uri }}" method="get">
+    <table class="inputtable">
+        <tr>
+            <td style="width: 60px;">
+                角色名：
+            </td>
+            <td style="width: 200px;">
+                {{ role['name'] }}
+                <input type="hidden" name="id" value="{{ role['id'] }}" />
+            </td>
+            <td style="width: 60px;">
+                用户名：
+            </td>
+            <td style="width: 200px;">
+                <input type="text" name="userName" value="{{ userName }}" />
+            </td>
+            <td style="width: 60px;">
+
+            </td>
+            <td style="width: 80px;"> 
+            </td>
+            <td style="text-align: right">
+                {% if ExportType == True %}
+                {% end %}
+                <a href="{{siteDomain}}Admin/Role/UserListExport?id={{role['id']}}&userName={{userName}}" target="_blank" style="margin-right:20px;">导出结果</a>
+                <input type="submit" style="width:100px; height:26px;line-height:18px; cursor:pointer; margin-right:3px;" value="查询" />
+            </td>
+        </tr>
+    </table>
+</form>
 </div>
 <div class="showdiv">
     {% raw pager[0: pager.find('跳转第')] + '</div>' %}
@@ -75,10 +105,30 @@
                 <a href="{{siteDomain}}Admin/User/RightDetail?userID={{ r['id'] }}">权限预览</a>
                 <a href="{{siteDomain}}Admin/User/RoleList?userID={{ r['id'] }}">所属角色</a>
                 <a href="{{siteDomain}}Admin/User/GroupList?userID={{ r['id'] }}">所属用户组</a>
+                <a href="javascript:" onclick="Role.del({{r['id']}}, {{role['id']}})">删除角色关联</a>
             </td>
         </tr>
         {% end %}
     </table>
     {% raw pager %}
 </div>
+
+<script type="text/javascript" language="javascript">
+    <!--
+    var Role = {
+        del: function (userID, roleID) {
+            if (!confirm("确定删除该角色用户关联吗？\r\n")) return false;
+
+            $.post('/Admin/Role/UserBindDel?userID='+userID+'&roleID='+roleID+'&r=' + Math.random(), { 'userID': userID, 'roleID': roleID, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', window.location.href);
+                     } else {
+                         Common.alert('操作失败,'+data.msg);
+                     }
+                 }, "json");
+        }
+    };
+    //-->
+</script>
 {% end %}

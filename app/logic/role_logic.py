@@ -110,6 +110,26 @@ def delete( id, user):
 
 
 
+_delete_user_bind_role_sql = ''' update sso_user_role set isDelete = %s, lastUpdater = %s, 
+                        lastUpdateTime = now()  where roleID = %s and userID = %s and isDelete = %s '''
+_delete_user_bind_user_group_sql = ''' update  sso_user_group_user set isDelete = %s, lastUpdater = %s, 
+                        lastUpdateTime = now()  where userID = %s and isDelete = %s and userGroupID in 
+                        (select userGroupID from sso_user_group_role where roleID = %s)  '''
+''' 删除用户与角色的关联，通过用户组的间接关联也删除 '''
+def delete_user_bind(userID , roleID , user):
+    istruedelete = state.Boole['true']
+    isfalsedelete = state.Boole['false']
+    yz = (istruedelete, user, roleID, userID, isfalsedelete)
+    result = mysql.insert_or_update_or_delete(_delete_user_bind_role_sql, yz)
+
+    yz2 = (istruedelete, user, userID, isfalsedelete, roleID)
+    result2 = mysql.insert_or_update_or_delete(_delete_user_bind_user_group_sql, yz2)
+    return 0 == result and 0 == result2
+
+
+
+
+
 _query_right_by_role_app_sql = '''  select rr.id, rr.funcID, rr.appCode, rr.roleID, rr.`right`, rr.customRight, rr.isDelete, rr.creater, 
                     rr.createTime, rr.lastUpdater, rr.lastUpdateTime, f.path from sso_role_right as rr  left  join  sso_func  as  f  on  rr.funcID = f.id 
                     where rr.isDelete = %s and rr.roleID = %s and rr.appCode = %s '''
