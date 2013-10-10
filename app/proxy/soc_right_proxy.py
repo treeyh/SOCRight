@@ -21,7 +21,7 @@ def _http_get(url, params):
 
     if None == obj or obj['code'] != 0:
         return None
-    return obj['data']
+    return obj.get('data', None)
 
 
 def get_login_user(token):

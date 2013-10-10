@@ -137,8 +137,7 @@ class PassWordEditHandler(base_handler.BaseRightHandler):
             return
 
         try:
-            type = user_logic.UserLogic.instance(
-            ).update_password(name = user['name'], oldPassWord = ps['oldPassWord'] , 
+            type = user_logic.update_password(name = user['name'], oldPassWord = ps['oldPassWord'] , 
                               newPassWord1=ps['newPassWord1'], newPassWord2=ps['newPassWord2'])
             if type:
                 if None != user['loginCount'] and 0 >= user['loginCount']:

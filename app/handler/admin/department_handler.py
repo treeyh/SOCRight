@@ -29,7 +29,7 @@ class DepartmentListHandler(admin_base_handler.AdminRightBaseHandler):
 
 class DepartmentAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.DepartmentManager'
-    _right = 0
+    _right = state.operAdd
 
     def get(self):
         ps = self.get_page_config(title = '创建部门', refUrl = config.SOCRightConfig['siteDomain'] + 'Admin/Department/List')

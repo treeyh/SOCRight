@@ -186,7 +186,7 @@ class BaseHandler(tornado.web.RequestHandler):
         url = self.format_page_url()
         pageArea = self.get_page_pagearea(page, pageTotal)
         html = '<div style="margin: auto; margin-top: 3px; width: 99%; height:22px; line-height:22px; border: dashed #ccc 1px; text-align: right; font-size: 12px;">'
-        html = '%s<label style="margin-right: 20px;">共%d条记录&nbsp;&nbsp;分%d页&nbsp;&nbsp;每页%d条记录</label>' % (html, total, pageTotal, total)
+        html = '%s<label style="margin-right: 20px;">共%d条记录&nbsp;&nbsp;分%d页&nbsp;&nbsp;每页%d条记录</label>' % (html, total, pageTotal, size)
 
         if len(pageArea) > 0:
             if 1 < page:

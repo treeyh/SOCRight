@@ -92,7 +92,9 @@
             <td style="width:50px">
                 <a href="{{siteDomain}}Admin/Application/Detail?code={{ r['code'] }}">详情</a>
                 <a href="{{siteDomain}}Admin/Application/Edit?code={{ r['code'] }}">编辑</a>
+                {% if r['status'] == 1 %}
                 <a href="{{siteDomain}}Admin/Role/RightEdit?appCode={{ r['code'] }}">权限设置</a>
+                {% end%}
                 <!-- <a href="javascript:" onclick="App.del('{{r['code']}}')">删除</a> -->
             </td>
         </tr>
