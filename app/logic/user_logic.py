@@ -48,7 +48,7 @@ _login_sql = '''  select id, realName, departmentID, email, mobile, tel , name, 
 _login_col = str_helper.format_str_to_list_filter_empty('id, realName, departmentID, email, mobile, tel , name, loginCount', ',')
 ''' 用户登录 '''
 def login( name, password):
-    password = _format_user_password_md5(password)        
+    password = _format_user_password_md5(password)
     user = mysql.find_one(_login_sql, (name, password, state.statusActive, state.Boole['false']), _login_col)
     return user
 

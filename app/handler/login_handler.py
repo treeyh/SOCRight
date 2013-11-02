@@ -104,9 +104,10 @@ class AppGotoHandler(base_handler.BaseRightHandler):
         if '' == ps['appCode'] or None == user:
             self.redirect(ps['serviceSiteDomain'] + 'AppList')
             return
-
+        print user
         gotoUrl = user_logic.get_goto_user_url(
             userID=user['id'], appCode=ps['appCode'], ip=self.get_user_ip(), backUrl='')
+        print gotoUrl
         oper_log_logic.add(operID=user['id'], operUserName=user['name'], operRealName=user[
                                                    'realName'], appCode=ps['appCode'], funcPath='', action='userLogin', targetType=0, targetID='', targetName='', startStatus='', endStatus='', operIp=self.get_user_ip())
         self.redirect(gotoUrl)

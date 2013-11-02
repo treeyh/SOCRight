@@ -11,7 +11,7 @@
               <a href="{{serviceSiteDomain}}PassWordEdit">修改密码</a>
             </li>
             <li>
-              <a href="{{serviceSiteDomain}}Logout">退出登录</a>
+              <a href="{{siteDomain}}Admin/Logout">退出登录</a>
             </li>
               </ul>
             </li>
@@ -19,14 +19,19 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li><a href="/">{{ title }}</a></li>
-        <li><a href="{{serviceSiteDomain}}AppList">应用列表</a></li>
+        <li><a href="/">{{ siteName }}</a></li>
         <li><a href="{{serviceSiteDomain}}PassWordEdit">修改密码</a></li>
         <li><a href="###">关于</a></li>
       </ul>
     </div>
   </div>
 </div>
-
+<div id="content">
 {% block content %}{% end %}
+</div>
+<div id="footer" style="background:#ccc;">
+  <div class="container">
+    <p class="text-muted credit">Example courtesy <a href="http://martinbean.co.uk">Martin Bean</a> and <a href="http://ryanfait.com/sticky-footer/">Ryan Fait</a>.</p>
+  </div>
+</div>
 {% end %}

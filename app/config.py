@@ -7,8 +7,8 @@ SOCRightConfig = {
     'siteName' : '云海统一权限管理平台',
     'jsDomain' : '/static/',
     'cssDomain' : '/static/',    
-    'siteDomain' : 'http://ssoadmin.kanchene.com/',
-    'serviceSiteDomain' : 'http://sso.kanchene.com/',
+    'siteDomain' : 'http://ssoadmin.ejyi.com/',
+    'serviceSiteDomain' : 'http://sso.ejyi.com/',
     
     'size' : 20,
     'appCode' : 'SOCRight',
