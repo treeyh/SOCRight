@@ -26,7 +26,7 @@ class LoginHandler(base_handler.BaseHandler):
                     userID=user['id'], appCode=ps['appCode'], ip=self.get_user_ip(), backUrl=ps['backUrl'])
                 self.redirect(backUrl)
             return
-        self.render('login.html', **ps)
+        self.render('login_bs.html', **ps)
 
     def post(self):
         ps = self.get_page_config('登录')
@@ -92,7 +92,7 @@ class AppListHandler(base_handler.BaseRightHandler):
         user = self.current_user
         ps['user'] = user
         ps['apps'] = application_logic.query_all_by_active();
-        self.render('app_list.html', **ps)
+        self.render('app_list_bs.html', **ps)
 
 
 class AppGotoHandler(base_handler.BaseRightHandler):
@@ -120,7 +120,7 @@ class PassWordEditHandler(base_handler.BaseRightHandler):
             ls=['oldPassWord', 'newPassWord1', 'newPassWord2'], default='', map=ps)
         user = self.current_user
         ps['user'] = user
-        self.render('password_edit.html', **ps)
+        self.render('password_edit_bs.html', **ps)
 
     def post(self):
         ps = self.get_page_config('修改密码')
@@ -133,7 +133,7 @@ class PassWordEditHandler(base_handler.BaseRightHandler):
         if str_helper.is_null_or_empty(msg) == False:
             ps['msg'] = msg
             ps = self.format_none_to_empty(ps)
-            self.render('password_edit.html', **ps)
+            self.render('password_edit_bs.html', **ps)
             return
 
         try:
@@ -155,4 +155,4 @@ class PassWordEditHandler(base_handler.BaseRightHandler):
         except error.RightError as e:
             ps['msg'] = e.msg
 
-        self.render('password_edit.html', **ps)
+        self.render('password_edit_bs.html', **ps)

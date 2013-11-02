@@ -1,0 +1,32 @@
+{% extends "base_bs.html" %} {% block head %} {% end %} {% block body %}
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+        <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown">欢迎您：{{user['realName']}}<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+            <li>
+              <a href="{{serviceSiteDomain}}PassWordEdit">修改密码</a>
+            </li>
+            <li>
+              <a href="{{serviceSiteDomain}}Logout">退出登录</a>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/">{{ title }}</a></li>
+        <li><a href="{{serviceSiteDomain}}AppList">应用列表</a></li>
+        <li><a href="{{serviceSiteDomain}}PassWordEdit">修改密码</a></li>
+        <li><a href="###">关于</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% block content %}{% end %}
+{% end %}

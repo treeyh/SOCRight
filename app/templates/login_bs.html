@@ -1,0 +1,24 @@
+{% extends "base_bs.html" %} {% block head %}
+
+{% end %} {% block body %}
+
+<div class="container">
+
+  <form class="form-signin" action="{{ request.path }}" method="post">
+    <h1 class="form-signin-heading">用户登录:</h1>
+    <br />
+    <br />
+    <input type="text" class="form-control" name="userName" placeholder="您的账号：" required autofocus>
+    <br />
+    <input type="password" class="form-control" name="passWord" placeholder="您的密码：" required>
+    <!-- <label class="checkbox">
+      <input type="checkbox" value="remember-me"> 记住我
+    </label> -->
+    <input type="hidden" name="appCode" value="{{ appCode }}" />
+    <input type="hidden" name="backUrl" value="{{ backUrl }}" />
+    <br />
+    <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+  </form>
+
+</div>
+{% end %}

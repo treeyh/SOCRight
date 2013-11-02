@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <title>{{ title }}</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />    
+    <link rel="stylesheet" href="{{ cssDomain }}js/bootstrap/css/bootstrap.css?{{ version }}" type="text/css" />
+    <link rel="stylesheet" href="{{ cssDomain }}js/bootstrap/css/bootstrap-theme.css?{{ version }}" type="text/css" />
+    <link rel="stylesheet" href="{{ cssDomain }}js/bootstrap/css/bs_style.css?{{ version }}" type="text/css" />
+    <script type="text/javascript" src="{{ jsDomain }}js/jquery.min.1.7.2.js?{{ version }}"></script>
+    <script type="text/javascript" src="{{ jsDomain }}js/bootstrap/js/bootstrap.min.js?{{ version }}"></script>
+    {% block head %}{% end %}
+</head>
+    <body>
+        {% block body %}{% end %}
+        <script language="javascript" type="text/javascript" src="{{ jsDomain }}js/common.js?{{ version }}"></script>
+        
+        
+    <script type="text/javascript" language="javascript">
+    <!--
+        $(document).ready(function () {
+            $(".showtable tr").mouseover(function () {
+                $(this).addClass("over");
+            }).mouseout(function () {
+                $(this).removeClass("over");
+            }); //移除该行的class  
+            $(".showtable tr:odd").addClass("alt");
+            var msg = '{{ msg }}';
+            var gotoUrl = '{{ gotoUrl }}';
+            if (msg != '') {
+                Common.alert(msg, gotoUrl);
+            }
+        });
+    //-->
+    </script>
+    </body>
+</html>

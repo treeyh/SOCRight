@@ -1,0 +1,35 @@
+
+/*  
+登录页面样式
+*/
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+  margin-top: 120px;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+
+/* 页头样式 */
+.navbar-wrapper{position:absolute;top:0;left:0;right:0;z-index:20}
+@media screen and (min-width:768px){.navbar-wrapper.affix{position:fixed;margin-top:0}.navbar-wrapper.affix>.container{width:100%;padding-left:0;padding-right:0} .navbar-wrapper.affix .navbar{border-radius:0}}.navbar-wrapper .container{padding-left:0;padding-right:0}
+.navbar-wrapper .navbar{padding-left:15px;padding-right:15px}
+@media (min-width:768px){.navbar{min-height:44px}.navbar .navbar-header{float:right} .navbar .navbar-nav>li>a{padding-top:12px;padding-bottom:12px} .navbar .navbar-brand{padding-top:12px;padding-bottom:12px}}.carousel{height:460px}
