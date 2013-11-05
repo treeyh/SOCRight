@@ -31,14 +31,16 @@
             if (msg != '') {
                 Common.alert(msg, gotoUrl);
             }
-
-            // var h = $(window).height();
-            // var hh = $('.navbar').height();
-            // var fh = $('#footer').height();
-            // alert(h);
-            // alert(hh);
-            // alert(fh);
-            // $('#content').height(h - hh - fh + 40);
+            $('#123').html($('#123').html()+'<br />$(window).height()'+$(window).height());
+            $('#123').html($('#123').html()+'<br />$(navbar).height()'+$('.navbar').height());
+            $('#123').html($('#123').html()+'<br />$(navbar).outerHeight(true)'+$('.navbar').outerHeight(true));
+            $('#123').html($('#123').html()+'<br />$(footer).height()'+$('#footer').height());
+            $('#123').html($('#123').html()+'<br />$(footer).outerHeight(true)'+$('#footer').outerHeight(true));
+            var h = $(window).height();
+            var h = $(window).height();
+            var hh = $('.navbar').outerHeight(true);
+            var fh = $('#footer').outerHeight(true);
+            $('#content').height(h - hh - fh);
 
         });
 
