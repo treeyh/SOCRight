@@ -1,0 +1,99 @@
+{% extends "../base_bs.html" %} {% block head %}
+<link rel="stylesheet" href="{{ jsDomain }}js/zTree/zTreeStyle/zTreeStyle.css?{{ version }}" type="text/css" />
+<script type="text/javascript" src="{{ jsDomain }}js/zTree/jquery.ztree.core-3.2.min.js?{{ version }}"></script>
+{% end %} {% block body %}
+
+<div class="navbar navbar-inverse">
+  <div class="container">
+    <div class="navbar-header">
+        <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown">欢迎您：{{user['realName']}}<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+            <li>
+              <a href="{{serviceSiteDomain}}PassWordEdit">修改密码</a>
+            </li>
+            <li>
+              <a href="{{serviceSiteDomain}}Logout">退出登录</a>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/">{{ siteName }}</a></li>
+        <li class="dropdown">
+            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">部门管理<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="{{siteDomain}}Admin/Department/List" target="content">部门列表</a>
+                </li>
+                <li>
+                    <a href="{{siteDomain}}Admin/Department/Add" target="content">创建部门</a>
+                </li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">应用功能管理<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="{{siteDomain}}Admin/Application/List" target="content">应用列表</a>
+                </li>
+                <li>
+                    <a href="{{siteDomain}}Admin/Application/Add" target="content">创建应用</a>
+                </li>
+                <li>
+                    <a href="{{siteDomain}}Admin/Func/List" target="content">功能列表</a>
+                </li>
+                <li>
+                    <a href="{{siteDomain}}Admin/Func/Edit" target="content">功能编辑</a>
+                </li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">用户管理<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="{{siteDomain}}Admin/User/List" target="content">用户列表</a>
+                </li>
+                <li>
+                    <a href="{{siteDomain}}Admin/User/Add" target="content">创建用户</a>
+                </li>
+                <li>
+                    <a href="{{siteDomain}}Admin/UserGroup/List" target="content">用户组列表</a>
+                </li>
+                <li>
+                    <a href="{{siteDomain}}Admin/UserGroup/Add" target="content">创建用户组</a>
+                </li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">角色管理<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="{{siteDomain}}Admin/Role/List" target="content">角色列表</a>
+                </li>
+                <li>
+                    <a href="{{siteDomain}}Admin/Role/Add" target="content">创建角色</a>
+                </li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">操作日志<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="{{siteDomain}}Admin/OperLog/List" target="content">日志列表</a>
+                </li>
+            </ul>
+        </li>
+        <li><a href="###">关于</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="col-md-12" id="wrap">
+    <iframe name="content" id="content" src="{{siteDomain}}Admin/Application/List" height="100%" width="100%"
+            border="0" frameborder="0">浏览器不支持嵌入式框架，或被配置为不显示嵌入式框架。</iframe>
+</div>
+{% end %}
