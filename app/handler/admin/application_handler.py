@@ -24,7 +24,7 @@ class ApplicationListHandler(admin_base_handler.AdminRightBaseHandler):
                         code = app['code'], status= app['status'], page = ps['page'], size = ps['size'])
         ps['app'] = app
         ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
-        self.render('admin/application/list.html', **ps)
+        self.render('admin/application/list_bs.html', **ps)
 
 class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.AppManager'

@@ -40,7 +40,7 @@ class MainHandler(admin_base_handler.AdminBaseHandler):
         ps['user'] = user
         self.check_oper_right(user = user)
 
-        self.render('admin/main.html', **ps)
+        self.render('admin/main_bs.html', **ps)
 
     def get_user_info_by_token(self , token):
         user = soc_right_proxy.get_login_user(token = token)

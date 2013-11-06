@@ -33,3 +33,4 @@
 @media screen and (min-width:768px){.navbar-wrapper.affix{position:fixed;margin-top:0}.navbar-wrapper.affix>.container{width:100%;padding-left:0;padding-right:0} .navbar-wrapper.affix .navbar{border-radius:0}}.navbar-wrapper .container{padding-left:0;padding-right:0}
 .navbar-wrapper .navbar{padding-left:15px;padding-right:15px}
 @media (min-width:768px){.navbar{min-height:44px}.navbar .navbar-header{float:right} .navbar .navbar-nav>li>a{padding-top:12px;padding-bottom:12px} .navbar .navbar-brand{padding-top:12px;padding-bottom:12px}}.carousel{height:460px}
+
