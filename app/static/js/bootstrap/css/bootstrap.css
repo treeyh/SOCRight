@@ -309,7 +309,7 @@ body {
   font-size: 14px;
   line-height: 1.428571429;
   color: #333333;
-  background-color: #eee;
+  background-color: #F5F5F5;
 }
 
 input,
@@ -808,8 +808,10 @@ pre code {
 }
 
 .row {
-  margin-right: -15px;
-  margin-left: -15px;
+  /*margin-right: -15px;
+  margin-left: -15px;*/
+  margin-right: 0px;
+  margin-left: 0px;
 }
 
 .row:before,

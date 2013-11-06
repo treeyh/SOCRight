@@ -1,109 +1,82 @@
-{% extends "../../base_bs.html" %} {% block head %} {% end %} {% block body %}
-<div class="col-md-12">
-    <ol class="breadcrumb">
-      <li><a href="#">首页</a></li>
-      <li><a href="#">应用管理</a></li>
-      <li class="active">应用列表</li>
-    </ol>
+{% extends "../base_a_bs.html" %} {% block head %} {% end %} 
+{% block crumb %}
+<li>
+    <a href="#">应用管理</a>
+</li>
+<li class="active">应用列表</li>
+{% end %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">查询条件</div>
+            <div class="panel-body">
+                <form action="{{ request.path }}" method="get" class="form-inline" role="form">
+                    <div class="form-group">
+                        <label for="code" class="sr-only">应用编号</label>
+                        <input type="text" name="code" id="code" class="form-control" value="{{ app['code'] }}" placeholder="应用编号" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="name">应用名称</label>
+                        <input type="text" name="name" id="name" class="form-control" value="{{ app['name'] }}" placeholder="应用名称" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="status">应用状态</label>
+                        <select name="status" id="status" class="form-control">
+                            <option value="0" {% if app['status'] == 0 %} selected{% end %}>全部</option>
+                            <option value="1" {% if app['status'] == 1 %} selected{% end %}>可用</option>
+                            <option value="2" {% if app['status'] == 2 %} selected{% end %}>不可用</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="float:right;">
+                        <a href="{{siteDomain}}Admin/Application/Add" class="btn btn-default">创建应用</a>
+                        <input type="submit" class="btn btn-primary" value="&nbsp;&nbsp;查&nbsp;&nbsp;询&nbsp;&nbsp;" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="inputdiv">
-    <form action="{{ request.path }}" method="get">
-    <table class="inputtable">
-        <tr>
-            <td style="width: 60px;">
-                编号：
-            </td>
-            <td style="width: 200px;">
-                <input type="text" name="code" value="{{ app['code'] }}" />
-            </td>
-            <td style="width: 60px;">
-                名称：
-            </td>
-            <td style="width: 200px;">
-                <input type="text" name="name" value="{{ app['name'] }}" />
-            </td>
-            <td style="width: 60px;">
-                状态：
-            </td>
-            <td style="width: 80px;">
-                <select name="status">
-                    <option value="0" {% if app['status'] == 0 %} selected{% end %}>全部</option>
-                    <option value="1" {% if app['status'] == 1 %} selected{% end %}>可用</option>
-                    <option value="2" {% if app['status'] == 2 %} selected{% end %}>不可用</option>
-                </select>
-            </td>
-            <td style="text-align: right">
-                <a href="{{siteDomain}}Admin/Application/Add" style="margin-right:20px;">创建应用</a>
-                <input type="submit" style="width:100px; height:26px;line-height:18px; cursor:pointer; margin-right:3px;" value="查询" />
-            </td>
-        </tr>
-    </table>
-    </form>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-body">
+            <table class="table table-bordered table-striped">
+                <tr class="head">
+                    <td style="width:80px">编号</td>
+                    <td style="width:90px">应用名称</td>
+                    <td style="width:50px">开发人员</td>
+                    <td style="width:40px">状态</td>
+                    <td style="width:200px">应用url</td>
+                    <td style="width:50px">最后更新人</td>
+                    <td style="width:60px">最后更新时间</td>
+                    <td style="width:90px">操作</td>
+                </tr>
+                {% for r in pagedata['data'] %}
+                <tr>
+                    <td>{{ r['code'] }}</td>
+                    <td>{{ r['name'] }}</td>
+                    <td>{{ r['developer'] }}</td>
+                    <td>{{ r['statusname'] }}</td>
+                    <td>{{ r['url'] }}</td>
+                    <td>{{ r['lastUpdater'] }}</td>
+                    <td>{{ str(r['lastUpdateTime'])[0:-3] }}</td>
+                    <td>
+                        <a href="{{siteDomain}}Admin/Application/Detail?code={{ r['code'] }}">详情</a>
+                        <a href="{{siteDomain}}Admin/Application/Edit?code={{ r['code'] }}">编辑</a>
+                        {% if r['status'] == 1 %}
+                        <a href="{{siteDomain}}Admin/Role/RightEdit?appCode={{ r['code'] }}">权限设置</a>
+                        {% end%}
+                        <!-- <a href="javascript:" onclick="App.del('{{r['code']}}')">删除</a> -->
+                    </td>
+                </tr>
+            {% end %}
+            </table>
+        {% raw pager %}
+        </div>
+    </div>
 </div>
-<div class="showdiv">
-    {% raw pager[0: pager.find('跳转第')] + '</div>' %}
-    <table class="showtable">
-        <tr class="head">
-            <td style="width:80px">
-                编号
-            </td>
-            <td style="width:90px">
-                应用名称
-            </td>
-            <td style="width:50px">
-                开发人员
-            </td>
-            <td style="width:40px">
-                状态
-            </td>
-            <td style="width:200px">
-                应用url
-            </td>
-            <td style="width:50px">
-                最后更新人
-            </td>
-            <td style="width:60px">
-                最后更新时间
-            </td>
-            <td style="width:90px">
-                操作
-            </td>
-        </tr>
-        {% for r in pagedata['data'] %}
-        <tr>
-            <td style="width:80px">
-                {{ r['code'] }}
-            </td>
-            <td style="width:90px">
-                {{ r['name'] }}
-            </td>
-            <td style="width:50px">
-                {{ r['developer'] }}
-            </td>
-            <td style="width:40px">
-                {{ r['statusname'] }}
-            </td>
-            <td style="width:200px">
-                {{ r['url'] }}
-            </td>
-            <td style="width:50px">
-                {{ r['lastUpdater'] }}
-            </td>
-            <td style="width:80px">
-                {{ str(r['lastUpdateTime'])[0:-3] }}
-            </td>
-            <td style="width:50px">
-                <a href="{{siteDomain}}Admin/Application/Detail?code={{ r['code'] }}">详情</a>
-                <a href="{{siteDomain}}Admin/Application/Edit?code={{ r['code'] }}">编辑</a>
-                {% if r['status'] == 1 %}
-                <a href="{{siteDomain}}Admin/Role/RightEdit?appCode={{ r['code'] }}">权限设置</a>
-                {% end%}
-                <!-- <a href="javascript:" onclick="App.del('{{r['code']}}')">删除</a> -->
-            </td>
-        </tr>
-        {% end %}
-    </table>
-    {% raw pager %}
 </div>
 <script type="text/javascript" language="javascript">
     <!--

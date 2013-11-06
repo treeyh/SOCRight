@@ -23,7 +23,7 @@ class ApplicationListHandler(admin_base_handler.AdminRightBaseHandler):
         ps['pagedata'] = application_logic.query_page(name = app['name'], 
                         code = app['code'], status= app['status'], page = ps['page'], size = ps['size'])
         ps['app'] = app
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
+        ps['pager'] = self.build_page_html_bs(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
         self.render('admin/application/list_bs.html', **ps)
 
 class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
