@@ -15,7 +15,7 @@ def _format_url(url, params):
     return url
 
 def _http_get(url, params):
-    url = _format_url(url, params)
+    url = _format_url(url, params)    
     json = http_helper.get(url)
     obj = str_helper.json_decode(json)
 
@@ -27,7 +27,7 @@ def _http_get(url, params):
 def get_login_user(token):
     params = {'token': token}
     url = '%sUser/Get' % (config.urls['socRightApi'])
-    obj = _http_get(url, params)
+    obj = _http_get(url, params)    
     return obj
 
 

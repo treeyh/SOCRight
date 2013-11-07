@@ -46,7 +46,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             app = self.get_args(['code', 'name', 'developer', 'url', 'remark'], '')
             app['status'] = int(self.get_arg('status', '0'))        
         ps['app'] = app
-        self.render('admin/application/add_or_edit.html', **ps)
+        self.render('admin/application/add_or_edit_bs.html', **ps)
 
     def post(self):
         ps = self.get_page_config(title = '创建应用')
@@ -59,12 +59,12 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         msg = self.check_str_empty_input(app, ['code', 'name', 'url'])
         if str_helper.is_null_or_empty(msg) == False:
             ps['msg'] = msg
-            self.render('admin/application/add_or_edit.html', **ps)
+            self.render('admin/application/add_or_edit_bs.html', **ps)
             return
         codeType = str_helper.check_num_abc__(app['code'])
         if codeType == False:
             ps['msg'] = state.ResultInfo.get(101006, '')
-            self.render('admin/application/add_or_edit.html', **ps)
+            self.render('admin/application/add_or_edit_bs.html', **ps)
             return
         app['user'] = self.get_oper_user()
         if ps['isedit']:
@@ -95,7 +95,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             except error.RightError as e:
                 ps['msg'] = e.msg
         ps = self.format_none_to_empty(ps)
-        self.render('admin/application/add_or_edit.html', **ps)
+        self.render('admin/application/add_or_edit_bs.html', **ps)
 
 
 

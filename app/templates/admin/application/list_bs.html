@@ -1,7 +1,7 @@
 {% extends "../base_a_bs.html" %} {% block head %} {% end %} 
 {% block crumb %}
 <li>
-    <a href="#">应用管理</a>
+    <a href="{{siteDomain}}Admin/Application/List">应用管理</a>
 </li>
 <li class="active">应用列表</li>
 {% end %}
@@ -15,23 +15,23 @@
                 <form action="{{ request.path }}" method="get" class="form-inline" role="form">
                     <div class="form-group">
                         <label for="code" class="sr-only">应用编号</label>
-                        <input type="text" name="code" id="code" class="form-control" value="{{ app['code'] }}" placeholder="应用编号" />
+                        <input type="text" name="code" id="code" class="form-control" value="{{ app['code'] }}" placeholder="应用编号" data-toggle="hover" data-original-title="输入需要查询的应用编号" data-placement="bottom" />
                     </div>
                     <div class="form-group">
                         <label class="sr-only" for="name">应用名称</label>
-                        <input type="text" name="name" id="name" class="form-control" value="{{ app['name'] }}" placeholder="应用名称" />
+                        <input type="text" name="name" id="name" class="form-control" value="{{ app['name'] }}" placeholder="应用名称" data-toggle="hover" data-original-title="输入需要查询的应用名称" data-placement="bottom" />
                     </div>
                     <div class="form-group">
                         <label class="sr-only" for="status">应用状态</label>
-                        <select name="status" id="status" class="form-control">
+                        <select name="status" id="status" class="form-control" data-toggle="hover" data-original-title="选择需要查询的应用状态" data-placement="bottom">
                             <option value="0" {% if app['status'] == 0 %} selected{% end %}>全部</option>
                             <option value="1" {% if app['status'] == 1 %} selected{% end %}>可用</option>
                             <option value="2" {% if app['status'] == 2 %} selected{% end %}>不可用</option>
                         </select>
                     </div>
                     <div class="form-group" style="float:right;">
-                        <a href="{{siteDomain}}Admin/Application/Add" class="btn btn-default">创建应用</a>
-                        <input type="submit" class="btn btn-primary" value="&nbsp;&nbsp;查&nbsp;&nbsp;询&nbsp;&nbsp;" />
+                        <a href="{{siteDomain}}Admin/Application/Add" class="btn btn-default">新建应用</a>
+                        <button type="submit" class="btn btn-primary" style="width:100px;"><span class=".glyphicon .glyphicon-search"></span> 查询</button>
                     </div>
                 </form>
             </div>
@@ -54,7 +54,7 @@
                     <td style="width:90px">操作</td>
                 </tr>
                 {% for r in pagedata['data'] %}
-                <tr>
+                <tr {% if r['status'] != 1 %}class="warning"{% end%}>
                     <td>{{ r['code'] }}</td>
                     <td>{{ r['name'] }}</td>
                     <td>{{ r['developer'] }}</td>

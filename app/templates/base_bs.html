@@ -35,6 +35,11 @@
             $(window).bind('resize', function(){
                 Common.resetContent();
             });
+
+            $('form').tooltip({
+              selector: "[data-toggle=hover]",
+              container: "body"
+            });
         });
         
     //-->

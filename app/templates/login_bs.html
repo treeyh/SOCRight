@@ -8,16 +8,17 @@
     <h1 class="form-signin-heading">用户登录:</h1>
     <br />
     <br />
-    <input type="text" class="form-control" name="userName" placeholder="您的账号：" required autofocus>
+    <input type="text" class="form-control" data-toggle="hover" data-original-title="输入您的帐号" data-placement="right" name="userName" placeholder="您的账号：" required autofocus>
     <br />
-    <input type="password" class="form-control" name="passWord" placeholder="您的密码：" required>
+    <input type="password" class="form-control" data-toggle="hover" data-original-title="输入您的密码" data-placement="right" name="passWord" placeholder="您的密码：" required>
     <!-- <label class="checkbox">
       <input type="checkbox" value="remember-me"> 记住我
     </label> -->
     <input type="hidden" name="appCode" value="{{ appCode }}" />
     <input type="hidden" name="backUrl" value="{{ backUrl }}" />
     <br />
-    <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">
+        <span class=".glyphicon .glyphicon-search"></span>登录</button>
   </form>
 
 </div>
