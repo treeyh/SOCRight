@@ -125,4 +125,4 @@ class ApplicationDetailHandler(admin_base_handler.AdminRightBaseHandler):
             app = {'code':'','name':'','developer':'','url':'','remark':'','status':1,'creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}
         
         ps['app'] = app
-        self.render('admin/application/detail.html', **ps)
+        self.render('admin/application/detail_bs.html', **ps)

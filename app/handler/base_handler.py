@@ -241,11 +241,11 @@ class BaseHandler(tornado.web.RequestHandler):
                 #     pagepre = pageArea[0] - 1
                 #     html = '%s<li><a href="%s%d" title="转到第%d页">...</a></li>' % (html, url, pagepre, pagepre)
             else:
-                html = '%s<li class="disabled"><a href="#" title="转到第一页">|&laquo;</a></li><li class="disabled"><a href="#" title="转到上一页">&laquo;</a></li>' % (html)
+                html = '%s<li class="disabled"><span title="转到第一页">|&laquo;</span></li><li class="disabled"><span title="转到上一页">&laquo;</span></li>' % (html)
 
             for i in pageArea:
                 if i == page:
-                    html = '%s<li class="active"><a href="#">%d <span class="sr-only">(current)</span></a></li>' % (html, i)
+                    html = '%s<li class="active"><span>%d <span class="sr-only">(current)</span></span></li>' % (html, i)
                 else:
                     html = '%s<li><a href="%s%d" title="转到第%d页">%d</a></li>' % (html, url, i, i, i)
 
@@ -257,10 +257,10 @@ class BaseHandler(tornado.web.RequestHandler):
                 html = '%s<li><a href="%s%d" title="转到下一页">&raquo;</a></li>' % (html, url, next)
                 html = '%s<li><a href="%s%d" title="转到最末页">&raquo;|</a></li>' % (html, url, pageTotal)
             else:
-                html = '%s<li class="disabled"><a href="#" title="转到下一页">&raquo;</a></li><li class="disabled"><a href="#" title="转到最末页">&raquo;|</a></li>' % (html)
+                html = '%s<li class="disabled"><span title="转到下一页">&raquo;</span></li><li class="disabled"><span title="转到最末页">&raquo;|</span></li>' % (html)
         else:
-            html = '%s<li class="disabled"><a href="#" title="转到第一页">|&laquo;</a></li><li class="disabled"><a href="#" title="转到上一页">&laquo;</a></li>' % (html)
-            html = '%s<li class="disabled"><a href="#" title="转到下一页">&raquo;</a></li><li class="disabled"><a href="#" title="转到最末页">&raquo;|</a></li>' % (html)
+            html = '%s<li class="disabled"><span title="转到第一页">|&laquo;</span></li><li class="disabled"><span title="转到上一页">&laquo;</span></li>' % (html)
+            html = '%s<li class="disabled"><span title="转到下一页">&raquo;</span></li><li class="disabled"><span title="转到最末页">&raquo;|</span></li>' % (html)
 
         # html = '%s跳转第<input type="text" value="%d" id="btGoToPage" class="form-control input-sm" style="width:45px;" />页<input type="button" value="Go" class="btn btn-default" onclick="Common.goToPage(\'%s\', %d)" />' % (html, page, url, pageTotal)
 

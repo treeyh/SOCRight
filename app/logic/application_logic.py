@@ -98,7 +98,7 @@ def update( name, code, developer, url, status, remark, user):
 
     isdelete = state.Boole['false']
     yz = (name, developer, url, status, remark, user, code)
-    result = mysql.insert_or_update_or_delete(self._update_sql, yz)
+    result = mysql.insert_or_update_or_delete(_update_sql, yz)
     return 0 == result
 
 

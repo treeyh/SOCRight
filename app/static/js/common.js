@@ -19,6 +19,13 @@ var Common = {
             $('#wrap').height(300);
         }
     },
+    backPage:function(){
+        var url = $('#refUrl').val();
+        if(undefined == url || '' == url){
+            return;
+        }
+        window.location.href = url;
+    },
     goToPage: function(url, pageTotal){
         var page = $('#btGoToPage').val();
         var p = parseInt(page);

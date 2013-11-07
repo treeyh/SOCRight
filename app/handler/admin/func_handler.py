@@ -37,7 +37,7 @@ class FuncListHandler(admin_base_handler.AdminRightBaseHandler):
                 break
         ps['funcs'] = func_logic.query_all_by_app(appCode)
         ps['appCode'] = appCode
-        self.render('admin/func/list.html', **ps)
+        self.render('admin/func/list_bs.html', **ps)
 
 
 class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
@@ -51,7 +51,7 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             ps['gotoUrl'] = ps['siteDomain'] + 'Admin/Application/Add'
             ps['apps'] = []
             ps['funcs'] = []
-            self.render('admin/func/list.html', **ps)
+            self.render('admin/func/list_bs.html', **ps)
             return
 
         appCode = self.get_arg('appCode', apps[0]['code'])
@@ -63,7 +63,7 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 break
         ps['tree'] = self.get_funcs_tree_by_appCode(appCode, appName)
         ps['appCode'] = appCode
-        self.render('admin/func/detail.html', **ps)
+        self.render('admin/func/detail_bs.html', **ps)
 
     def get_funcs_tree_by_appCode(self, appCode, appName):
         funcs = func_logic.query_all_by_app(appCode)

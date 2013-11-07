@@ -91,4 +91,4 @@ class LogoutHandler(admin_base_handler.AdminBaseHandler):
 class NotRightHandler(admin_base_handler.AdminBaseHandler):
     def get(self):
         ps = self.get_page_config(title = '无该操作权限')
-        self.render('admin/not_right.html', **ps)
+        self.render('admin/not_right_bs.html', **ps)

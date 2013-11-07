@@ -1,0 +1,90 @@
+{% extends "../base_a_bs.html" %} {% block head %} {% end %} 
+{% block crumb %}
+<li>
+    <a href="{{siteDomain}}Admin/Func/List">功能管理</a>
+</li>
+<li class="active">功能列表</li>
+{% end %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">查询条件</div>
+            <div class="panel-body">
+                <form action="{{ request.path }}" method="get" class="form-inline" role="form">
+                    <div class="form-group">
+                        <label class="sr-only" for="apps">所属应用</label>
+                        <select id="apps" name="apps" class="form-control" data-toggle="hover" data-original-title="选择所属应用" data-placement="bottom">
+                            {% for app in apps %}
+                            <option value="{{ app['code'] }}" {% if appCode == app['code'] %} selected {% end %}>{{ app['name']}}</option>
+                            {% end %}
+                        </select>
+                    </div>
+                    <div class="form-group" style="float:right;">
+                        <a href="{{siteDomain}}Admin/Func/Edit?appCode={{appCode}}" class="btn btn-default">维护该应用功能</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-body">
+            <table class="table table-bordered table-striped table-hover">
+                <tr>
+                    <td style="width: 60px;">
+                        编号
+                    </td>
+                    <td style="width: 250px;">
+                        名称
+                    </td>
+                    <td style="width: 100px;">
+                        编号
+                    </td>
+                    <td style="width: 80px;">
+                        排序编号
+                    </td>
+                    <td>
+                        唯一路径(NameSpace)
+                    </td>
+                </tr>
+                {% if None != funcs %}
+                {% for func in funcs %}
+                <tr>
+                    <td>
+                        {{ func['id'] }}
+                    </td>
+                    <td>
+                        {% set c = func['path'].count('.') %}
+                        {% for i in range(c-1) %}██{% end %}{{ func['name'] }}-Lv{{c}}
+                    </td>
+                    <td>
+                        {{ func['code'] }}
+                    </td>
+                    <td>
+                        {{ func['sort'] }}
+                    </td>
+                    <td>
+                        {{ func['path'] }}
+                    </td>
+                </tr>
+                {% end %}
+                {% end %}
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" language="javascript">
+    <!--
+    $(document).ready(function () {
+        $('#apps').bind('change', function() {
+            window.location.href = '{{siteDomain}}Admin/Func/List?appCode=' + $('#apps').val();
+        });
+    });
+    //-->
+</script>
+{% end %}
