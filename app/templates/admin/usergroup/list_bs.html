@@ -1,0 +1,142 @@
+{% extends "../base_a_bs.html" %}
+{% block crumb %}
+<li>
+    <a href="{{siteDomain}}Admin/UserGroup/List">用户组管理</a>
+</li>
+<li class="active">用户组列表</li>
+{% end %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">查询条件</div>
+            <div class="panel-body">
+                <form action="{{ request.path }}" method="get" class="form-inline" role="form">
+                    <div class="form-group">
+                        <label for="id" class="sr-only">编号</label>
+                        <input type="text" name="id" id="id" value="{{ userGroup['id'] }}" class="form-control" placeholder="编号" data-toggle="hover" data-original-title="输入需要查询的用户组编号" data-placement="bottom" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="name">名称</label>
+                        <input type="text" name="name" id="name" value="{{ userGroup['name'] }}" class="form-control" placeholder="名称" data-toggle="hover" data-original-title="输入需要查询的用户组名称" data-placement="bottom" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="status">应用状态</label>
+                        <select name="status" id="status" class="form-control" data-toggle="hover" data-original-title="选择需要查询的用户组状态" data-placement="bottom">
+                            <option value="0" {% if userGroup['status'] == 0 %} selected{% end %}>全部</option>
+                            <option value="1" {% if userGroup['status'] == 1 %} selected{% end %}>可用</option>
+                            <option value="2" {% if userGroup['status'] == 2 %} selected{% end %}>不可用</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="float:right;">
+                        <a href="{{siteDomain}}Admin/UserGroup/Add" class="btn btn-info">新建用户组</a>
+                        <button type="submit" class="btn btn-primary" style="width:100px;"><span class="glyphicon glyphicon-search m-r10"></span>查询</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-body">
+            <table class="table table-bordered table-striped table-hover">
+                <tr>
+                    <td style="width:40px">
+                        编号
+                    </td>
+                    <td style="width:60px">
+                        名称
+                    </td>
+                    <td style="width:60px">
+                        状态
+                    </td>
+                    <td style="width:50px">
+                        创建人
+                    </td>
+                    <td style="width:60px">
+                        创建时间
+                    </td>
+                    <td style="width:50px">
+                        最后更新人
+                    </td>
+                    <td style="width:60px">
+                        最后更新时间
+                    </td>
+                    <td style="width:80px">
+                        操作
+                    </td>
+                </tr>                
+                {% for r in pagedata['data'] %}
+                <tr>
+                    <td>
+                        {{ r['id'] }}
+                    </td>
+                    <td>
+                        {{ r['name'] }}
+                    </td>
+                    <td>
+                        {{ r['statusname'] }}
+                    </td>
+                    <td>
+                        {{ r['creater'] }}
+                    </td>
+                    <td>
+                        {{ str(r['createTime'])[0:-3] }}
+                    </td>
+                    <td>
+                        {{ r['lastUpdater'] }}
+                    </td>
+                    <td>
+                        {{ str(r['lastUpdateTime'])[0:-3] }}
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{siteDomain}}Admin/UserGroup/Detail?id={{ r['id'] }}" class="btn btn-primary">查看详情</a>
+                              <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" type="button" style="height: 34px;">
+                                  <span class="caret"></span>
+                                  <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                              <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{siteDomain}}Admin/UserGroup/Edit?id={{ r['id'] }}">修改编辑</a></li>
+                                <li><a href="javascript:" onclick="UserGroup.del('{{r['id']}}')">删除</a></li>
+                                <li class="divider"></li>
+                                <li><a href="{{siteDomain}}Admin/UserGroup/UserList?id={{ r['id'] }}">用户列表</a></li>
+                                {% if r['status'] == 1 %}
+                                <li><a href="{{siteDomain}}Admin/User/Add?userGroupID={{ r['id'] }}">创建该组用户</a></li>
+                                {% end %}
+                                <li class="divider"></li>
+                                <li><a href="{{siteDomain}}Admin/UserGroup/RoleList?id={{ r['id'] }}">角色列表</a></li>
+                                <li><a href="{{siteDomain}}Admin/UserGroup/RightDetail?id={{ r['id'] }}">权限预览</a></li>
+                              </ul>
+                        </div>
+                    </td>
+                </tr>
+                {% end %}
+            </table>
+            {% raw pager %}
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" language="javascript">
+    <!--
+    var UserGroup = {
+        del: function (id) {
+            if (!confirm("确定删除该记录吗？")) return false;
+
+            $.post('/Admin/UserGroup/Del', { 'id': id, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', window.location.href);
+                     } else {
+                         Common.alert('操作失败,'+data.msg);
+                     }
+                 }, "json");
+        }
+    };
+    //-->
+</script>
+{% end %}

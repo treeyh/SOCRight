@@ -10,7 +10,7 @@ SOCRightConfig = {
     'siteDomain' : 'http://ssoadmin.ejyi.com/',
     'serviceSiteDomain' : 'http://sso.ejyi.com/',
     
-    'size' : 20,
+    'size' : 15,
     'appCode' : 'SOCRight',
     'rightCookieName' : 'soc_right_user',
     'adminCookieName' : 'soc_right_admin_user',

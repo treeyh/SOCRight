@@ -1,0 +1,218 @@
+{% extends "../base_a_bs.html" %}
+{% block crumb %}
+<li>
+    <a href="{{siteDomain}}Admin/User/List">用户管理</a>
+</li>
+<li class="active">用户列表</li>
+{% end %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">查询条件</div>
+            <div class="panel-body">
+                <form action="{{ request.path }}" method="get" class="form-inline" role="form">
+                    <div class="form-group">
+                        <label for="name" class="sr-only">用户名</label>
+                        <input type="text" name="name" id="name" value="{{ user['name'] }}" class="form-control" placeholder="用户名" data-toggle="hover" data-original-title="输入需要查询的用户名" data-placement="bottom" />
+                        <input type="hidden" name="id" value="{{ user['id'] }}" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="realName">姓名</label>
+                        <input type="text" name="realName" id="realName" value="{{ user['realName'] }}" class="form-control" placeholder="姓名" data-toggle="hover" data-original-title="输入需要查询的姓名" data-placement="bottom" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="status">应用状态</label>
+                        <select name="status" id="status" class="form-control" data-toggle="hover" data-original-title="选择需要查询的用户状态" data-placement="bottom">
+                            <option value="0">全部状态</option>
+                            {% for k in userStatus.keys() %}
+                            <option value="{{k}}" {% if k == user['status'] %} selected{% end %}>{{userStatus[k]}}</option>
+                            {% end %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="departmentID">所属部门</label>
+                        <select name="departmentID" id="departmentID" class="form-control" data-toggle="hover" data-original-title="选择需要查询的部门" data-placement="bottom">
+                            <option value="0">全部部门</option>
+                            {% for d in deps %}
+                            <option value="{{d['id']}}" {% if d['id'] == user['departmentID'] %} selected{% end %}>{{d['name']}}</option>
+                            {% end %}
+                        </select>
+                        <input type="hidden" name="mobile" value="{{ user['mobile'] }}" />
+                        <input type="hidden" name="tel" value="{{ user['tel'] }}" />
+                        <input type="hidden" name="email" value="{{ user['email'] }}" />
+                    </div>
+                    <br />
+                    <br />
+                    <div class="form-group">
+                        <label class="sr-only" for="createTimeBegin">创建开始日期</label>
+                        <input type="text" onfocus="WdatePicker()" value="{{user['createTimeBegin']}}" id="createTimeBegin" name="createTimeBegin" class="Wdate form-control" placeholder="开始日期" data-toggle="hover" data-original-title="选择需要查询的创建开始日期" data-placement="bottom" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="createTimeEnd">创建结束日期</label>
+                        <input type="text" onfocus="WdatePicker()" value="{{user['createTimeEnd']}}" id="createTimeEnd" name="createTimeEnd" class="Wdate form-control" placeholder="结束日期" data-toggle="hover" data-original-title="选择需要查询的结束日期" data-placement="bottom" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="lastUpdateTimeBegin">更新开始日期</label>
+                        <input type="text" onfocus="WdatePicker()" value="{{user['lastUpdateTimeBegin']}}" id="lastUpdateTimeBegin" name="lastUpdateTimeBegin" class="Wdate form-control" placeholder="开始日期" data-toggle="hover" data-original-title="选择需要查询的开始日期" data-placement="bottom" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="lastUpdateTimeEnd">更新结束日期</label>
+                        <input type="text" onfocus="WdatePicker()" value="{{user['lastUpdateTimeEnd']}}" id="lastUpdateTimeEnd" name="lastUpdateTimeEnd" class="Wdate form-control" placeholder="结束日期" data-toggle="hover" data-original-title="选择需要查询的结束日期" data-placement="bottom" />
+                    </div>
+                    <div class="form-group" style="float:right;">
+                        {% if ExportType == True %}
+                        <a href="{{siteDomain}}Admin/User/Export?name={{user['name']}}&status={{user['status']}}&realName={{user['realName']}}&departmentID={{user['departmentID']}}&createTimeBegin={{user['createTimeBegin']}}&createTimeEnd={{user['createTimeEnd']}}&lastUpdateTimeBegin={{user['lastUpdateTimeBegin']}}&lastUpdateTimeEnd={{user['lastUpdateTimeEnd']}}" target="_blank" style="margin-right:20px;" class="btn btn-default">导出结果</a>
+                        {% end %}
+                        <a href="{{siteDomain}}Admin/User/Add" class="btn btn-info">新建用户</a>
+                        <button type="submit" class="btn btn-primary" style="width:100px;"><span class="glyphicon glyphicon-search m-r10"></span>查询</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-body">
+            <table class="table table-bordered table-striped table-hover">
+                <tr>
+                    <td style="width:20px">
+                        编号
+                    </td>
+                    <td style="width:60px">
+                        用户名
+                    </td>
+                    <td style="width:60px">
+                        姓名
+                    </td>
+                    <td style="width:80px">
+                        部门
+                    </td>
+                    <td style="width:20px">
+                        状态
+                    </td>
+                    <td style="width:50px">
+                        创建人
+                    </td>
+                    <td style="width:60px">
+                        创建时间
+                    </td>
+                    <td style="width:50px">
+                        最后更新人
+                    </td>
+                    <td style="width:60px">
+                        最后更新时间
+                    </td>
+                    <td style="width:80px">
+                        操作
+                    </td>
+                </tr>
+                {% for r in pagedata['data'] %}
+                <tr>
+                    <td>
+                        {{ r['id'] }}
+                    </td>
+                    <td>
+                        {{ r['name'] }}
+                    </td>
+                    <td>
+                        {{ r['realName'] }}
+                    </td>
+                    <td>
+                        {{ r['departmentName'] }}
+                    </td>
+                    <td>
+                        {{ r['statusname'] }}
+                    </td>
+                    <td>
+                        {{ r['creater'] }}
+                    </td>
+                    <td>
+                        {{ str(r['createTime'])[0:-3] }}
+                    </td>
+                    <td>
+                        {{ r['lastUpdater'] }}
+                    </td>
+                    <td>
+                        {{ str(r['lastUpdateTime'])[0:-3] }}
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{siteDomain}}Admin/User/Detail?id={{ r['id'] }}" class="btn btn-primary">查看详情</a>
+                              <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" type="button" style="height: 34px;">
+                                  <span class="caret"></span>
+                                  <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                              <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{siteDomain}}Admin/User/Edit?id={{ r['id'] }}">修改编辑</a></li>
+                                <li><a href="javascript:" onclick="User.del('{{r['id']}}')">删除</a></li>
+                                {% if LockType == True %}
+                                    <li class="divider"></li>
+                                    {% if r['status'] == 3 %}
+                                    <li><a href="javascript:" onclick="User.unLock('{{r['id']}}')">解锁</a></li>
+                                    {% else %}
+                                    <li><a href="javascript:" onclick="User.lock('{{r['id']}}')">锁定</a></li>
+                                    {% end %}
+                                {% end %}
+                                <li class="divider"></li>
+                                <li><a href="{{siteDomain}}Admin/User/GroupList?userID={{ r['id'] }}">所属用户组</a></li>
+                                <li class="divider"></li>
+                                <li><a href="{{siteDomain}}Admin/User/RoleList?userID={{ r['id'] }}">所属角色</a></li>
+                                <li><a href="{{siteDomain}}Admin/User/RightDetail?userID={{ r['id'] }}">权限预览</a></li>
+                              </ul>
+                        </div>
+                    </td>
+                </tr>
+                {% end %}
+            </table>
+            {% raw pager %}
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" language="javascript">
+    <!--
+    var User = {
+        del: function (id) {
+            if (!confirm("确定删除该记录吗？")) return false;
+
+            $.post('/Admin/User/Del?' + Math.random(), { 'id': id, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', window.location.href);
+                     } else {
+                         Common.alert('操作失败,'+data.msg);
+                     }
+                 }, "json");
+        },
+        unLock: function (id) {
+            if (!confirm("确定解锁该用户吗？")) return false;
+
+            $.post('/Admin/User/UnLock?' + Math.random(), { 'id': id, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', window.location.href);
+                     } else {
+                         Common.alert('操作失败,'+data.msg);
+                     }
+                 }, "json");
+        },
+        lock: function (id) {
+            if (!confirm("确定锁定该用户吗？")) return false;
+
+            $.post('/Admin/User/Lock?' + Math.random(), { 'id': id, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', window.location.href);
+                     } else {
+                         Common.alert('操作失败,'+data.msg);
+                     }
+                 }, "json");
+        }
+    };
+    //-->
+</script>
+{% end %}

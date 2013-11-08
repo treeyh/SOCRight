@@ -23,8 +23,8 @@ class RoleListHandler(admin_base_handler.AdminRightBaseHandler):
         ps['pagedata'] = role_logic.query_page(id = role['id'], 
                     name = role['name'], status = role['status'], page = ps['page'], size = ps['size'])
         ps['role'] = role
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
-        self.render('admin/role/list.html', **ps)
+        ps['pager'] = self.build_page_html_bs(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
+        self.render('admin/role/list_bs.html', **ps)
 
 class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager'
@@ -45,7 +45,7 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             role['status'] = int(self.get_arg('status', '0'))
         ps['role'] = role
         ps = self.format_none_to_empty(ps)
-        self.render('admin/role/add_or_edit.html', **ps)
+        self.render('admin/role/add_or_edit_bs.html', **ps)
 
     def post(self):
         ps = self.get_page_config(title = '创建角色')
@@ -59,7 +59,7 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         if str_helper.is_null_or_empty(msg) == False:
             ps['msg'] = msg
             ps = self.format_none_to_empty(ps)
-            self.render('admin/role/add_or_edit.html', **ps)
+            self.render('admin/role/add_or_edit_bs.html', **ps)
             return
         role['user'] = self.get_oper_user()
         
@@ -91,7 +91,7 @@ class RoleAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             except error.RightError as e:
                 ps['msg'] = e.msg
         ps = self.format_none_to_empty(ps)
-        self.render('admin/role/add_or_edit.html', **ps)
+        self.render('admin/role/add_or_edit_bs.html', **ps)
 
 
 
@@ -122,7 +122,7 @@ class RoleDetailHandler(admin_base_handler.AdminRightBaseHandler):
             role = {'id':'','name':'', 'statusname':'','status':1, 'remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}        
         ps['role'] = role
         ps = self.format_none_to_empty(ps)
-        self.render('admin/role/detail.html', **ps)
+        self.render('admin/role/detail_bs.html', **ps)
 
 
 class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):

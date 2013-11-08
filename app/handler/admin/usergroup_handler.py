@@ -24,8 +24,8 @@ class UserGroupListHandler(admin_base_handler.AdminRightBaseHandler):
                     name = userGroup['name'], status = userGroup['status'], page = ps['page'], size = ps['size'])
         ps['userGroup'] = userGroup
         ps = self.format_none_to_empty(ps)
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
-        self.render('admin/usergroup/list.html', **ps)
+        ps['pager'] = self.build_page_html_bs(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
+        self.render('admin/usergroup/list_bs.html', **ps)
 
 class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager'
@@ -44,7 +44,7 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             usergroup['status'] = int(self.get_arg('status', '0'))
         ps['usergroup'] = usergroup
         ps = self.format_none_to_empty(ps)
-        self.render('admin/usergroup/add_or_edit.html', **ps)
+        self.render('admin/usergroup/add_or_edit_bs.html', **ps)
 
     def post(self):
         ps = self.get_page_config(title = '创建用户组')
@@ -58,7 +58,7 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         if str_helper.is_null_or_empty(msg) == False:
             ps['msg'] = msg
             ps = self.format_none_to_empty(ps)
-            self.render('admin/usergroup/add_or_edit.html', **ps)
+            self.render('admin/usergroup/add_or_edit_bs.html', **ps)
             return
         usergroup['user'] = self.get_oper_user()
         
@@ -88,7 +88,7 @@ class UserGroupAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             except error.RightError as e:
                 ps['msg'] = e.msg
         ps = self.format_none_to_empty(ps)
-        self.render('admin/usergroup/add_or_edit.html', **ps)
+        self.render('admin/usergroup/add_or_edit_bs.html', **ps)
 
 
 
@@ -120,7 +120,7 @@ class UserGroupDetailHandler(admin_base_handler.AdminRightBaseHandler):
             usergroup = {'id':'','name':'', 'statusname':'','status':1, 'remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}        
         ps['usergroup'] = usergroup
         ps = self.format_none_to_empty(ps)
-        self.render('admin/usergroup/detail.html', **ps)
+        self.render('admin/usergroup/detail_bs.html', **ps)
 
 
 

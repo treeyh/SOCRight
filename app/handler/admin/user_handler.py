@@ -33,8 +33,8 @@ class UserListHandler(admin_base_handler.AdminRightBaseHandler):
                      status = user['status'], createTimeBegin = user['createTimeBegin'], createTimeEnd = user['createTimeEnd'], lastUpdateTimeBegin = user['lastUpdateTimeBegin'], lastUpdateTimeEnd = user['lastUpdateTimeEnd'], page = ps['page'], size = ps['size'])
         ps['user'] = user
         ps = self.format_none_to_empty(ps)
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])
-        self.render('admin/user/list.html', **ps)
+        ps['pager'] = self.build_page_html_bs(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])
+        self.render('admin/user/list_bs.html', **ps)
 
 
 class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
@@ -65,7 +65,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         ps['deps'] = department_logic.query_all_by_active()
 
         ps = self.format_none_to_empty(ps)
-        self.render('admin/user/add_or_edit.html', **ps)
+        self.render('admin/user/add_or_edit_bs.html', **ps)
 
 
 
@@ -88,7 +88,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         if str_helper.is_null_or_empty(msg) == False:
             ps['msg'] = msg
             ps = self.format_none_to_empty(ps)
-            self.render('admin/user/add_or_edit.html', **ps)
+            self.render('admin/user/add_or_edit_bs.html', **ps)
             return
 
         user['user'] = self.get_oper_user()
@@ -130,7 +130,7 @@ class UserAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             except error.RightError as e:
                 ps['msg'] = e.msg
         ps = self.format_none_to_empty(ps)
-        self.render('admin/user/add_or_edit.html', **ps)
+        self.render('admin/user/add_or_edit_bs.html', **ps)
 
 
     def bind_role(self, userID, roleID, user):
@@ -183,7 +183,7 @@ class UserDetailHandler(admin_base_handler.AdminRightBaseHandler):
             user = {'id':'','name':'', 'passWord':'', 'statusname':'','mobile':'','tel':'','email':'','status':1,'lastLoginTime':'','lastLoginApp':'','lastLoginIp':'','remark':'','creater':'','createTime':'','lastUpdater':'','lastUpdateTime':''}        
         ps['user'] = user
         ps = self.format_none_to_empty(ps)
-        self.render('admin/user/detail.html', **ps)
+        self.render('admin/user/detail_bs.html', **ps)
 
 
 

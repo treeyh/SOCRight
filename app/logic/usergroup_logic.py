@@ -94,7 +94,7 @@ _update_sql = '''   update sso_user_group set name = %s, status = %s, remark = %
 ''' 更新用户组 '''
 def update( id, name, status, remark, user):
     obj = query_one_by_name(name = name)
-    if None != obj and str(obj['id']) == str(id):
+    if None != obj and str(obj['id']) != str(id):
         raise  error.RightError(code = 105001)
 
     isdelete = state.Boole['false']

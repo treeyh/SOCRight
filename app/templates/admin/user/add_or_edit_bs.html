@@ -1,0 +1,143 @@
+{% extends "../base_a_bs.html" %}
+{% block crumb %}
+<li>
+    <a href="{{siteDomain}}Admin/User/List">用户管理</a>
+</li>
+<li class="active">{% if isedit %}编辑用户{% else %}新建用户{% end %}</li>
+{% end %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-body">
+                <form action="{{ request.uri }}" method="post" class="form-horizontal">
+                    {% if isedit %}
+                    <div class="form-group">
+                        <label for="id" class="col-sm-2 control-label"><span class="red">*</span>编号</label>
+                        <div class="col-sm-5">
+                            <input type="text" style="ime-mode:Disabled"  {% if isedit %} disabled {% end %} value="{{ user['id'] }}" class="form-control" />
+                            <input type="hidden" name="id" value="{{ user['id'] }}" />
+                        </div>
+                    </div>
+                    {% end %} 
+                    <div class="form-group">
+                        <label for="name" class="col-sm-2 control-label"><span class="red">*</span>用户名(唯一)</label>
+                        <div class="col-sm-5">
+                            {% if isedit %}
+                            <input type="text" style="ime-mode:Disabled"  {% if isedit %} disabled {% end %} value="{{ user['name'] }}" class="form-control" />
+                            <input type="hidden" name="name" value="{{ user['name'] }}" />
+                            {% else %}
+                            <input type="text" name="name" id="name" class="form-control" value="{{ user['name'] }}" style="ime-mode:Disabled" placeholder="用户名(唯一)" data-toggle="hover" data-original-title="允许输入英文字母、数字和下划线" data-placement="right" required />
+                            {% end %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="realName" class="col-sm-2 control-label"><span class="red">*</span>姓名</label>
+                        <div class="col-sm-5">
+                            <input type="text" name="realName" id="realName" class="form-control" value="{{ user['realName'] }}" placeholder="姓名" required />
+                            <input type="hidden" name="parentID" value="0" />
+                            <input type="hidden" name="role" value="{{roleID}}" />
+                            <input type="hidden" name="userGroup" value="{{userGroupID}}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="col-sm-2 control-label"><span class="red">*</span>电子邮箱(唯一)</label>
+                        <div class="col-sm-5">
+                            <input type="text" name="email" id="email" class="form-control" value="{{ user['email'] }}" placeholder="电子邮箱(唯一)" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile" class="col-sm-2 control-label"><span class="red">*</span>手机</label>
+                        <div class="col-sm-5">
+                            <input type="text" name="mobile" id="mobile" class="form-control" value="{{ user['mobile'] }}" placeholder="手机" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="tel" class="col-sm-2 control-label"><span class="red">*</span>电话</label>
+                        <div class="col-sm-5">
+                            <input type="text" name="tel" id="tel" class="form-control" value="{{ user['tel'] }}" placeholder="电话" />
+                        </div>
+                    </div>
+                    {% if not isedit %}
+                    <div class="form-group">
+                        <label for="passWord" class="col-sm-2 control-label"><span class="red">*</span>初始密码</label>
+                        <div class="col-sm-5">
+                            <input type="password" name="passWord" id="passWord" class="form-control" value="{{ user['passWord'] }}" placeholder="初始密码" data-toggle="hover" data-original-title="需要大小写、数字、符号至少三种类型" data-placement="right" required />
+                        </div>
+                    </div>
+                    {% end %}
+                    <div class="form-group">
+                        <label for="departmentID" class="col-sm-2 control-label">部门</label>
+                        <div class="col-sm-5">
+                            <select name="departmentID" id="departmentID" class="form-control">
+                                {% for d in deps %}
+                                <option value="{{d['id']}}" {% if d['id'] == user['departmentID'] %} selected{% end %}>{{d['name']}}</option>
+                                {% end %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="beginDate" class="col-sm-2 control-label"><span class="red">*</span>有效期-开始</label>
+                        <div class="col-sm-5">
+                            <input type="text" name="beginDate" id="beginDate" value="{{ user['beginDate'] }}" class="Wdate form-control" placeholder="有效期-开始" onFocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'2037-10-01\'}',readOnly:true})" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate" class="col-sm-2 control-label"><span class="red">*</span>有效期-结束</label>
+                        <div class="col-sm-5">
+                            <input type="text" name="endDate" id="endDate" value="{{ user['endDate'] }}" class="Wdate form-control" placeholder="有效期-结束" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'beginDate\')}',maxDate:'2037-10-01',readOnly:true})" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="status" class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-5">
+                            <select name="status" id="status" class="form-control">
+                                {% for k in userStatus.keys() %}
+                                <option value="{{k}}" {% if k == user['status'] %} selected{% end %}>{{userStatus[k]}}</option>
+                                {% end %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="remark" class="col-sm-2 control-label">备注</label>
+                        <div class="col-sm-5">
+                            <textarea rows="8" cols="40" name="remark" class="form-control" id="remark" placeholder="备注">{{ user['remark'] }}</textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-8 col-sm-offset-2">
+                        <button type="submit" class="btn btn-primary" style="width:100px;">提交</button>
+                        <a href="javascript:void(0);" class="btn btn-default col-sm-offset-1" onclick="Common.backPage();">返回</a>
+                        <input type="hidden" value="{{refUrl}}" id="refUrl" name="refUrl" />
+                        {% if isedit and ResetPasswordType == True %}
+                        <a class="btn btn-danger col-sm-offset-1" id="btResetPW" style="width:100px;" onclick="User.resetPassWord('{{ user['name'] }}');">重置密码</a>
+                        <lable id="showResetPassWord" class="red"></lable>
+                        {% end %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" language="javascript">
+    <!--
+    var User = {
+        resetPassWord: function (name) {
+            if (!confirm("确定重置用户【{{ user['realName'] }}】的密码吗？")) {
+                return false;
+            }
+
+            $.post('/Admin/User/ResetPassWord', { 'name': name, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', '');
+                         $('#showResetPassWord').text("用户新密码：" + data.data.newpw + "。请注意保存。");
+                     } else {
+                         Common.alert('操作失败,' + data.msg);
+                     }
+                 }, "json");
+        }
+    };
+    //-->
+</script>
+{% end %}

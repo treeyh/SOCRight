@@ -1,0 +1,136 @@
+{% extends "../base_a_bs.html" %}
+{% block crumb %}
+<li>
+    <a href="{{siteDomain}}Admin/User/List">用户管理</a>
+</li>
+<li class="active">用户详情</li>
+{% end %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-body">
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <td class="col-sm-2">
+                            编号
+                        </td>
+                        <td class="col-sm-10">
+                            {{ user['id'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            用户名
+                        </td>
+                        <td>
+                            {{ user['name'] }}
+                            <input type="hidden" name="parentID" value="0" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            姓名
+                        </td>
+                        <td>
+                            {{ user['realName'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            电子邮箱
+                        </td>
+                        <td>
+                            {{ user['email'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            手机
+                        </td>
+                        <td>
+                            {{ user['mobile'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            电话
+                        </td>
+                        <td>
+                            {{ user['tel'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            部门
+                        </td>
+                        <td>
+                            {{ user['departmentName'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            有效期
+                        </td>
+                        <td>
+                            {{ user['beginDate'] }} ---- {{ user['endDate'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            状态
+                        </td>
+                        <td>
+                            {{ user['statusname'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            备注
+                        </td>
+                        <td>
+                            {{ user['remark'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            创建人
+                        </td>
+                        <td>
+                            {{ user['creater'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            创建时间
+                        </td>
+                        <td>
+                            {{ user['createTime'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            最后更新人
+                        </td>
+                        <td>
+                            {{ user['lastUpdater'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            最后更新时间
+                        </td>
+                        <td>
+                            {{ user['lastUpdateTime'] }}
+                        </td>
+                    </tr>
+                </table>
+                <div class="col-sm-3 col-sm-offset-2">
+                    <a href="javascript:void(0);" class="btn btn-default" onclick="window.history.go(-1);">返回</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% end %}

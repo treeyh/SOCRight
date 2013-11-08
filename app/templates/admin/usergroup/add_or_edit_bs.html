@@ -1,9 +1,9 @@
 {% extends "../base_a_bs.html" %}
 {% block crumb %}
 <li>
-    <a href="{{siteDomain}}Admin/Department/List">部门管理</a>
+    <a href="{{siteDomain}}Admin/UserGroup/List">用户组管理</a>
 </li>
-<li class="active">{% if isedit %}编辑部门{% else %}新建部门{% end %}</li>
+<li class="active">{% if isedit %}编辑用户组{% else %}新建用户组{% end %}</li>
 {% end %}
 
 {% block content %}
@@ -16,37 +16,37 @@
                     <div class="form-group">
                         <label for="id" class="col-sm-2 control-label"><span class="red">*</span>编号</label>
                         <div class="col-sm-5">
-                            <input type="text" style="ime-mode:Disabled"  {% if isedit %} disabled {% end %} value="{{ dep['id'] }}" class="form-control" />
-                            <input type="hidden" name="id" id="id" value="{{ dep['id'] }}" />
+                            <input type="text" style="ime-mode:Disabled"  {% if isedit %} disabled {% end %} value="{{ usergroup['id'] }}" class="form-control" />
+                            <input type="hidden" name="id" value="{{ usergroup['id'] }}" />
                         </div>
                     </div>
                     {% end %} 
                     <div class="form-group">
                         <label for="name" class="col-sm-2 control-label"><span class="red">*</span>名称</label>
                         <div class="col-sm-5">
-                            <input type="text" name="name" id="name" class="form-control" value="{{ dep['name'] }}" placeholder="部门名称" required />
+                            <input type="text" name="name" id="name" class="form-control" value="{{ usergroup['name'] }}" placeholder="名称" required />
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="status" class="col-sm-2 control-label">状态</label>
                         <div class="col-sm-5">
                             <label class="checkbox-inline">
-                              <input type="radio" id="status1" name="status" value="1" {% if dep['status'] == 1 or dep['status'] == 0 %} checked{% end %}> 可用
+                              <input type="radio" id="status1" name="status" value="1" {% if usergroup['status'] == 1 or usergroup['status'] == 0 %} checked{% end %}> 可用
                             </label>
                             <label class="checkbox-inline">
-                              <input type="radio" id="status2" name="status" value="2" {% if dep['status'] == 2 %} checked {% end %}> 不可用
+                              <input type="radio" id="status2" name="status" value="2" {% if usergroup['status'] == 2 %} checked {% end %}> 不可用
                             </label>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="remark" class="col-sm-2 control-label">备注</label>
                         <div class="col-sm-5">
-                            <textarea rows="8" cols="40" name="remark" class="form-control" id="remark" placeholder="备注">{{ dep['remark'] }}</textarea>
+                            <textarea rows="8" cols="40" name="remark" class="form-control" id="remark" placeholder="备注">{{ usergroup['remark'] }}</textarea>
                         </div>
                     </div>
-                    <div class="col-sm-3 col-sm-offset-2">
+                    <div class="col-sm-8 col-sm-offset-2">
                         <button type="submit" class="btn btn-primary" style="width:100px;">提交</button>
-                        <a href="javascript:void(0);" class="btn btn-default col-sm-offset-5" onclick="Common.backPage();">返回</a>
+                        <a href="javascript:void(0);" class="btn btn-default col-sm-offset-1" onclick="Common.backPage();">返回</a>
                         <input type="hidden" value="{{refUrl}}" id="refUrl" name="refUrl" />
                     </div>
                 </form>
