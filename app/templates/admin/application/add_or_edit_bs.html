@@ -1,4 +1,4 @@
-{% extends "../base_a_bs.html" %} {% block head %} {% end %} 
+{% extends "../base_a_bs.html" %}
 {% block crumb %}
 <li>
     <a href="{{siteDomain}}Admin/Application/List">应用管理</a>
@@ -30,10 +30,12 @@
                     <div class="form-group">
                         <label for="status" class="col-sm-2 control-label">状态</label>
                         <div class="col-sm-5">
-                            <select name="status" id="status" class="form-control">
-                                <option value="1" {% if app['status'] == 1 %} selected{% end %}>可用</option>
-                                <option value="2" {% if app['status'] == 2 %} selected{% end %}>不可用</option>
-                            </select>
+                            <label class="checkbox-inline">
+                              <input type="radio" id="status1" name="status" value="1" {% if app['status'] == 1 or app['status'] == 0 %} checked{% end %}> 可用
+                            </label>
+                            <label class="checkbox-inline">
+                              <input type="radio" id="status2" name="status" value="2" {% if app['status'] == 2 %} checked {% end %}> 不可用
+                            </label>
                         </div>
                     </div>
                     <div class="form-group">

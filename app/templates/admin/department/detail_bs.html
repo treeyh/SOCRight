@@ -1,9 +1,9 @@
 {% extends "../base_a_bs.html" %}
 {% block crumb %}
 <li>
-    <a href="{{siteDomain}}Admin/Application/List">应用管理</a>
+    <a href="{{siteDomain}}Admin/Department/List">部门管理</a>
 </li>
-<li class="active">应用详情</li>
+<li class="active">部门详情</li>
 {% end %}
 
 {% block content %}
@@ -17,7 +17,7 @@
                             编号
                         </td>
                         <td class="col-sm-10">
-                            {{ app['code'] }}
+                            {{ dep['id'] }}
                         </td>
                     </tr>
                     <tr>
@@ -25,7 +25,7 @@
                             名称
                         </td>
                         <td>
-                            {{ app['name'] }}
+                            {{ dep['name'] }}
                         </td>
                     </tr>
                     <tr>
@@ -33,23 +33,7 @@
                             状态
                         </td>
                         <td>
-                            {{ app['statusname'] }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            默认链接
-                        </td>
-                        <td>
-                            {{ app['url'] }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            开发负责人
-                        </td>
-                        <td>
-                            {{ app['developer'] }}
+                            {{ dep['statusname'] }}
                         </td>
                     </tr>
                     <tr>
@@ -57,7 +41,7 @@
                             备注
                         </td>
                         <td>
-                            {{ app['remark'] }}
+                            {{ dep['remark'] }}
                         </td>
                     </tr>
                     <tr>
@@ -65,7 +49,7 @@
                             创建人
                         </td>
                         <td>
-                            {{ app['creater'] }}
+                            {{ dep['creater'] }}
                         </td>
                     </tr>
                     <tr>
@@ -73,7 +57,7 @@
                             创建时间
                         </td>
                         <td>
-                            {{ app['createTime'] }}
+                            {{ dep['createTime'] }}
                         </td>
                     </tr>
                     <tr>
@@ -81,7 +65,7 @@
                             最后更新人
                         </td>
                         <td>
-                            {{ app['lastUpdater'] }}
+                            {{ dep['lastUpdater'] }}
                         </td>
                     </tr>
                     <tr>
@@ -89,7 +73,7 @@
                             最后更新时间
                         </td>
                         <td>
-                            {{ app['lastUpdateTime'] }}
+                            {{ dep['lastUpdateTime'] }}
                         </td>
                     </tr>
                 </table>

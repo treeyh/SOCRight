@@ -25,9 +25,9 @@ class OperLogListHandler(admin_base_handler.AdminRightBaseHandler):
         ps['pagedata'] = oper_log_logic.query_page(operID = operLog['operID'], operUserName = operLog['operUserName'], appCode = '', funcPath = '', action = operLog['action'], operIp = '', beginTime = operLog['beginTime'], endTime = operLog['endTime'], page = ps['page'], size = ps['size'])
         ps['operLog'] = operLog
         ps['actions'] = state.logAction2
-        ps['pager'] = self.build_page_html(page=ps['page'], size=ps[
+        ps['pager'] = self.build_page_html_bs(page=ps['page'], size=ps[
                                            'size'], total=ps['pagedata']['total'], pageTotal=ps['pagedata']['pagetotal'])
-        self.render('admin/operlog/list.html', **ps)
+        self.render('admin/operlog/list_bs.html', **ps)
 
 
 class OperLogExportHandler(admin_base_handler.AdminRightBaseHandler):

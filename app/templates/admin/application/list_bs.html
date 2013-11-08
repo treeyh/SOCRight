@@ -1,4 +1,4 @@
-{% extends "../base_a_bs.html" %} {% block head %} {% end %} 
+{% extends "../base_a_bs.html" %}
 {% block crumb %}
 <li>
     <a href="{{siteDomain}}Admin/Application/List">应用管理</a>
@@ -31,7 +31,7 @@
                     </div>
                     <div class="form-group" style="float:right;">
                         <a href="{{siteDomain}}Admin/Application/Add" class="btn btn-default">新建应用</a>
-                        <button type="submit" class="btn btn-primary" style="width:100px;"><span class=".glyphicon .glyphicon-search"></span> 查询</button>
+                        <button type="submit" class="btn btn-primary" style="width:100px;"><span class="glyphicon glyphicon-search m-r10"></span>查询</button>
                     </div>
                 </form>
             </div>
@@ -43,7 +43,7 @@
         <div class="panel panel-info">
             <div class="panel-body">
             <table class="table table-bordered table-striped table-hover">
-                <tr class="head">
+                <tr>
                     <td style="width:80px">编号</td>
                     <td style="width:90px">应用名称</td>
                     <td style="width:50px">开发人员</td>
@@ -51,7 +51,7 @@
                     <td style="width:200px">应用url</td>
                     <td style="width:50px">最后更新人</td>
                     <td style="width:60px">最后更新时间</td>
-                    <td style="width:90px">操作</td>
+                    <td style="width:80px">操作</td>
                 </tr>
                 {% for r in pagedata['data'] %}
                 <tr {% if r['status'] != 1 %}class="warning"{% end%}>
@@ -63,12 +63,20 @@
                     <td>{{ r['lastUpdater'] }}</td>
                     <td>{{ str(r['lastUpdateTime'])[0:-3] }}</td>
                     <td>
-                        <a href="{{siteDomain}}Admin/Application/Detail?code={{ r['code'] }}">详情</a>
-                        <a href="{{siteDomain}}Admin/Application/Edit?code={{ r['code'] }}">编辑</a>
-                        {% if r['status'] == 1 %}
-                        <a href="{{siteDomain}}Admin/Role/RightEdit?appCode={{ r['code'] }}">权限设置</a>
-                        {% end%}
-                        <!-- <a href="javascript:" onclick="App.del('{{r['code']}}')">删除</a> -->
+                        <div class="btn-group">
+                            <a href="{{siteDomain}}Admin/Application/Detail?code={{ r['code'] }}" class="btn btn-primary">查看详情</a>
+                              <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" type="button">
+                                  <span class="caret"></span>
+                                  <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                              <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{siteDomain}}Admin/Application/Edit?code={{ r['code'] }}">修改编辑</a></li>
+                                <li class="divider"></li>
+                                {% if r['status'] == 1 %}
+                                <li><a href="{{siteDomain}}Admin/Role/RightEdit?appCode={{ r['code'] }}">权限设置</a></li>
+                                {% end%}
+                              </ul>
+                        </div>
                     </td>
                 </tr>
             {% end %}
@@ -78,22 +86,4 @@
     </div>
 </div>
 </div>
-<script type="text/javascript" language="javascript">
-    <!--
-    // var App = {
-    //     del: function (code) {
-    //         if (!confirm("确定删除该记录吗？")) return false;
-
-    //         $.post('/Admin/Application/Del', { 'code': code , 'ajax': 'ajax'},
-    //              function (data) {
-    //                  if (0 == data.code) {
-    //                      Common.alert('操作成功', window.location.href);
-    //                  } else {
-    //                      Common.alert('操作失败,'+data.msg);
-    //                  }
-    //              }, "json");
-    //     }
-    // };
-    //-->
-</script>
 {% end %}

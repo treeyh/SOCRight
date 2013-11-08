@@ -1,0 +1,111 @@
+{% extends "../base_a_bs.html" %}
+{% block crumb %}
+<li>
+    <a href="{{siteDomain}}Admin/OperLog/List">日志列表</a>
+</li>
+<li class="active">日志列表</li>
+{% end %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">查询条件</div>
+            <div class="panel-body">
+                <form action="{{ request.path }}" method="get" class="form-inline" role="form">
+                    <div class="form-group">
+                        <label class="sr-only" for="operID">用户ID</label>
+                        <input type="text" name="operID" id="operID" class="form-control" placeholder="用户ID" data-toggle="hover" data-original-title="输入需要查询的用户ID" data-placement="bottom" value="{{ operLog['operID'] }}" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="operUserName">用户名</label>
+                        <input type="text" name="operUserName" id="operUserName" value="{{ operLog['operUserName'] }}"  class="form-control" placeholder="用户名" data-toggle="hover" data-original-title="输入需要查询的用户ID" data-placement="bottom" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="action">类型</label>
+                        <select name="action" id="action" class="form-control" data-toggle="hover" data-original-title="选择需要查询的日志类型" data-placement="bottom">
+                            <option value="">全部</option>
+                            {% for k in actions %}
+                            <option value="{{k['k']}}" {% if operLog['action'] == k['k'] %} selected{% end %}>{{k['v']}}</option>
+                            {% end %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="beginTime">开始日期</label>
+                        <input type="text" onfocus="WdatePicker()" value="{{operLog['beginTime']}}" id="beginTime" name="beginTime" class="Wdate form-control" placeholder="开始日期" data-toggle="hover" data-original-title="选择需要查询的开始日期" data-placement="bottom" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="endTime">结束日期</label>
+                        <input type="text" onfocus="WdatePicker()" value="{{operLog['endTime']}}" id="endTime" name="endTime" class="Wdate form-control" placeholder="结束日期" data-toggle="hover" data-original-title="选择需要查询的结束日期" data-placement="bottom" />
+                    </div>
+                    <div class="form-group" style="float:right;">
+                        {% if ExportType == True %}
+                        <a href="{{siteDomain}}Admin/OperLog/Export?action={{operLog['action']}}&operUserName={{operLog['operUserName']}}&operID={{operLog['operID']}}&beginTime={{operLog['beginTime']}}&endTime={{operLog['endTime']}}" target="_blank" class="btn btn-default">导出结果</a>
+                        {% end %}
+                        <button type="submit" class="btn btn-primary" style="width:100px;"><span class="glyphicon glyphicon-search m-r10"></span>查询</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-body">
+            <table class="table table-bordered table-striped table-hover">
+                <tr>
+                    <td style="width: 60px;">
+                        编号
+                    </td>
+                    <td style="width:150px">
+                        操作人
+                    </td>
+                    <td style="width:50px">
+                        应用编号
+                    </td>
+                    <td style="width:40px">
+                        动作
+                    </td>
+                    <td style="width:200px">
+                        操作目标
+                    </td>
+                    <td style="width:50px">
+                        操作IP
+                    </td>
+                    <td style="width:60px">
+                        操作时间
+                    </td>
+                </tr>
+                {% for r in pagedata['data'] %}
+                <tr>
+                    <td style="width:80px">
+                        {{ r['id'] }}
+                    </td>
+                    <td style="width:150px">
+                        {{ r['operID'] }}/{{ r['operUserName'] }}/{{ r['operRealName'] }}
+                    </td>
+                    <td style="width:50px">
+                        {{ r['appCode'] }}
+                    </td>
+                    <td style="width:40px">
+                        {{ r['actionname'] }}
+                    </td>
+                    <td style="width:200px">
+                        {{ r['targetID'] }}/{{ r['targetName'] }}
+                    </td>
+                    <td style="width:50px">
+                        {{ r['operIp'] }}
+                    </td>
+                    <td style="width:80px">
+                        {{ str(r['operTime'])[0:-3] }}
+                    </td>
+                </tr>
+                {% end %}
+            </table>
+            {% raw pager %}
+        </div>
+    </div>
+</div>
+</div>
+{% end %}
