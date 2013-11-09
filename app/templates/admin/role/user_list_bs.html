@@ -1,0 +1,140 @@
+{% extends "../base_a_bs.html" %}
+{% block crumb %}
+<li>
+    <a href="{{siteDomain}}Admin/Role/List">角色管理</a>
+</li>
+<li class="active">角色关联用户列表</li>
+{% end %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">查询条件-角色：{{ role['name'] }}</div>
+            <div class="panel-body">
+                <form action="{{ request.path }}" method="get" class="form-inline" role="form">
+                    <div class="form-group">
+                        <label for="userName" class="sr-only">用户名</label>
+                        <input type="text" name="userName" id="userName" value="{{ userName }}" class="form-control" placeholder="用户名" data-toggle="hover" data-original-title="输入需要查询的用户名" data-placement="bottom" />
+                        <input type="hidden" name="id" value="{{ role['id'] }}" />
+                    </div>
+                    <div class="form-group" style="float:right;">
+                        {% if ExportType == True %}
+                        {% end %}
+                        <a href="{{siteDomain}}Admin/Role/UserListExport?id={{role['id']}}&userName={{userName}}" target="_blank" class="btn btn-default">导出结果</a>
+                        <button type="submit" class="btn btn-primary" style="width:100px;"><span class="glyphicon glyphicon-search m-r10"></span>查询</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-body">
+            <table class="table table-bordered table-striped table-hover">
+                <tr>
+                    <td style="width:20px">
+                        编号
+                    </td>
+                    <td style="width:60px">
+                        用户名
+                    </td>
+                    <td style="width:60px">
+                        姓名
+                    </td>
+                    <td style="width:80px">
+                        部门
+                    </td>
+                    <td style="width:20px">
+                        状态
+                    </td>
+                    <td style="width:50px">
+                        创建人
+                    </td>
+                    <td style="width:60px">
+                        创建时间
+                    </td>
+                    <td style="width:50px">
+                        最后更新人
+                    </td>
+                    <td style="width:60px">
+                        最后更新时间
+                    </td>
+                    <td style="width:80px">
+                        操作
+                    </td>
+                </tr>
+                {% for r in pagedata['data'] %}
+                <tr>
+                    <td>
+                        {{ r['id'] }}
+                    </td>
+                    <td>
+                        {{ r['name'] }}
+                    </td>
+                    <td>
+                        {{ r['realName'] }}
+                    </td>
+                    <td>
+                        {{ r['departmentName'] }}
+                    </td>
+                    <td>
+                        {{ r['statusname'] }}
+                    </td>
+                    <td>
+                        {{ r['creater'] }}
+                    </td>
+                    <td>
+                        {{ str(r['createTime'])[0:-3] }}
+                    </td>
+                    <td>
+                        {{ r['lastUpdater'] }}
+                    </td>
+                    <td>
+                        {{ str(r['lastUpdateTime'])[0:-3] }}
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{siteDomain}}Admin/User/RightDetail?userID={{ r['id'] }}" class="btn btn-primary">权限预览</a>
+                              <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" type="button" style="height: 34px;">
+                                  <span class="caret"></span>
+                                  <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                              <ul class="dropdown-menu" role="menu">
+                                <li class="divider"></li>
+                                <li><a href="{{siteDomain}}Admin/User/GroupList?userID={{ r['id'] }}">所属用户组</a></li>
+                                <li><a href="{{siteDomain}}Admin/User/RoleList?userID={{ r['id'] }}">所属角色</a></li>
+                                <li class="divider"></li>
+                                <li><a href="javascript:" onclick="Role.del({{r['id']}}, {{role['id']}})">删除角色关联</a></li>
+                              </ul>
+                        </div>
+                    </td>
+                </tr>
+                {% end %}
+            </table>
+            {% raw pager %}
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" language="javascript">
+    <!--
+    var Role = {
+        del: function (userID, roleID) {
+            if (!confirm("确定删除该角色用户关联吗？\r\n")) return false;
+
+            $.post('/Admin/Role/UserBindDel?' + Math.random(), { 'userID': userID, 'roleID': roleID, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功', window.location.href);
+                     } else {
+                         Common.alert('操作失败,'+data.msg);
+                     }
+                 }, "json");
+        }
+    };
+    //-->
+</script>
+{% end %}

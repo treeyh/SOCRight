@@ -256,8 +256,8 @@ class RoleUserListHandler(admin_base_handler.AdminRightBaseHandler):
         ps['pagedata'] = user_logic.query_page_by_roleid(roleID = role['id'], userName = ps['userName'], page = ps['page'], size = ps['size'])
         ps['role'] = role
         ps = self.format_none_to_empty(ps)
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
-        self.render('admin/role/user_list.html', **ps)
+        ps['pager'] = self.build_page_html_bs(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
+        self.render('admin/role/user_list_bs.html', **ps)
 
 
 
