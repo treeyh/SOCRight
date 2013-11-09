@@ -107,6 +107,25 @@ class UserGroupDelHandler(admin_base_handler.AdminRightBaseHandler):
         else:
             self.out_fail(code = 101)
 
+
+class UserGroupQueryHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager'
+    _right = state.operView
+
+    def post(self):
+        ps = self.get_page_config(title = '用户组查询')
+        userGroup = self.get_args(['id', 'name'], '')
+        userGroup['status'] = int(self.get_arg('status', '0'))
+        ps['page'] = int(self.get_arg('page', '1'))
+        ps['pagedata'] = usergroup_logic.query_page(id = userGroup['id'], 
+                    name = userGroup['name'], status = userGroup['status'], page = ps['page'], size = ps['modelSize'])
+        if None == ps['pagedata']:
+            self.out_fail(code = 101)
+        else:
+            self.out_ok(data = ps['pagedata'])
+        
+
+
 class UserGroupDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager'
     _right = state.operView

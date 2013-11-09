@@ -125,7 +125,7 @@ def _get_page_sql(sql, page, size):
 def find_page(sql, params=(), mapcol=None, page=1, size = 15):
     conn=_getConnection()
     c = None
-    page_result = {'total':0,'pagetotal':0, 'page':page, 'size':size, 'data':{}}
+    page_result = {'total':0,'pagetotal':0, 'page':page, 'size':size, 'data':[]}
     try:
         c=conn.cursor()
         countsql = _get_count_sql(sql)

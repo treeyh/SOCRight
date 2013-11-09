@@ -125,6 +125,23 @@ class RoleDetailHandler(admin_base_handler.AdminRightBaseHandler):
         self.render('admin/role/detail_bs.html', **ps)
 
 
+class RoleQueryHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager'
+    _right = state.operView
+
+    def post(self):
+        ps = self.get_page_config(title = '角色列表')
+        role = self.get_args(['id', 'name'], '')
+        role['status'] = int(self.get_arg('status', '0'))
+        ps['page'] = int(self.get_arg('page', '1'))
+        ps['pagedata'] = role_logic.query_page(id = role['id'], 
+                    name = role['name'], status = role['status'], page = ps['page'], size = ps['modelSize'])
+        if None == ps['pagedata']:
+            self.out_fail(code = 101)
+        else:
+            self.out_ok(data = ps['pagedata'])
+
+
 class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager.RoleBindRightManager'
     _right = state.operView
@@ -139,7 +156,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         if None == roles or len(roles) == 0:
             ps['msg'] = state.ResultInfo.get(104003, '')
             ps['refUrl'] = ps['siteDomain'] +'Admin/Role/Add'
-            self.render('admin/role/right_edit.html', **ps)
+            self.render('admin/role/right_edit_bs.html', **ps)
             return
         else:
             if 0 == ps['roleID']:
@@ -148,7 +165,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         if None == apps or len(apps) == 0:
             ps['msg'] = state.ResultInfo.get(104003, '')
             ps['refUrl'] = ps['siteDomain'] +'Admin/Application/Add'
-            self.render('admin/role/right_edit.html', **ps)
+            self.render('admin/role/right_edit_bs.html', **ps)
             return
         else:
             if '' == ps['appCode']:
@@ -166,10 +183,10 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
         ps['funcs'] = funcs
         if self.is_edit():
             self.check_oper_right(right = state.operEdit)
-            self.render('admin/role/right_edit.html', **ps)
+            self.render('admin/role/right_edit_bs.html', **ps)
         else:
             self.check_oper_right(right = state.operView)
-            self.render('admin/role/right_detail.html', **ps)
+            self.render('admin/role/right_detail_bs.html', **ps)
 
     def post(self):
         self.check_oper_right(right = state.operEdit)
@@ -221,7 +238,7 @@ class RoleRightHandler(admin_base_handler.AdminRightBaseHandler):
             ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
         else:
             ps['msg'] = state.ResultInfo.get(104004, '')
-        self.render('admin/role/right_edit.html', **ps)
+        self.render('admin/role/right_edit_bs.html', **ps)
 
 
 

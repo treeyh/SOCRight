@@ -77,8 +77,10 @@ class BaseHandler(tornado.web.RequestHandler):
     def out_ok(self, data=None, jsoncallback = None):
         if data == None or data == '':
             j = '{"code":0,"msg":"OK"}'
-        else:
+        elif str == type(data) or unicode == type(data): 
             j = '{"code":0,"msg":"OK","data":%s}' % data
+        else:
+            j = '{"code":0,"msg":"OK","data":%s}' % str_helper.json_encode(data)
         if jsoncallback == None or jsoncallback == '':
             self.write(j)
         else:

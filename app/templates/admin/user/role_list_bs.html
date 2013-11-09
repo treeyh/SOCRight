@@ -1,0 +1,270 @@
+{% extends "../base_a_bs.html" %}
+{% block crumb %}
+<li>
+    <a href="{{siteDomain}}Admin/User/List">用户管理</a>
+</li>
+<li class="active">绑定角色列表</li>
+{% end %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">用户名:{{userName}}；姓名：{{userRealName}}</div>
+            <div class="panel-body">
+                <form class="form-inline" role="form">
+                    <div class="form-group">
+                        <label for="name" class="sr-only">用户名</label>
+                        <input type="text" name="name" id="name" value="{{ userName }}" class="form-control" title="用户名" disabled />
+                        <input type="hidden" id="userID" name="userID" value="{{userID}}" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="realName">姓名</label>
+                        <input type="text" name="realName" id="realName" value="{{ userRealName }}" class="form-control" title="姓名" disabled />
+                    </div>
+                    <div class="form-group" style="float:right;">
+                        <a class="btn btn-default" href="{{refUrl}}" id="refUrl">返回</a>
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modelinfo" onclick="UserRole.queryRole();">绑定新的角色</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div id="pagediv" class="panel-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modelinfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">选择角色</h4>
+      </div>
+      <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-info">                        
+                        <div class="panel-body">
+                            <form class="form-inline" role="form">
+                                <div class="form-group">
+                                    <label for="userGroupName" class="sr-only">角色名称</label>
+                                    <input type="text" name="userGroupName" id="userGroupName" value="" class="form-control" placeholder="角色名称" data-toggle="hover" data-original-title="输入需要查询的角色名称" data-placement="bottom" />
+                                </div>
+                                <div class="form-group" style="float:right;">
+                                    <button type="button" class="btn btn-primary" style="width:100px;" onclick="UserRole.queryRole();"><span class="glyphicon glyphicon-search m-r10"></span>查询</button>                                    
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-info">
+                        <div id="querydiv" class="panel-body">
+                        </div>
+                    </div>
+                </div>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>        
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" language="javascript">
+    <!--
+
+    var UserRole = {
+        _queryRoleKey : '',
+        del: function (id, roleID) {
+            if (!confirm("确定删除该记录吗？")) return false;
+
+            $.post('{{siteDomain}}Admin/User/RoleDel?' + Math.random(), { 'id': id, 'roleID': roleID, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功');
+                         UserRole.queryBindRole(1);
+                     } else {
+                         Common.alert('操作失败,' + data.msg);
+                     }
+                 }, "json");
+        },
+        bind: function (roleID) {
+            var userID = $('#userID').val();
+            if (userID == '') {
+                Common.alert('请先选择用户');
+                return;
+            }
+            $.post('/Admin/User/RoleBind', { 'userID': userID, 'roleID': roleID, 'ajax': 'ajax'},
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功');
+                         $('#modelinfo').modal('hide');
+                         UserRole.queryBindRole(1);
+                     } else {
+                         Common.alert('操作失败,' + data.msg);
+                     }
+                 }, "json");
+        },
+        queryRolePage : function(page){
+            $.post('{{siteDomain}}Admin/Role/Query?' + Math.random(), { 'name': UserRole._queryRoleKey, 'status': '1', 'page': page, 'ajax': 'ajax' },
+                 function (data) {
+                    if (0 == data.code) {
+                        UserRole._buileQueryPageHtml(data.data.page, data.data.size, data.data.pagetotal, data.data.total, data.data.data);
+                    } else {
+                        Common.alert('操作失败,' + data.msg);
+                    }
+                 }, "json");
+        },
+        queryRole: function () {
+            var roleName = $('#roleName').val();
+            UserRole._queryRoleKey = roleName;
+            UserRole.queryRolePage(1);
+        },
+        _buileQueryPageHtml : function(page, size, pagetotal, total, ls){
+            var html = ' <table class="table table-bordered table-striped table-hover table-condensed"><tr>'+
+'                    <td style="width:40px">'+
+'                        编号'+
+'                    </td>'+
+'                    <td style="width:100px">'+
+'                        角色名称'+
+'                    </td>'+
+'                    <td style="width:50px">'+
+'                        操作'+
+'                    </td>'+
+'                </tr> ';
+            
+            if(undefined != ls && ls.length > 0){
+                for(var i = 0; i < ls.length ; i++){
+                    html += ' <tr>'+
+                            '            <td>'+
+                            '                '+ ls[i].id +
+                            '            </td>'+
+                            '            <td>'+
+                            '                '+ ls[i].name +
+                            '            </td>'+
+                            '            <td>'+                            
+                            '                <a href="javascript:" onclick="UserRole.bind(\''+ ls[i].id +'\')" class="btn btn-primary btn-xs">绑定</a>'+
+                            '            </td>'+
+                            '        </tr> ';
+                }
+            }
+            html += '</table>';
+            html += '<div class="row"><div style="padding: 20px;" class="col-md-8"><span>共&nbsp;'+total+'&nbsp;条记录&nbsp;&nbsp;&nbsp;分&nbsp;'+pagetotal+'&nbsp;页&nbsp;&nbsp;&nbsp;每页&nbsp;'+size+'&nbsp;条记录</span></div>';
+            html += '<div class="col-md-4"><ul class="pagination">';
+            if(page <= 1){
+                html += '<li class="disabled"><span>&laquo;</span></li>';
+            }else{
+                pre = page - 1;
+                html += '<li><a href="javascript:UserRole.queryRolePage('+pre+')">&laquo;</a></li>';
+            }
+            if(page >= pagetotal){
+                html += '<li class="disabled"><span>&raquo;</span></li>';
+            }else{
+                next = page + 1;
+                html += '<li><a href="javascript:UserRole.queryRolePage('+next+')">&raquo;</a></li>';
+            }
+            html += '</ul></div></div>';
+            pd = $('#querydiv');
+            pd.empty();
+            pd.html(html);
+        },
+        queryBindRole : function(page){
+            var userID = $('#userID').val();
+
+            $.post('{{siteDomain}}Admin/User/RoleQuery?' + Math.random(), { 'userID': userID, 'page': page, 'ajax': 'ajax' },
+                 function (data) {
+                    if (0 == data.code) {
+                        UserRole._buileBindPageHtml(data.data.page, data.data.size, data.data.pagetotal, data.data.total, data.data.data);
+                    } else {
+                        Common.alert('操作失败,' + data.msg);
+                    }
+                 }, "json");
+
+        },
+        _buileBindPageHtml : function(page, size, pagetotal, total, ls){
+            var html = ' <table class="table table-bordered table-striped table-hover"><tr>'+
+'                    <td style="width:40px">'+
+'                        编号'+
+'                    </td>'+
+'                    <td style="width:40px">'+
+'                        角色编号'+
+'                    </td>'+
+'                    <td style="width:160px">'+
+'                        角色名'+
+'                    </td>'+
+'                    <td style="width:60px">'+
+'                        绑定人'+
+'                    </td>'+
+'                    <td style="width:50px">'+
+'                        绑定时间'+
+'                    </td>'+
+'                    <td style="width:50px">'+
+'                        操作'+
+'                    </td>'+
+'                </tr> ';
+            
+            if(undefined != ls && ls.length > 0){
+                for(var i = 0; i < ls.length ; i++){
+                    html += ' <tr>'+
+                            '            <td>'+
+                            '                '+ ls[i].id +
+                            '            </td>'+
+                            '            <td>'+
+                            '               '+ ls[i].roleID +
+                            '            </td>'+
+                            '            <td>'+
+                            '                '+ ls[i].roleName +
+                            '            </td>'+
+                            '            <td>'+
+                            '                '+ ls[i].creater +
+                            '            </td>'+
+                            '            <td>'+
+                            '                '+ ls[i].createTime +
+                            '            </td>'+
+                            '            <td>'+
+                            '                <a href="{{siteDomain}}Admin/Role/Detail?id='+ ls[i].id +'" class="btn btn-primary">用户组详情</a>'+
+                            '                <a href="javascript:" onclick="UserRole.del(\''+ ls[i].id +'\',\''+ ls[i].roleID +'\')" class="btn btn-primary">取消绑定</a>'+
+                            '            </td>'+
+                            '        </tr> ';
+                }
+            }
+            html += '</table>';
+            html += '<div class="row"><div class="col-md-5"></div><div style="padding: 20px;" class="col-md-5"><span>共&nbsp;'+total+'&nbsp;条记录&nbsp;&nbsp;&nbsp;分&nbsp;'+pagetotal+'&nbsp;页&nbsp;&nbsp;&nbsp;每页&nbsp;'+size+'&nbsp;条记录</span></div>';
+            html += '<div class="col-md-2"><ul class="pagination">';
+            if(page <= 1){
+                html += '<li class="disabled"><span>&laquo;</span></li>';
+            }else{
+                pre = page - 1;
+                html += '<li><a href="javascript:UserRole.queryBindRole('+pre+')">&laquo;</a></li>';
+            }
+            if(page >= pagetotal){
+                html += '<li class="disabled"><span>&raquo;</span></li>';
+            }else{
+                next = page + 1;
+                html += '<li><a href="javascript:UserRole.queryBindRole('+next+')">&raquo;</a></li>';
+            }
+            html += '</ul></div></div>';
+            pd = $('#pagediv');
+            pd.empty();
+            pd.html(html);
+        }
+
+
+    };
+
+    $(document).ready(function(){
+        UserRole.queryBindRole(1);
+    });
+    //-->
+</script>
+{% end %}

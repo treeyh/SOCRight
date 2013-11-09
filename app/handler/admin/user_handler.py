@@ -201,49 +201,37 @@ class UserRoleListHandler(admin_base_handler.AdminRightBaseHandler):
             self.render('admin/user/role_list.html', **ps)
             return
         
-        ps['page'] = int(self.get_arg('page', '1'))
-        ps['pagedata'] = user_logic.query_page_user_roles(
-                userID = ps['userID'], page = ps['page'], size = ps['size'])
         user = user_logic.query_one(id = ps['userID'])
         ps['userName'] = user['name']
         ps['userRealName'] = user['realName']
         ps = self.format_none_to_empty(ps)
+        self.render('admin/user/role_list_bs.html', **ps)
 
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
-        self.render('admin/user/role_list.html', **ps)
+
+class UserRoleQueryHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.UserManager.UserBindRoleManager'
+    _right = state.operView
+
+    def post(self):
+        ps = self.get_page_config(title = '用户绑定角色列表')
+        ps['userID'] = int(self.get_arg('userID', '0'))
+        if 0 == ps['userID']:
+            self.out_fail(code = 105003)
+            return
+        
+        ps['page'] = int(self.get_arg('page', '1'))
+        ps['pagedata'] = user_logic.query_page_user_roles(
+                userID = ps['userID'], page = ps['page'], size = ps['size'])
+
+        if None == ps['pagedata']:
+            self.out_fail(code = 101)
+        else:
+            self.out_ok(data = ps['pagedata'])
 
 
 class UserRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager.UserBindRoleManager'
     _right = state.operEdit
-    def get(self):
-        ps = self.get_page_config(title = '新增角色绑定用户')
-        ps['userID'] = int(self.get_arg('userID', '0'))
-        if 0 == ps['userID']:
-            ps['msg'] = state.ResultInfo.get(103003, '')
-            ps['gotoUrl'] = ps['siteDomain'] +'Admin/User/Add'
-            self.render('admin/user/role_list.html', **ps)
-            return
-
-        ps['page'] = int(self.get_arg('page', '1'))        
-        ps['roleName'] = self.get_arg('roleName', '')
-        ps['roleID'] = int(self.get_arg('roleID', '0'))
-        ps['roleInfo'] = ''
-        if ps['roleID'] > 0:
-            roleInfo = role_logic.query_one(id = ps['roleID'])
-            ps['roleInfo'] = roleInfo['name']        
-
-        ps['pagedata'] = role_logic.query_page(name = ps['roleName'], 
-            status = state.statusActive, page = ps['page'], size = ps['size'])
-        
-        user = user_logic.query_one(id = ps['userID'])
-        ps['userInfo'] = user['name']
-        ps['userRealName'] = user['realName']
-
-        ps = self.format_none_to_empty(ps)
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
-        self.render('admin/user/role_bind.html', **ps)
-
 
     def post(self):
         userID = int(self.get_arg('userID', '0'))
@@ -286,7 +274,7 @@ class UserRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
         if 0 == ps['userID']:
             ps['msg'] = state.ResultInfo.get(103007, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/User/List'
-            self.render('admin/user/right.html', **ps)
+            self.render('admin/user/right_detail_bs.html', **ps)
             return
         
         ps['appCode'] = self.get_arg('appCode', '')
@@ -294,7 +282,7 @@ class UserRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
         if None == ps['apps'] or len(ps['apps']) <= 0:
             ps['msg'] = state.ResultInfo.get(101004, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/Application/Add'
-            self.render('admin/user/right_detail.html', **ps)
+            self.render('admin/user/right_detail_bs.html', **ps)
             return
         else:
             if '' == ps['appCode']:
@@ -312,7 +300,7 @@ class UserRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
         funcs = user_logic.query_user_app_right(userID = ps['userID'], appCode = ps['appCode'])
         ps['funcs'] = funcs
         
-        self.render('admin/user/right_detail.html', **ps)
+        self.render('admin/user/right_detail_bs.html', **ps)
 
 
 class UserUserGroupListHandler(admin_base_handler.AdminRightBaseHandler):
@@ -325,19 +313,36 @@ class UserUserGroupListHandler(admin_base_handler.AdminRightBaseHandler):
         if 0 == ps['userID']:
             ps['msg'] = state.ResultInfo.get(103007, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/User/List'
-            self.render('admin/user/right.html', **ps)
+            self.render('admin/user/group_list_bs.html', **ps)
             return
         
         user = user_logic.query_one(id = ps['userID'])
         ps['userName'] = user['name']
         ps['userRealName'] = user['realName']
 
+        ps['page'] = int(self.get_arg('page', '1'))        
+        ps = self.format_none_to_empty(ps)        
+        self.render('admin/user/group_list_bs.html', **ps)
+
+
+class UserUserGroupQueryHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindUserManager'
+    _right = state.operView
+
+    def post(self):
+        ps = self.get_page_config(title = '用户绑定用户组列表')
+        ps['userID'] = int(self.get_arg('userID', '0'))
+        if 0 == ps['userID']:            
+            self.out_fail(code = 103007)
+            return
+        
+        user = user_logic.query_one(id = ps['userID'])
         ps['page'] = int(self.get_arg('page', '1'))
+
         ps['pagedata'] = usergroup_logic.query_page_user_groups(
-                userID = ps['userID'], page = ps['page'], size = ps['size'])        
-        ps = self.format_none_to_empty(ps)
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])
-        self.render('admin/user/group_list.html', **ps)
+                userID = ps['userID'], page = ps['page'], size = ps['size'])
+        
+        self.out_ok(data = ps['pagedata'])
 
 
 class UserResetPassWordHandler(admin_base_handler.AdminRightBaseHandler):

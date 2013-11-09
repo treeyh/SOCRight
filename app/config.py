@@ -11,6 +11,7 @@ SOCRightConfig = {
     'serviceSiteDomain' : 'http://sso.ejyi.com/',
     
     'size' : 15,
+    'modelSize' : 5,
     'appCode' : 'SOCRight',
     'rightCookieName' : 'soc_right_user',
     'adminCookieName' : 'soc_right_admin_user',

@@ -1,0 +1,272 @@
+{% extends "../base_a_bs.html" %}
+{% block crumb %}
+<li>
+    <a href="{{siteDomain}}Admin/User/List">用户管理</a>
+</li>
+<li class="active">绑定用户组列表</li>
+{% end %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">用户名:{{userName}}；姓名：{{userRealName}}</div>
+            <div class="panel-body">
+                <form class="form-inline" role="form">
+                    <div class="form-group">
+                        <label for="name" class="sr-only">用户名</label>
+                        <input type="text" name="name" id="name" value="{{ userName }}" class="form-control" title="用户名" disabled />
+                        <input type="hidden" id="userID" name="userID" value="{{userID}}" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="realName">姓名</label>
+                        <input type="text" name="realName" id="realName" value="{{ userRealName }}" class="form-control" title="姓名" disabled />
+                    </div>
+                    <div class="form-group" style="float:right;">
+                        <a class="btn btn-default" href="{{refUrl}}" id="refUrl">返回</a>
+                        <button  type="button" class="btn btn-info" data-toggle="modal" data-target="#modelinfo" onclick="UserUserGroup.queryUserGroup();">绑定新的用户组</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div id="pagediv" class="panel-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modelinfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">选择用户组</h4>
+      </div>
+      <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-info">                        
+                        <div class="panel-body">
+                            <form class="form-inline" role="form">
+                                <div class="form-group">
+                                    <label for="userGroupName" class="sr-only">用户组名称</label>
+                                    <input type="text" name="userGroupName" id="userGroupName" value="" class="form-control" placeholder="用户组名称" data-toggle="hover" data-original-title="输入需要查询的用户组名称" data-placement="bottom" />
+                                </div>
+                                <div class="form-group" style="float:right;">
+                                    <button type="button" class="btn btn-primary" style="width:100px;" onclick="UserUserGroup.queryUserGroup();"><span class="glyphicon glyphicon-search m-r10"></span>查询</button>                                    
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-info">
+                        <div id="querydiv" class="panel-body">
+                        </div>
+                    </div>
+                </div>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>        
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" language="javascript">
+    <!--
+
+    var UserUserGroup = {
+        _queryGroupKey : '',
+        del: function (id, userGroupID) {
+            if (!confirm("确定删除该记录吗？")) return false;
+
+            $.post('{{siteDomain}}Admin/UserGroup/UserDel?' + Math.random(), { 'id': id, 'userGroupID': userGroupID, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功');
+                         UserUserGroup.queryBindUserGroup(1);
+                     } else {
+                         Common.alert('操作失败,' + data.msg);
+                     }
+                 }, "json");
+        },
+        bind: function (userGroupID) {
+            var userID = $('#userID').val();
+            if (userID == '') {
+                Common.alert('请先选择用户');
+                return;
+            }
+
+            $.post('/Admin/UserGroup/UserBind?' + Math.random(), { 'userGroupID': userGroupID, 'userID': userID, 'ajax': 'ajax' },
+                 function (data) {
+                     if (0 == data.code) {
+                         Common.alert('操作成功');
+                         $('#modelinfo').modal('hide');
+                         UserUserGroup.queryBindUserGroup(1);
+                     } else {
+                         Common.alert('操作失败,' + data.msg);
+                     }
+                 }, "json");
+        },
+        queryUserGroupPage : function(page){
+            $.post('{{siteDomain}}Admin/UserGroup/Query?' + Math.random(), { 'name': UserUserGroup._queryGroupKey, 'status': '1', 'page': page, 'ajax': 'ajax' },
+                 function (data) {
+                    if (0 == data.code) {
+                        UserUserGroup._buileQueryPageHtml(data.data.page, data.data.size, data.data.pagetotal, data.data.total, data.data.data);
+                    } else {
+                        Common.alert('操作失败,' + data.msg);
+                    }
+                 }, "json");
+        },
+        queryUserGroup: function () {
+            var userGroupName = $('#userGroupName').val();
+            UserUserGroup._queryGroupKey = userGroupName;
+            UserUserGroup.queryUserGroupPage(1);
+        },
+        queryBindUserGroup : function(page){
+            var userID = $('#userID').val();
+
+            $.post('{{siteDomain}}Admin/User/GroupQuery?' + Math.random(), { 'userID': userID, 'page': page, 'ajax': 'ajax' },
+                 function (data) {
+                    if (0 == data.code) {
+                        UserUserGroup._buileBindPageHtml(data.data.page, data.data.size, data.data.pagetotal, data.data.total, data.data.data);
+                    } else {
+                        Common.alert('操作失败,' + data.msg);
+                    }
+                 }, "json");
+
+        },
+        _buileQueryPageHtml : function(page, size, pagetotal, total, ls){
+            var html = ' <table class="table table-bordered table-striped table-hover table-condensed"><tr>'+
+'                    <td style="width:40px">'+
+'                        编号'+
+'                    </td>'+
+'                    <td style="width:100px">'+
+'                        角色组名称'+
+'                    </td>'+
+'                    <td style="width:50px">'+
+'                        操作'+
+'                    </td>'+
+'                </tr> ';
+            
+            if(undefined != ls && ls.length > 0){
+                for(var i = 0; i < ls.length ; i++){
+                    html += ' <tr>'+
+                            '            <td>'+
+                            '                '+ ls[i].id +
+                            '            </td>'+
+                            '            <td>'+
+                            '                '+ ls[i].name +
+                            '            </td>'+
+                            '            <td>'+                            
+                            '                <a href="javascript:" onclick="UserUserGroup.bind(\''+ ls[i].id +'\')" class="btn btn-primary btn-xs">绑定</a>'+
+                            '            </td>'+
+                            '        </tr> ';
+                }
+            }
+            html += '</table>';
+            html += '<div class="row"><div style="padding: 20px;" class="col-md-8"><span>共&nbsp;'+total+'&nbsp;条记录&nbsp;&nbsp;&nbsp;分&nbsp;'+pagetotal+'&nbsp;页&nbsp;&nbsp;&nbsp;每页&nbsp;'+size+'&nbsp;条记录</span></div>';
+            html += '<div class="col-md-4"><ul class="pagination">';
+            if(page <= 1){
+                html += '<li class="disabled"><span>&laquo;</span></li>';
+            }else{
+                pre = page - 1;
+                html += '<li><a href="javascript:UserUserGroup.queryUserGroupPage('+pre+')">&laquo;</a></li>';
+            }
+            if(page >= pagetotal){
+                html += '<li class="disabled"><span>&raquo;</span></li>';
+            }else{
+                next = page + 1;
+                html += '<li><a href="javascript:UserUserGroup.queryUserGroupPage('+next+')">&raquo;</a></li>';
+            }
+            html += '</ul></div></div>';
+            pd = $('#querydiv');
+            pd.empty();
+            pd.html(html);
+        },
+
+        _buileBindPageHtml : function(page, size, pagetotal, total, ls){
+            var html = ' <table class="table table-bordered table-striped table-hover"><tr>'+
+'                    <td style="width:40px">'+
+'                        编号'+
+'                    </td>'+
+'                    <td style="width:40px">'+
+'                        角色组编号'+
+'                    </td>'+
+'                    <td style="width:160px">'+
+'                        角色组名称'+
+'                    </td>'+
+'                    <td style="width:60px">'+
+'                        绑定人'+
+'                    </td>'+
+'                    <td style="width:50px">'+
+'                        绑定时间'+
+'                    </td>'+
+'                    <td style="width:50px">'+
+'                        操作'+
+'                    </td>'+
+'                </tr> ';
+            
+            if(undefined != ls && ls.length > 0){
+                for(var i = 0; i < ls.length ; i++){
+                    html += ' <tr>'+
+                            '            <td>'+
+                            '                '+ ls[i].id +
+                            '            </td>'+
+                            '            <td>'+
+                            '               '+ ls[i].userGroupID +
+                            '            </td>'+
+                            '            <td>'+
+                            '                '+ ls[i].userGroupName +
+                            '            </td>'+
+                            '            <td>'+
+                            '                '+ ls[i].creater +
+                            '            </td>'+
+                            '            <td>'+
+                            '                '+ ls[i].createTime +
+                            '            </td>'+
+                            '            <td>'+
+                            '                <a href="{{siteDomain}}Admin/UserGroup/Detail?id='+ ls[i].id +'" class="btn btn-primary">用户组详情</a>'+
+                            '                <a href="javascript:" onclick="UserUserGroup.del(\''+ ls[i].id +'\',\''+ ls[i].userGroupID +'\')" class="btn btn-primary">取消绑定</a>'+
+                            '            </td>'+
+                            '        </tr> ';
+                }
+            }
+            html += '</table>';
+            html += '<div class="row"><div class="col-md-5"></div><div style="padding: 20px;" class="col-md-5"><span>共&nbsp;'+total+'&nbsp;条记录&nbsp;&nbsp;&nbsp;分&nbsp;'+pagetotal+'&nbsp;页&nbsp;&nbsp;&nbsp;每页&nbsp;'+size+'&nbsp;条记录</span></div>';
+            html += '<div class="col-md-2"><ul class="pagination">';
+            if(page <= 1){
+                html += '<li class="disabled"><span>&laquo;</span></li>';
+            }else{
+                pre = page - 1;
+                html += '<li><a href="javascript:UserUserGroup.queryBindUserGroup('+pre+')">&laquo;</a></li>';
+            }
+            if(page >= pagetotal){
+                html += '<li class="disabled"><span>&raquo;</span></li>';
+            }else{
+                next = page + 1;
+                html += '<li><a href="javascript:UserUserGroup.queryBindUserGroup('+next+')">&raquo;</a></li>';
+            }
+            html += '</ul></div></div>';
+            pd = $('#pagediv');
+            pd.empty();
+            pd.html(html);
+        }
+
+
+    };
+
+    $(document).ready(function(){
+        UserUserGroup.queryBindUserGroup(1);
+    });
+    //-->
+</script>
+{% end %}

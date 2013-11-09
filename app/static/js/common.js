@@ -42,3 +42,4 @@ var Common = {
         window.location.href = url;
     }
 };
+

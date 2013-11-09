@@ -39,6 +39,13 @@
   color:red;
   margin-right:5px;
 }
+.ur { 
+  color: #D25900;
+  font-weight: border;
+}
 .m-r10{
   margin-right: 10px;
+}
+.m-0{
+  margin:0px;
 }
