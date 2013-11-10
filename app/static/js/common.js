@@ -34,8 +34,8 @@ var Common = {
             return;
         }
         url = url + p;
-        if($('#aback').length > 0 && url.indexOf('refUrl=') < 0){
-            var aback = $('#aback')[0].href;
+        if($('#refUrl').length > 0 && url.indexOf('refUrl=') < 0){
+            var aback = $('#refUrl')[0].href;
             url = "&refUrl="+enencodeURIComponent(aback);
         }
 
