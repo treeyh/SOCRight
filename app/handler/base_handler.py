@@ -229,7 +229,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def build_page_html_bs(self, page, size, total, pageTotal):
         url = self.format_page_url()
         pageArea = self.get_page_pagearea(page, pageTotal)
-        html = '<div class="row"><div class="col-md-5"></div>'        
+        html = '<div class="row pinned"><div class="col-md-5"></div>'        
         html = '%s<div class="col-md-3" style="padding: 20px;"><span>共&nbsp;%d&nbsp;条记录&nbsp;&nbsp;&nbsp;分&nbsp;%d&nbsp;页&nbsp;&nbsp;&nbsp;每页&nbsp;%d&nbsp;条记录</span></div>' % (html, total, pageTotal, size)
         # html = '%s<div class="col-md-2 form-inline" style="padding: 20px;">跳转到第&nbsp;<input type="text" value="%d" id="btGoToPage" class="form-control input-sm" style="width:45px;" />&nbsp;页&nbsp;<input type="button" value="Go" class="btn btn-default" onclick="Common.goToPage(\'%s\', %d)" /></div>' % (html, page, url, pageTotal)
         html = '%s<div class="col-md-4"><ul class="pagination">' % (html)
