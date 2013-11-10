@@ -319,3 +319,22 @@ class RoleUserBindDelHandler(admin_base_handler.AdminRightBaseHandler):
             self.out_ok()
         else:
             self.out_fail(code = 101)
+
+
+class RoleUserGroupListHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.RoleManager'
+    _right = state.operView
+    def get(self):
+        ps = self.get_page_config(title = '角色用户组列表')
+        role = {}
+        role['id'] = int(self.get_arg('id', '0'))
+        print role['id']
+        role = role_logic.query_one(id = role['id'])
+        ps['role'] = role
+
+        ps['page'] = int(self.get_arg('page', '1'))
+
+        ps['pagedata'] = role_logic.query_page_role_groups(roleID = role['id'], page = ps['page'], size = ps['size'])
+        ps = self.format_none_to_empty(ps)
+        ps['pager'] = self.build_page_html_bs(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
+        self.render('admin/role/user_group_list_bs.html', **ps)

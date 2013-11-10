@@ -170,6 +170,26 @@ class UserDelHandler(admin_base_handler.AdminRightBaseHandler):
         else:
             self.out_fail(code = 101)
 
+class UserQueryHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
+    _right = state.operView
+    def post(self):
+        ps = self.get_page_config(title = '用户查询')
+        
+        user = self.get_args(['id', 'realName', 'name', 'tel', 'mobile', 'email', 'createTimeBegin', 'createTimeEnd', 'lastUpdateTimeBegin', 'lastUpdateTimeEnd'], '')
+        user['status'] = int(self.get_arg('status', '0'))
+        user['departmentID'] = int(self.get_arg('departmentID', '0'))        
+        ps['page'] = int(self.get_arg('page', '1'))        
+        ps['pagedata'] = user_logic.query_page(id = user['id'],
+                    name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
+                     tel = user['tel'], mobile = user['mobile'], email = user['email'], 
+                     status = user['status'], createTimeBegin = user['createTimeBegin'], createTimeEnd = user['createTimeEnd'], lastUpdateTimeBegin = user['lastUpdateTimeBegin'], lastUpdateTimeEnd = user['lastUpdateTimeEnd'], page = ps['page'], size = ps['size'])
+        if None == ps['pagedata']:
+            self.out_fail(code = 101)
+        else:
+            self.out_ok(data = ps['pagedata'])
+
+
 class UserDetailHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserManager'
     _right = state.operView

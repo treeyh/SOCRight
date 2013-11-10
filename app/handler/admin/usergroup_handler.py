@@ -149,58 +149,49 @@ class UserGroupUserListHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config(title = '用户组绑定用户列表', refUrl = config.SOCRightConfig['siteDomain'] + 'Admin/UserGroup/List')
         ps['userGroupID'] = int(self.get_arg('id', '0'))
-        userGroups = usergroup_logic.query_all_by_active()
-        if None == userGroups or len(userGroups) == 0:
-            ps['msg'] = state.ResultInfo.get(105003, '')
-            ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/Add'
-            self.render('admin/usergroup/user_list.html', **ps)
+        if '0' == ps['userGroupID']:
+            ps['msg'] = state.ResultInfo.get(105002, '')
+            ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/List'
+            self.render('admin/usergroup/user_list_bs.html', **ps)
+            return            
+
+        userGroup = usergroup_logic.query_one(id = ps['userGroupID'])
+        if None == userGroup:
+            ps['msg'] = state.ResultInfo.get(105002, '')
+            ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/List'
+            self.render('admin/usergroup/user_list_bs.html', **ps)
             return
-        else:
-            if 0 == ps['userGroupID']:
-                ps['userGroupID'] = userGroups[0]['id']
+
+        ps['userGroupName'] = userGroup['name']
+        ps = self.format_none_to_empty(ps)
+        self.render('admin/usergroup/user_list_bs.html', **ps)
+
+
+class UserGroupUserQueryHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindUserManager'
+    _right = state.operView
+    def post(self):
+        ps = self.get_page_config(title = '用户组绑定用户列表')
+
+        ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
+
+        if '0' == ps['userGroupID']:
+            self.out_fail(code = 105002)
+            return
         
         ps['page'] = int(self.get_arg('page', '1'))
         ps['pagedata'] = usergroup_logic.query_page_group_users(
                 userGroupID = ps['userGroupID'], page = ps['page'], size = ps['size'])
-    
-        ps['userGroups'] = userGroups
-        ps = self.format_none_to_empty(ps)
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
-        self.render('admin/usergroup/user_list.html', **ps)
+        if None == ps['pagedata']:
+            self.out_fail(code = 101)
+        else:
+            self.out_ok(data = ps['pagedata'])
+        
 
 
 class UserGroupUserBindHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindUserManager'
     _right = state.operEdit
-
-    def get(self):
-        ps = self.get_page_config(title = '新增用户绑定用户组')
-        ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
-        userGroups = usergroup_logic.query_all_by_active()
-        if None == userGroups or len(userGroups) == 0:
-            ps['msg'] = state.ResultInfo.get(105003, '')
-            ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/Add'
-            self.render('admin/usergroup/user_bind.html', **ps)
-            return
-        else:
-            if 0 == ps['userGroupID']:
-                ps['userGroupID'] = userGroups[0]['id']
-
-        ps['userGroups'] = userGroups
-        ps['page'] = int(self.get_arg('page', '1'))        
-        ps['userName'] = self.get_arg('userName', '')
-        ps['userID'] = int(self.get_arg('userID', '0'))
-        ps['userInfo'] = ''
-        if ps['userID'] > 0:
-            userInfo = user_logic.query_one(id = ps['userID'])
-            ps['userInfo'] = userInfo['name']        
-
-        ps['pagedata'] = user_logic.query_page(name = ps['userName'], 
-            status = state.statusActive, page = ps['page'], size = ps['size'])
-        ps = self.format_none_to_empty(ps)
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
-        self.render('admin/usergroup/user_bind.html', **ps)
-
 
     def post(self):
         userGroupID = int(self.get_arg('userGroupID', '0'))
@@ -242,57 +233,48 @@ class UserGroupRoleListHandler(admin_base_handler.AdminRightBaseHandler):
     def get(self):
         ps = self.get_page_config(title = '用户组绑定角色列表', refUrl = config.SOCRightConfig['siteDomain'] + 'Admin/UserGroup/List')
         ps['userGroupID'] = int(self.get_arg('id', '0'))
-        userGroups = usergroup_logic.query_all_by_active()
-        if None == userGroups or len(userGroups) == 0:
-            ps['msg'] = state.ResultInfo.get(105003, '')
-            ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/Add'
-            self.render('admin/usergroup/role_list.html', **ps)
+        
+        if '0' == ps['userGroupID']:
+            ps['msg'] = state.ResultInfo.get(105002, '')
+            ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/List'
+            self.render('admin/usergroup/role_list_bs.html', **ps)
             return
-        else:
-            if 0 == ps['userGroupID']:
-                ps['userGroupID'] = userGroups[0]['id']
+
+        userGroup = usergroup_logic.query_one(id = ps['userGroupID'])
+        if None == userGroup:
+            ps['msg'] = state.ResultInfo.get(105002, '')
+            ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/List'
+            self.render('admin/usergroup/role_list_bs.html', **ps)
+            return
+
+        ps['userGroupName'] = userGroup['name']
+        self.render('admin/usergroup/role_list_bs.html', **ps)
+
+class UserGroupRoleQueryHandler(admin_base_handler.AdminRightBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindRoleManager'
+    _right = state.operView
+
+    def post(self):
+        ps = self.get_page_config(title = '查询用户组绑定角色')
+        ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
+        
+        if '0' == ps['userGroupID']:
+            self.out_fail(code = 105002)
+            return
         
         ps['page'] = int(self.get_arg('page', '1'))
         ps['pagedata'] = usergroup_logic.query_page_group_roles(
                 userGroupID = ps['userGroupID'], page = ps['page'], size = ps['size'])
-        ps = self.format_none_to_empty(ps)
-        ps['userGroups'] = userGroups
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
-        self.render('admin/usergroup/role_list.html', **ps)
+
+        if None == ps['pagedata']:
+            self.out_fail(code = 101)
+        else:
+            self.out_ok(data = ps['pagedata'])
 
 
 class UserGroupRoleBindHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.UserGroupManager.UserGroupBindRoleManager'
     _right = state.operEdit
-
-    def get(self):
-        ps = self.get_page_config(title = '新增角色绑定用户组')
-        ps['userGroupID'] = int(self.get_arg('userGroupID', '0'))
-        userGroups = usergroup_logic.query_all_by_active()
-        if None == userGroups or len(userGroups) == 0:
-            ps['msg'] = state.ResultInfo.get(105003, '')
-            ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/Add'
-            self.render('admin/usergroup/user_bind.html', **ps)
-            return
-        else:
-            if 0 == ps['userGroupID']:
-                ps['userGroupID'] = userGroups[0]['id']
-
-        ps['userGroups'] = userGroups
-        ps['page'] = int(self.get_arg('page', '1'))        
-        ps['roleName'] = self.get_arg('roleName', '')
-        ps['roleID'] = int(self.get_arg('roleID', '0'))
-        ps['roleInfo'] = ''
-        if ps['roleID'] > 0:
-            roleInfo = role_logic.query_one(id = ps['roleID'])
-            ps['roleInfo'] = roleInfo['name']        
-
-        ps['pagedata'] = role_logic.query_page(name = ps['roleName'], 
-            status = state.statusActive, page = ps['page'], size = ps['size'])
-        ps = self.format_none_to_empty(ps)
-        ps['pager'] = self.build_page_html(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
-        self.render('admin/usergroup/role_bind.html', **ps)
-
 
     def post(self):
         userGroupID = int(self.get_arg('userGroupID', '0'))
@@ -337,7 +319,7 @@ class UserGroupRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
         if 0 == ps['userGroupID']:
             ps['msg'] = state.ResultInfo.get(105010, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/UserGroup/List'
-            self.render('admin/usergroup/right_detail.html', **ps)
+            self.render('admin/usergroup/right_detail_bs.html', **ps)
             return
 
         ps['appCode'] = self.get_arg('appCode', '')
@@ -345,7 +327,7 @@ class UserGroupRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
         if None == ps['apps'] or len(ps['apps']) <= 0:
             ps['msg'] = state.ResultInfo.get(101004, '')
             ps['gotoUrl'] = ps['siteDomain'] +'Admin/Application/Add'
-            self.render('admin/usergroup/right_detail.html', **ps)
+            self.render('admin/usergroup/right_detail_bs.html', **ps)
             return
         else:
             if '' == ps['appCode']:
@@ -360,4 +342,4 @@ class UserGroupRightDetailHandler(admin_base_handler.AdminRightBaseHandler):
         funcs = usergroup_logic.query_user_group_app_right(userGroupID = ps['userGroupID'], appCode = ps['appCode'])
         ps['funcs'] = funcs
         
-        self.render('admin/usergroup/right_detail.html', **ps)
+        self.render('admin/usergroup/right_detail_bs.html', **ps)

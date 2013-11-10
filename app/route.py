@@ -57,6 +57,7 @@ route.append((r'^/Admin/User/List', user_handler.UserListHandler))
 route.append((r'^/Admin/User/Add', user_handler.UserAddOrEditHandler))
 route.append((r'^/Admin/User/Edit', user_handler.UserAddOrEditHandler))
 route.append((r'^/Admin/User/Detail', user_handler.UserDetailHandler))
+route.append((r'^/Admin/User/Query', user_handler.UserQueryHandler))
 route.append((r'^/Admin/User/Del', user_handler.UserDelHandler))
 route.append((r'^/Admin/User/RoleList', user_handler.UserRoleListHandler))
 route.append((r'^/Admin/User/RoleQuery', user_handler.UserRoleQueryHandler))
@@ -82,6 +83,8 @@ route.append((r'^/Admin/Role/RightDetail', role_handler.RoleRightHandler))
 route.append((r'^/Admin/Role/UserList', role_handler.RoleUserListHandler))
 route.append((r'^/Admin/Role/UserListExport', role_handler.RoleUserListExportHandler))
 route.append((r'^/Admin/Role/UserBindDel', role_handler.RoleUserBindDelHandler))
+route.append((r'^/Admin/Role/UserGroupList', role_handler.RoleUserGroupListHandler))
+
 
 
 
@@ -92,9 +95,11 @@ route.append((r'^/Admin/UserGroup/Detail', usergroup_handler.UserGroupDetailHand
 route.append((r'^/Admin/UserGroup/Query', usergroup_handler.UserGroupQueryHandler))
 route.append((r'^/Admin/UserGroup/Del', usergroup_handler.UserGroupDelHandler))
 route.append((r'^/Admin/UserGroup/UserList', usergroup_handler.UserGroupUserListHandler))
+route.append((r'^/Admin/UserGroup/UserQuery', usergroup_handler.UserGroupUserQueryHandler))
 route.append((r'^/Admin/UserGroup/UserBind', usergroup_handler.UserGroupUserBindHandler))
 route.append((r'^/Admin/UserGroup/UserDel', usergroup_handler.UserGroupUserDelHandler))
 route.append((r'^/Admin/UserGroup/RoleList', usergroup_handler.UserGroupRoleListHandler))
+route.append((r'^/Admin/UserGroup/RoleQuery', usergroup_handler.UserGroupRoleQueryHandler))
 route.append((r'^/Admin/UserGroup/RoleBind', usergroup_handler.UserGroupRoleBindHandler))
 route.append((r'^/Admin/UserGroup/RoleDel', usergroup_handler.UserGroupRoleDelHandler))
 route.append((r'^/Admin/UserGroup/RightDetail', usergroup_handler.UserGroupRightDetailHandler))

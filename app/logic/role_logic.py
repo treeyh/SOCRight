@@ -210,3 +210,18 @@ def init_func_right( funcs):
         else:
             func['customJson'] = None
     return funcs
+
+
+
+_query_role_groups_sql = '''  select ugu.id, ugu.userGroupID, ugu.roleID, ugu.remark, ugu.isDelete, ugu.creater, 
+                        ugu.createTime, ugu.lastUpdater, ugu.lastUpdateTime, u.`name` as userGroupName from sso_user_group_role as ugu 
+                        LEFT JOIN sso_user_group u on u.id = ugu.userGroupID 
+                        where ugu.roleID = %s and  ugu.isDelete = %s and u.status = %s  order by ugu.id desc '''
+_query_role_groups_col = str_helper.format_str_to_list_filter_empty(
+        'id, userGroupID, roleID, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, userGroupName', ',')
+''' 分页查询角色的用户组 '''
+def query_page_role_groups( roleID, page = 1, size = 12):
+    isdelete = state.Boole['false']
+    yz = (roleID, isdelete, state.statusActive)
+    roles = mysql.find_page(_query_role_groups_sql, yz, _query_role_groups_col, page, size)
+    return roles

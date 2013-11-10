@@ -1,30 +1,26 @@
 {% extends "../base_a_bs.html" %}
 {% block crumb %}
 <li>
-    <a href="{{siteDomain}}Admin/User/List">用户管理</a>
+    <a href="{{siteDomain}}Admin/UserGroup/List">用户组管理</a>
 </li>
-<li class="active">绑定用户组列表</li>
+<li class="active">绑定角色列表</li>
 {% end %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-info">
-            <div class="panel-heading">用户名:{{userName}}；姓名：{{userRealName}}</div>
+            <div class="panel-heading">用户组信息</div>
             <div class="panel-body">
                 <form class="form-inline" role="form">
                     <div class="form-group">
-                        <label for="name" class="sr-only">用户名</label>
-                        <input type="text" name="name" id="name" value="{{ userName }}" class="form-control" title="用户名" disabled />
-                        <input type="hidden" id="userID" name="userID" value="{{userID}}" />
-                    </div>
-                    <div class="form-group">
-                        <label class="sr-only" for="realName">姓名</label>
-                        <input type="text" name="realName" id="realName" value="{{ userRealName }}" class="form-control" title="姓名" disabled />
+                        <label for="userGroupName" class="sr-only">用户组名</label>
+                        <input type="text" name="userGroupName" id="userGroupName" value="{{ userGroupName }}" class="form-control" title="用户组名" disabled />
+                        <input type="hidden" id="userGroupID" name="userGroupID" value="{{userGroupID}}" />
                     </div>
                     <div class="form-group" style="float:right;">
                         <a class="btn btn-default" href="{{refUrl}}" id="refUrl">返回</a>
-                        <button  type="button" class="btn btn-info" data-toggle="modal" data-target="#modelinfo" onclick="UserUserGroup.queryUserGroup();">绑定新的用户组</button>
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modelinfo" onclick="UserGroupRole.queryRole();">绑定新的角色</button>
                     </div>
                 </form>
             </div>
@@ -45,7 +41,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">选择用户组</h4>
+        <h4 class="modal-title" id="myModalLabel">选择角色</h4>
       </div>
       <div class="modal-body">
             <div class="row">
@@ -54,11 +50,11 @@
                         <div class="panel-body">
                             <form class="form-inline" role="form">
                                 <div class="form-group">
-                                    <label for="userGroupName" class="sr-only">用户组名称</label>
-                                    <input type="text" name="userGroupName" id="userGroupName" value="" class="form-control" placeholder="用户组名称" data-toggle="hover" data-original-title="输入需要查询的用户组名称" data-placement="bottom" />
+                                    <label for="roleName" class="sr-only">角色名称</label>
+                                    <input type="text" name="roleName" id="roleName" value="" class="form-control" placeholder="角色名称" data-toggle="hover" data-original-title="输入需要查询的角色名称" data-placement="bottom" />
                                 </div>
                                 <div class="form-group" style="float:right;">
-                                    <button type="button" class="btn btn-primary" style="width:100px;" onclick="UserUserGroup.queryUserGroup();"><span class="glyphicon glyphicon-search m-r10"></span>查询</button>                                    
+                                    <button type="button" class="btn btn-primary" style="width:100px;" onclick="UserGroupRole.queryRole();"><span class="glyphicon glyphicon-search m-r10"></span>查询</button>                                    
                                 </div>
                             </form>
                         </div>
@@ -83,66 +79,52 @@
 <script type="text/javascript" language="javascript">
     <!--
 
-    var UserUserGroup = {
-        _queryGroupKey : '',
+    var UserGroupRole = {
+        _queryRoleKey : '',
         del: function (id, userGroupID) {
             if (!confirm("确定删除该记录吗？")) return false;
 
-            $.post('{{siteDomain}}Admin/UserGroup/UserDel?' + Math.random(), { 'id': id, 'userGroupID': userGroupID, 'ajax': 'ajax' },
+            $.post('{{siteDomain}}Admin/UserGroup/RoleDel?' + Math.random(), { 'id': id, 'userGroupID': userGroupID, 'ajax': 'ajax' },
                  function (data) {
                      if (0 == data.code) {
                          Common.alert('操作成功');
-                         UserUserGroup.queryBindUserGroup(1);
+                         UserGroupRole.queryBindRole(1);
                      } else {
                          Common.alert('操作失败,' + data.msg);
                      }
                  }, "json");
         },
-        bind: function (userGroupID) {
-            var userID = $('#userID').val();
-            if (userID == '') {
-                Common.alert('请先选择用户');
+        bind: function (roleID) {
+            var userGroupID = $('#userGroupID').val();
+            if (userGroupID == '') {
+                Common.alert('请先选择用户组');
                 return;
             }
-
-            $.post('/Admin/UserGroup/UserBind?' + Math.random(), { 'userGroupID': userGroupID, 'userID': userID, 'ajax': 'ajax' },
+            $.post('/Admin/UserGroup/RoleBind?' + Math.random(), { 'userGroupID': userGroupID, 'roleID': roleID, 'ajax': 'ajax'},
                  function (data) {
                      if (0 == data.code) {
                          Common.alert('操作成功');
                          $('#modelinfo').modal('hide');
-                         UserUserGroup.queryBindUserGroup(1);
+                         UserGroupRole.queryBindRole(1);
                      } else {
                          Common.alert('操作失败,' + data.msg);
                      }
                  }, "json");
         },
-        queryUserGroupPage : function(page){
-            $.post('{{siteDomain}}Admin/UserGroup/Query?' + Math.random(), { 'name': UserUserGroup._queryGroupKey, 'status': '1', 'page': page, 'ajax': 'ajax' },
+        queryRolePage : function(page){
+            $.post('{{siteDomain}}Admin/Role/Query?' + Math.random(), { 'name': UserGroupRole._queryRoleKey, 'status': '1', 'page': page, 'ajax': 'ajax' },
                  function (data) {
                     if (0 == data.code) {
-                        UserUserGroup._buileQueryPageHtml(data.data.page, data.data.size, data.data.pagetotal, data.data.total, data.data.data);
+                        UserGroupRole._buileQueryPageHtml(data.data.page, data.data.size, data.data.pagetotal, data.data.total, data.data.data);
                     } else {
                         Common.alert('操作失败,' + data.msg);
                     }
                  }, "json");
         },
-        queryUserGroup: function () {
-            var userGroupName = $('#userGroupName').val();
-            UserUserGroup._queryGroupKey = userGroupName;
-            UserUserGroup.queryUserGroupPage(1);
-        },
-        queryBindUserGroup : function(page){
-            var userID = $('#userID').val();
-
-            $.post('{{siteDomain}}Admin/User/GroupQuery?' + Math.random(), { 'userID': userID, 'page': page, 'ajax': 'ajax' },
-                 function (data) {
-                    if (0 == data.code) {
-                        UserUserGroup._buileBindPageHtml(data.data.page, data.data.size, data.data.pagetotal, data.data.total, data.data.data);
-                    } else {
-                        Common.alert('操作失败,' + data.msg);
-                    }
-                 }, "json");
-
+        queryRole: function () {
+            var roleName = $('#roleName').val();
+            UserGroupRole._queryRoleKey = roleName;
+            UserGroupRole.queryRolePage(1);
         },
         _buileQueryPageHtml : function(page, size, pagetotal, total, ls){
             var html = ' <table class="table table-bordered table-striped table-hover table-condensed"><tr>'+
@@ -150,7 +132,7 @@
 '                        编号'+
 '                    </td>'+
 '                    <td style="width:100px">'+
-'                        角色组名称'+
+'                        角色名称'+
 '                    </td>'+
 '                    <td style="width:50px">'+
 '                        操作'+
@@ -167,7 +149,7 @@
                             '                '+ ls[i].name +
                             '            </td>'+
                             '            <td>'+                            
-                            '                <a href="javascript:" onclick="UserUserGroup.bind(\''+ ls[i].id +'\')" class="btn btn-primary btn-xs">绑定</a>'+
+                            '                <a href="javascript:" onclick="UserGroupRole.bind(\''+ ls[i].id +'\')" class="btn btn-primary btn-xs">绑定</a>'+
                             '            </td>'+
                             '        </tr> ';
                 }
@@ -179,30 +161,42 @@
                 html += '<li class="disabled"><span>&laquo;</span></li>';
             }else{
                 pre = page - 1;
-                html += '<li><a href="javascript:UserUserGroup.queryUserGroupPage('+pre+')">&laquo;</a></li>';
+                html += '<li><a href="javascript:UserGroupRole.queryRolePage('+pre+')">&laquo;</a></li>';
             }
             if(page >= pagetotal){
                 html += '<li class="disabled"><span>&raquo;</span></li>';
             }else{
                 next = page + 1;
-                html += '<li><a href="javascript:UserUserGroup.queryUserGroupPage('+next+')">&raquo;</a></li>';
+                html += '<li><a href="javascript:UserGroupRole.queryRolePage('+next+')">&raquo;</a></li>';
             }
             html += '</ul></div></div>';
             pd = $('#querydiv');
             pd.empty();
             pd.html(html);
         },
+        queryBindRole : function(page){
+            var userGroupID = $('#userGroupID').val();
 
+            $.post('{{siteDomain}}Admin/UserGroup/RoleQuery?' + Math.random(), { 'userGroupID': userGroupID, 'page': page, 'ajax': 'ajax' },
+                 function (data) {
+                    if (0 == data.code) {
+                        UserGroupRole._buileBindPageHtml(data.data.page, data.data.size, data.data.pagetotal, data.data.total, data.data.data);
+                    } else {
+                        Common.alert('操作失败,' + data.msg);
+                    }
+                 }, "json");
+
+        },
         _buileBindPageHtml : function(page, size, pagetotal, total, ls){
             var html = ' <table class="table table-bordered table-striped table-hover"><tr>'+
 '                    <td style="width:40px">'+
 '                        编号'+
 '                    </td>'+
 '                    <td style="width:40px">'+
-'                        角色组编号'+
+'                        角色编号'+
 '                    </td>'+
 '                    <td style="width:160px">'+
-'                        角色组名称'+
+'                        角色名'+
 '                    </td>'+
 '                    <td style="width:60px">'+
 '                        绑定人'+
@@ -214,6 +208,7 @@
 '                        操作'+
 '                    </td>'+
 '                </tr> ';
+            var userGroupID = $('#userGroupID').val();
             
             if(undefined != ls && ls.length > 0){
                 for(var i = 0; i < ls.length ; i++){
@@ -222,10 +217,10 @@
                             '                '+ ls[i].id +
                             '            </td>'+
                             '            <td>'+
-                            '               '+ ls[i].userGroupID +
+                            '               '+ ls[i].roleID +
                             '            </td>'+
                             '            <td>'+
-                            '                '+ ls[i].userGroupName +
+                            '                '+ ls[i].roleName +
                             '            </td>'+
                             '            <td>'+
                             '                '+ ls[i].creater +
@@ -234,8 +229,8 @@
                             '                '+ ls[i].createTime +
                             '            </td>'+
                             '            <td>'+
-                            '                <a href="{{siteDomain}}Admin/UserGroup/Detail?id='+ ls[i].userGroupID +'" class="btn btn-primary">用户组详情</a>'+
-                            '                <a href="javascript:" onclick="UserUserGroup.del(\''+ ls[i].id +'\',\''+ ls[i].userGroupID +'\')" class="btn btn-primary">取消绑定</a>'+
+                            '                <a href="{{siteDomain}}Admin/Role/Detail?id='+ ls[i].roleID +'" class="btn btn-primary">用户组详情</a>'+
+                            '                <a href="javascript:" onclick="UserGroupRole.del(\''+ ls[i].id +'\',\''+ userGroupID +'\')" class="btn btn-primary">取消绑定</a>'+
                             '            </td>'+
                             '        </tr> ';
                 }
@@ -247,13 +242,13 @@
                 html += '<li class="disabled"><span>&laquo;</span></li>';
             }else{
                 pre = page - 1;
-                html += '<li><a href="javascript:UserUserGroup.queryBindUserGroup('+pre+')">&laquo;</a></li>';
+                html += '<li><a href="javascript:UserGroupRole.queryBindRole('+pre+')">&laquo;</a></li>';
             }
             if(page >= pagetotal){
                 html += '<li class="disabled"><span>&raquo;</span></li>';
             }else{
                 next = page + 1;
-                html += '<li><a href="javascript:UserUserGroup.queryBindUserGroup('+next+')">&raquo;</a></li>';
+                html += '<li><a href="javascript:UserGroupRole.queryBindRole('+next+')">&raquo;</a></li>';
             }
             html += '</ul></div></div>';
             pd = $('#pagediv');
@@ -265,7 +260,7 @@
     };
 
     $(document).ready(function(){
-        UserUserGroup.queryBindUserGroup(1);
+        UserGroupRole.queryBindRole(1);
     });
     //-->
 </script>

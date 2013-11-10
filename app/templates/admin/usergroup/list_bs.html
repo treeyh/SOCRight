@@ -103,12 +103,12 @@
                                 <li><a href="{{siteDomain}}Admin/UserGroup/Edit?id={{ r['id'] }}">修改编辑</a></li>
                                 <li><a href="javascript:" onclick="UserGroup.del('{{r['id']}}')">删除</a></li>
                                 <li class="divider"></li>
-                                <li><a href="{{siteDomain}}Admin/UserGroup/UserList?id={{ r['id'] }}">用户列表</a></li>
+                                <li><a href="{{siteDomain}}Admin/UserGroup/UserList?id={{ r['id'] }}">绑定用户列表</a></li>
                                 {% if r['status'] == 1 %}
                                 <li><a href="{{siteDomain}}Admin/User/Add?userGroupID={{ r['id'] }}">创建该组用户</a></li>
                                 {% end %}
                                 <li class="divider"></li>
-                                <li><a href="{{siteDomain}}Admin/UserGroup/RoleList?id={{ r['id'] }}">角色列表</a></li>
+                                <li><a href="{{siteDomain}}Admin/UserGroup/RoleList?id={{ r['id'] }}">绑定角色列表</a></li>
                                 <li><a href="{{siteDomain}}Admin/UserGroup/RightDetail?id={{ r['id'] }}">权限预览</a></li>
                               </ul>
                         </div>

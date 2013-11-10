@@ -244,6 +244,8 @@ def del_group_role( id, userGroupID, user):
 
 
 
+
+
 _get_group_role_sql = '''  select id, userGroupID, roleID from sso_user_group_role WHERE id = %s '''
 _get_group_role_col = str_helper.format_str_to_list_filter_empty('id, userGroupID, roleID', ',')
 ''' 获取用户与用户组绑定 '''

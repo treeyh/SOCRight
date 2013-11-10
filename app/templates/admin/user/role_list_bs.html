@@ -54,8 +54,8 @@
                         <div class="panel-body">
                             <form class="form-inline" role="form">
                                 <div class="form-group">
-                                    <label for="userGroupName" class="sr-only">角色名称</label>
-                                    <input type="text" name="userGroupName" id="userGroupName" value="" class="form-control" placeholder="角色名称" data-toggle="hover" data-original-title="输入需要查询的角色名称" data-placement="bottom" />
+                                    <label for="roleName" class="sr-only">角色名称</label>
+                                    <input type="text" name="roleName" id="roleName" value="" class="form-control" placeholder="角色名称" data-toggle="hover" data-original-title="输入需要查询的角色名称" data-placement="bottom" />
                                 </div>
                                 <div class="form-group" style="float:right;">
                                     <button type="button" class="btn btn-primary" style="width:100px;" onclick="UserRole.queryRole();"><span class="glyphicon glyphicon-search m-r10"></span>查询</button>                                    
@@ -232,7 +232,7 @@
                             '                '+ ls[i].createTime +
                             '            </td>'+
                             '            <td>'+
-                            '                <a href="{{siteDomain}}Admin/Role/Detail?id='+ ls[i].id +'" class="btn btn-primary">用户组详情</a>'+
+                            '                <a href="{{siteDomain}}Admin/Role/Detail?id='+ ls[i].roleID +'" class="btn btn-primary">用户组详情</a>'+
                             '                <a href="javascript:" onclick="UserRole.del(\''+ ls[i].id +'\',\''+ ls[i].roleID +'\')" class="btn btn-primary">取消绑定</a>'+
                             '            </td>'+
                             '        </tr> ';

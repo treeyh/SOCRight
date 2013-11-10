@@ -33,7 +33,7 @@ class MainHandler(admin_base_handler.AdminBaseHandler):
                 return
             else:                
                 user = self.get_user_info_by_token(token = ps['token'])
-        elif user.get('loginToken', '') != ps['token']:
+        elif ps['token'] != '' and user.get('loginToken', '') != ps['token']:
             '''  用户登录token不等于传入token，需要重新登录  '''
             user = self.get_user_info_by_token(token = ps['token'])
 
