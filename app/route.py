@@ -32,6 +32,7 @@ route.append((r'^/Api/User/GetByUserNames', user_api_handler.UsersByUserNamesHan
 #route.append((r'^/', main_handler.MainHandler))        #后台程序需开启这个
 route.append((r'^/Admin', main_handler.MainHandler))
 route.append((r'^/Admin/Main', main_handler.MainHandler))
+route.append((r'^/Admin/Index', main_handler.IndexHandler))
 route.append((r'^/Admin/NotRight', main_handler.NotRightHandler))
 route.append((r'^/Admin/Logout', main_handler.LogoutHandler))
 

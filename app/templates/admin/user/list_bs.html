@@ -23,6 +23,10 @@
                         <input type="text" name="realName" id="realName" value="{{ user['realName'] }}" class="form-control" placeholder="姓名" data-toggle="hover" data-original-title="输入需要查询的姓名" data-placement="bottom" />
                     </div>
                     <div class="form-group">
+                        <label class="sr-only" for="email">邮箱</label>
+                        <input type="text" name="email" id="email" value="{{ user['email'] }}" class="form-control" placeholder="邮箱" data-toggle="hover" data-original-title="输入需要查询的邮箱" data-placement="bottom" />
+                    </div>
+                    <div class="form-group">
                         <label class="sr-only" for="status">应用状态</label>
                         <select name="status" id="status" class="form-control" data-toggle="hover" data-original-title="选择需要查询的用户状态" data-placement="bottom">
                             <option value="0">全部状态</option>
@@ -41,25 +45,24 @@
                         </select>
                         <input type="hidden" name="mobile" value="{{ user['mobile'] }}" />
                         <input type="hidden" name="tel" value="{{ user['tel'] }}" />
-                        <input type="hidden" name="email" value="{{ user['email'] }}" />
                     </div>
                     <br />
                     <br />
                     <div class="form-group">
                         <label class="sr-only" for="createTimeBegin">创建开始日期</label>
-                        <input type="text" onfocus="WdatePicker()" value="{{user['createTimeBegin']}}" id="createTimeBegin" name="createTimeBegin" class="Wdate form-control" placeholder="开始日期" data-toggle="hover" data-original-title="选择需要查询的创建开始日期" data-placement="bottom" />
+                        <input type="text" onfocus="WdatePicker()" value="{{user['createTimeBegin']}}" id="createTimeBegin" name="createTimeBegin" class="Wdate form-control" placeholder="创建开始日期" data-toggle="hover" data-original-title="选择需要查询的创建开始日期" data-placement="bottom" />
                     </div>
                     <div class="form-group">
                         <label class="sr-only" for="createTimeEnd">创建结束日期</label>
-                        <input type="text" onfocus="WdatePicker()" value="{{user['createTimeEnd']}}" id="createTimeEnd" name="createTimeEnd" class="Wdate form-control" placeholder="结束日期" data-toggle="hover" data-original-title="选择需要查询的结束日期" data-placement="bottom" />
+                        <input type="text" onfocus="WdatePicker()" value="{{user['createTimeEnd']}}" id="createTimeEnd" name="createTimeEnd" class="Wdate form-control" placeholder="创建结束日期" data-toggle="hover" data-original-title="选择需要查询的结束日期" data-placement="bottom" />
                     </div>
                     <div class="form-group">
                         <label class="sr-only" for="lastUpdateTimeBegin">更新开始日期</label>
-                        <input type="text" onfocus="WdatePicker()" value="{{user['lastUpdateTimeBegin']}}" id="lastUpdateTimeBegin" name="lastUpdateTimeBegin" class="Wdate form-control" placeholder="开始日期" data-toggle="hover" data-original-title="选择需要查询的开始日期" data-placement="bottom" />
+                        <input type="text" onfocus="WdatePicker()" value="{{user['lastUpdateTimeBegin']}}" id="lastUpdateTimeBegin" name="lastUpdateTimeBegin" class="Wdate form-control" placeholder="更新开始日期" data-toggle="hover" data-original-title="选择需要查询的开始日期" data-placement="bottom" />
                     </div>
                     <div class="form-group">
                         <label class="sr-only" for="lastUpdateTimeEnd">更新结束日期</label>
-                        <input type="text" onfocus="WdatePicker()" value="{{user['lastUpdateTimeEnd']}}" id="lastUpdateTimeEnd" name="lastUpdateTimeEnd" class="Wdate form-control" placeholder="结束日期" data-toggle="hover" data-original-title="选择需要查询的结束日期" data-placement="bottom" />
+                        <input type="text" onfocus="WdatePicker()" value="{{user['lastUpdateTimeEnd']}}" id="lastUpdateTimeEnd" name="lastUpdateTimeEnd" class="Wdate form-control" placeholder="更新结束日期" data-toggle="hover" data-original-title="选择需要查询的结束日期" data-placement="bottom" />
                     </div>
                     <div class="form-group" style="float:right;">
                         {% if ExportType == True %}

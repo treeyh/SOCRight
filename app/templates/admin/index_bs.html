@@ -1,0 +1,21 @@
+{% extends "base_a_bs.html" %}
+{% block crumb %}
+<li class="active">欢迎页</li>
+{% end %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">{{title}}</div>
+            <div class="panel-body">
+                欢迎您：{{user['realName']}}
+                <br />
+                <br />
+                <br />
+<div class="alert alert-success">友情提示：不支持IE6-8浏览器，建议使用更高级浏览器版本，谢谢。</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% end %}

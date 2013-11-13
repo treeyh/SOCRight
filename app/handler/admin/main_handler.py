@@ -92,3 +92,13 @@ class NotRightHandler(admin_base_handler.AdminBaseHandler):
     def get(self):
         ps = self.get_page_config(title = '无该操作权限')
         self.render('admin/not_right_bs.html', **ps)
+
+
+class IndexHandler(admin_base_handler.AdminBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.Login'
+    _right = state.operView
+
+    def get(self):
+        ps = self.get_page_config(title = '欢迎访问')
+        ps['user'] = self.current_user
+        self.render('admin/index_bs.html', **ps)
