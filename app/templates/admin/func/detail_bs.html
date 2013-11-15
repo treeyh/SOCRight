@@ -376,8 +376,10 @@
         }
     };
     var zTreeNodes = {% raw tree %};
+
     $(document).ready(function () {
         Tree.initZTree();
+        
         $('#code').bind('keyup', function() {
             var basePath = $('#basePath').val();
             if('' != basePath) {

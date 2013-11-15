@@ -3,7 +3,7 @@
 import os
 
 SOCRightConfig = {
-    'version':'4',
+    'version':'5',
     'siteName' : '云海统一权限管理平台',
     'jsDomain' : '/static/',
     'cssDomain' : '/static/',    
