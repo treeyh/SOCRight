@@ -23,15 +23,15 @@
 可以去网上搜索安装教程，不再累述
 
 ### 1.1.6 软连接Python，如下：
-ln -s /opt/soft/python/bin/python /opt/soft/python/bin/python_socssoadmin
-ln -s /opt/soft/python/bin/python /opt/soft/python/bin/python_socsso
+ - ln -s /opt/soft/python/bin/python /opt/soft/python/bin/python_socssoadmin
+ - ln -s /opt/soft/python/bin/python /opt/soft/python/bin/python_socsso
 
 ### 1.1.6 修改redis配置，主要有以下两点：
  - 修改为守护进程模式
-    daemonize yes   
+     - daemonize yes   
  - 注释save操作
-    #save 900 1
-    #save 300 10
-    #save 60 10000
+     - #save 900 1
+     - #save 300 10
+     - #save 60 10000
 
 
