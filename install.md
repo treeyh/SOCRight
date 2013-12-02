@@ -1,4 +1,4 @@
-# 1 云海统一权限管理系统平【SOCRight】
+# 1 云海统一权限管理系统【SOCRight】
 目前由Tree维护的开源项目:-)，目前支持linux平台，windows平台理论上也支持，但是还没试验过。
 
 ## 1.1 安装步骤
@@ -26,12 +26,32 @@
  - ln -s /opt/soft/python/bin/python /opt/soft/python/bin/python_socssoadmin
  - ln -s /opt/soft/python/bin/python /opt/soft/python/bin/python_socsso
 
-### 1.1.6 修改redis配置，主要有以下两点：
+### 1.1.6 修改redis配置，启动redis，主要有以下两点：
  - 修改为守护进程模式
      - daemonize yes   
  - 注释save操作
      - #save 900 1
      - #save 300 10
      - #save 60 10000
+ - 启动redis     
+     - /opt/soft/redis/redis-server /opt/soft/redis/etc/redis.conf
+
+### 1.1.7 安装系统数据库
 
 
+### 1.1.7 部署云海统一权限管理系统
+将整个项目目录，放入web目录中，Tree自己部署在/opt/web/sso.eeshou.com/目录下
+
+#### 1.1.7.1 修改startservice.sh中配置
+根据服务器cpu核数修改配置，目前为8核CPU的示例
+
+#### 1.1.7.2 修改startadmin.sh中配置
+根据服务器cpu核数修改配置，目前为8核CPU的示例
+
+#### 1.1.7.3 给予/opt/web/sso.eeshou.com/下所有内容读写权限
+
+#### 1.1.7.4 给予4个sh文件可执行权限
+
+#### 1.1.7.5 修改app/config.py配置文件内容，修改参考备注
+
+#### 1.1.7.5 修改app/config.py配置文件内容，修改参考备注
