@@ -36,22 +36,23 @@
  - 启动redis     
      - /opt/soft/redis/redis-server /opt/soft/redis/etc/redis.conf
 
+
 ### 1.1.7 安装系统数据库
+Sql脚本为install/db/SOCRight.sql,数据库名为SOCRight,使用UTF-8编码
 
-
-### 1.1.7 部署云海统一权限管理系统
+### 1.1.8 部署云海统一权限管理系统
 将整个项目目录，放入web目录中，Tree自己部署在/opt/web/sso.eeshou.com/目录下
 
-#### 1.1.7.1 修改startservice.sh中配置
+#### 1.1.8.1 修改startservice.sh中配置
 根据服务器cpu核数修改配置，目前为8核CPU的示例
 
-#### 1.1.7.2 修改startadmin.sh中配置
+#### 1.1.8.2 修改startadmin.sh中配置
 根据服务器cpu核数修改配置，目前为8核CPU的示例
 
-#### 1.1.7.3 给予/opt/web/sso.eeshou.com/下所有内容读写权限
+#### 1.1.8.3 给予/opt/web/sso.eeshou.com/下所有内容读写权限
 
-#### 1.1.7.4 给予4个sh文件可执行权限
+#### 1.1.8.4 给予4个sh文件可执行权限
 
-#### 1.1.7.5 修改app/config.py配置文件内容，修改参考备注
+#### 1.1.8.5 修改app/config.py配置文件内容，修改参考备注
 
-#### 1.1.7.5 修改app/config.py配置文件内容，修改参考备注
+#### 1.1.8.6 
