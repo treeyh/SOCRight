@@ -14,9 +14,9 @@ SOCRightConfig = {
     'cssDomain' : '/static/',  
 
     #后台站点的域名，需要根据实际情况修改
-    'siteDomain' : 'http://ssoadmin.eeshou.com/',
+    'siteDomain' : 'http://ssoadmin.socsoft.net/',
     #服务站点的域名，需要根据实际情况修改
-    'serviceSiteDomain' : 'http://sso.eeshou.com/',
+    'serviceSiteDomain' : 'http://sso.socsoft.net/',
     
     #页面分页每页显示数
     'size' : 15,
@@ -30,7 +30,7 @@ SOCRightConfig = {
     'adminCookieName' : 'soc_right_admin_user',
 
     #系统部署目录，需要根据实际情况修改
-    'realPath' : '/opt/www/02_SOC/SOCRight/',
+    'realPath' : '/opt/web/sso.socsoft.net/',
     #导出用户信息目录，不需要修改
     'exportUserPath' : 'app/static/export/user/',
     #导出操作日志信息目录，不需要修改
@@ -49,7 +49,7 @@ db = {
     'host' : '127.0.0.1',
     'user' : 'root',
     'passwd' : 'dswybs',
-    'db' : 'SOCRight',
+    'db' : 'soc_sso_right',
     'charset':'utf8',
     'port':3306,
 }

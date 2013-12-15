@@ -1,5 +1,12 @@
 #-*- encoding: utf-8 -*-
 
+#  计划任务：1、N天未登录锁定账号；2、账号超过使用期限锁定账号；
+#
+#
+#
+
+
+
 
 import datetime, calendar  
 import sys
@@ -8,6 +15,7 @@ import os
 path = os.path.split(os.path.realpath(__file__))[0]
 sys.path.append(path + '/../app/')
 
+#设置多少天未登录即锁定账号
 lockDay = 30
 
 
