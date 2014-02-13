@@ -111,11 +111,11 @@ def get_goto_user_url( userID, appCode, ip, backUrl = ''):
 
 
 _query_sql = '''  select u.id , u.name, u.realName, u.parentID, u.departmentID, u.mobile, u.tel, u.email, u.status, u.lastLoginTime, 
-                        u.lastLoginApp, u.lastLoginIp, u.loginCount, u.beginDate, u.endDate, u.remark, u.isDelete, u.creater, u.createTime, u.lastUpdater, u.lastUpdateTime, d.name as departmentName  
+                        u.lastLoginApp, u.lastLoginIp, u.loginCount, u.lockTime, u.beginDate, u.endDate, u.remark, u.isDelete, u.creater, u.createTime, u.lastUpdater, u.lastUpdateTime, d.name as departmentName  
                 from sso_user as u 
                 LEFT JOIN sso_department as d ON d.id = u.departmentID 
                 where u.isDelete = %s  '''
-_query_col = str_helper.format_str_to_list_filter_empty('id , name, realName, parentID, departmentID, mobile, tel, email, status, lastLoginTime, lastLoginApp, lastLoginIp, loginCount, beginDate, endDate, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, departmentName', ',')
+_query_col = str_helper.format_str_to_list_filter_empty('id , name, realName, parentID, departmentID, mobile, tel, email, status, lastLoginTime, lastLoginApp, lastLoginIp, loginCount, lockTime, beginDate, endDate, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, departmentName', ',')
 ''' 分页查询用户信息 '''
 def query_page( id = '', name = '', realName = '', departmentID = 0, 
                     tel = '', mobile = '', email = '', status = 0, createTimeBegin = 0, createTimeEnd = 0, lastUpdateTimeBegin = 0, lastUpdateTimeEnd = 0, page = 1, size = 12):
@@ -338,6 +338,19 @@ def update_status( id, status, user):
     yz = (status, user, id)
     result = mysql.insert_or_update_or_delete(_update_status_sql, yz)
     return 0 == result
+
+
+
+_update_lock_status_sql = '''   update sso_user set  `status` = %s, `lockTime` = now(), `lastUpdater` = %s, 
+                        `lastUpdateTime` = now() where `id` = %s  '''
+''' 更新用户 '''
+def lock_user_status(id, status, user):
+    yz = (status, user, id)
+    result = mysql.insert_or_update_or_delete(_update_lock_status_sql, yz)
+    return 0 == result
+
+
+
 
 
 _update_goto_app_sql = '''   update sso_user set  `lastLoginTime` = now(), `lastLoginApp` = %s, `lastLoginIp` = %s, 

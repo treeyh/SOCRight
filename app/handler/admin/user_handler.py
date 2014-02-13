@@ -422,13 +422,13 @@ class UserExportHandler(admin_base_handler.AdminRightBaseHandler):
         users = ps['pagedata']['data']
 
         #生成excel文件
-        info = u'''<table><tr><td>用户ID</td><td>用户名</td><td>姓名</td><td>部门</td><td>状态</td>
+        info = u'''<table><tr><td>用户ID</td><td>用户名</td><td>姓名</td><td>部门</td><td>状态</td><td>锁定时间</td>
                     <td>最后登录时间</td><td>创建人</td><td>创建时间</td><td>最后更新人</td><td>最后更新时间</td></tr>'''
 
         for user in users:
             u = u'''<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>
-                    <td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>''' % (str(user['id']), user['name'], user['realName'], 
-                        user['departmentName'], user['statusname'], user['lastLoginTime'], user['creater'], str(user['createTime'])[0:-3], 
+                    <td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>''' % (str(user['id']), user['name'], user['realName'], 
+                        user['departmentName'], user['statusname'], str(user['lockTime'])[0:-3], user['lastLoginTime'], user['creater'], str(user['createTime'])[0:-3], 
                         user['lastUpdater'], str(user['lastUpdateTime'])[0:-3] )
             info = info + u
         info = info + u'</table>'

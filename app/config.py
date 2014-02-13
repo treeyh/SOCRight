@@ -14,9 +14,9 @@ SOCRightConfig = {
     'cssDomain' : '/static/',  
 
     #后台站点的域名，需要根据实际情况修改
-    'siteDomain' : 'http://ssoadmin.socsoft.net/',
+    'siteDomain' : 'http://ssoadmin.ejyi.com/',
     #服务站点的域名，需要根据实际情况修改
-    'serviceSiteDomain' : 'http://sso.socsoft.net/',
+    'serviceSiteDomain' : 'http://sso.ejyi.com/',
     
     #页面分页每页显示数
     'size' : 15,

@@ -94,8 +94,11 @@
                     <td style="width:80px">
                         部门
                     </td>
-                    <td style="width:20px">
+                    <td style="width:50px">
                         状态
+                    </td>
+                    <td style="width:60px">
+                        锁定时间
                     </td>
                     <td style="width:50px">
                         创建人
@@ -129,6 +132,9 @@
                     </td>
                     <td>
                         {{ r['statusname'] }}
+                    </td>
+                    <td>
+                        {{ str(r['lockTime'])[0:-3] }}
                     </td>
                     <td>
                         {{ r['creater'] }}

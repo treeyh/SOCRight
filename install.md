@@ -56,3 +56,12 @@ Sql脚本为install/db/soc_sso_right.sql,数据库名为soc_sso_right,使用UTF-
 #### 1.1.8.5 修改app/config.py配置文件内容，修改参考备注
 
 #### 1.1.8.6 
+
+
+
+
+
+# 
+---数据表增加用户锁定时间字段
+ALTER TABLE `sso_user`
+ADD COLUMN `lockTime`  datetime NULL COMMENT '锁定时间' AFTER `remark`;
