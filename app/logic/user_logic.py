@@ -118,7 +118,7 @@ _query_sql = '''  select u.id , u.name, u.realName, u.parentID, u.departmentID, 
 _query_col = str_helper.format_str_to_list_filter_empty('id , name, realName, parentID, departmentID, mobile, tel, email, status, lastLoginTime, lastLoginApp, lastLoginIp, loginCount, lockTime, beginDate, endDate, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime, departmentName', ',')
 ''' 分页查询用户信息 '''
 def query_page( id = '', name = '', realName = '', departmentID = 0, 
-                    tel = '', mobile = '', email = '', status = 0, createTimeBegin = 0, createTimeEnd = 0, lastUpdateTimeBegin = 0, lastUpdateTimeEnd = 0, page = 1, size = 12):
+                    tel = '', mobile = '', email = '', status = 0, createTimeBegin = '', createTimeEnd = '', lastUpdateTimeBegin = '', lastUpdateTimeEnd = '', page = 1, size = 12):
     sql = _query_sql
     isdelete = state.Boole['false']
     ps = [isdelete]
@@ -269,7 +269,8 @@ def add( name, passWord, realName, departmentID, mobile,
 
 _update_sql = '''   update sso_user set  `realName` = %s, `departmentID` = %s, `parentID` = %s, `mobile` = %s, `tel` = %s, `email` = %s,
                         `status` = %s, beginDate = %s, endDate = %s, `remark` = %s, `lastUpdater` = %s, 
-                        `lastUpdateTime` = now() where `id` = %s  '''
+                        `lastUpdateTime` = now(), `lockTime` = %s  where `id` = %s  '''
+
 ''' 更新用户 '''
 def update( id, realName, departmentID, parentID, mobile, tel, email, status,
              beginDate, endDate, remark, user):
@@ -278,8 +279,12 @@ def update( id, realName, departmentID, parentID, mobile, tel, email, status,
         raise error.RightError(code = 103001)
 
     isdelete = state.Boole['false']
+    lockTime = None
+    if status != state.statusUserActive:
+        lockTime = str_helper.get_now_datetimestr()
+
     yz = (realName, departmentID, parentID, mobile, tel, email, 
-        status, beginDate, endDate + ' 23:59:59', remark, user, id)
+        status, beginDate, endDate + ' 23:59:59', remark, user, lockTime, id)
     result = mysql.insert_or_update_or_delete(_update_sql, yz)
     return 0 == result
 
@@ -331,23 +336,19 @@ def reset_password( name):
     return None
 
 
-_update_status_sql = '''   update sso_user set  `status` = %s, `lastUpdater` = %s, 
+
+_update_status_sql = '''   update sso_user set  `status` = %s, `lastUpdater` = %s, `lockTime` = %s , 
                         `lastUpdateTime` = now() where `id` = %s  '''
+
 ''' 更新用户 '''
 def update_status( id, status, user):
-    yz = (status, user, id)
+    lockTime = None    
+    if status != state.statusUserActive:
+        lockTime = str_helper.get_now_datetimestr()
+    yz = (status, user, lockTime, id)
     result = mysql.insert_or_update_or_delete(_update_status_sql, yz)
     return 0 == result
 
-
-
-_update_lock_status_sql = '''   update sso_user set  `status` = %s, `lockTime` = now(), `lastUpdater` = %s, 
-                        `lastUpdateTime` = now() where `id` = %s  '''
-''' 更新用户 '''
-def lock_user_status(id, status, user):
-    yz = (status, user, id)
-    result = mysql.insert_or_update_or_delete(_update_lock_status_sql, yz)
-    return 0 == result
 
 
 

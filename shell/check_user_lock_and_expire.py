@@ -39,20 +39,21 @@ def _get_user_info(page, size):
 
 
 if __name__ == '__main__':
-	today = get_today()
+	today = get_today()	
 
 	for p in range(1, 9999):
+
 		up = _get_user_info(page = p, size = 1000)
+		print up
 		if 0 == len(up['data']):
 			break
-		print up['data']
 		for user in up['data']:
 			endDate = str_helper.date_string_to_datetime(user['endDate'])			
 
 			'''  验证是否超过截止日期  begin '''			
 			inv = endDate - today
 			if inv.days < 0:
-				user_logic.lock_user_status(id = user['id'], status = state.statusUserExpire, user = 'sys')
+				user_logic.update_status(id = user['id'], status = state.statusUserExpire, user = 'sys')
 
 
 			'''  验证是否登录超过30天  end '''
@@ -62,7 +63,7 @@ if __name__ == '__main__':
 			inv2 = today - lastLoginTime
 			print '%s--%s--%d' % (user['name'], str(lastLoginTime) ,inv2.days)
 			if inv2.days > lockDay:
-				user_logic.lock_user_status(id = user['id'], status = state.statusUserLock, user = 'sys')
+				user_logic.update_status(id = user['id'], status = state.statusUserLock, user = 'sys')
 
 
 
