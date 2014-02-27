@@ -417,17 +417,41 @@ class UserExportHandler(admin_base_handler.AdminRightBaseHandler):
         ps['pagedata'] = user_logic.query_page(id = user['id'],
                     name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
                      tel = user['tel'], mobile = user['mobile'], email = user['email'], 
-                     status = user['status'], createTimeBegin = user['createTimeBegin'], createTimeEnd = user['createTimeEnd'], lastUpdateTimeBegin = user['lastUpdateTimeBegin'], lastUpdateTimeEnd = user['lastUpdateTimeEnd'], page = ps['page'], size = 9999)
+                     status = user['status'], createTimeBegin = user['createTimeBegin'], createTimeEnd = user['createTimeEnd'], lastUpdateTimeBegin = user['lastUpdateTimeBegin'], lastUpdateTimeEnd = user['lastUpdateTimeEnd'], page = ps['page'], size = 999999)
 
         users = ps['pagedata']['data']
 
+        userGroups = usergroup_logic.query_user_user_group(id = user['id'],
+                    name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
+                     tel = user['tel'], mobile = user['mobile'], email = user['email'], 
+                     status = user['status'], createTimeBegin = user['createTimeBegin'], createTimeEnd = user['createTimeEnd'], lastUpdateTimeBegin = user['lastUpdateTimeBegin'], lastUpdateTimeEnd = user['lastUpdateTimeEnd'])
+
+        userGroupRoles = role_logic.query_user_user_group_role(id = user['id'],
+                    name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
+                     tel = user['tel'], mobile = user['mobile'], email = user['email'], 
+                     status = user['status'], createTimeBegin = user['createTimeBegin'], createTimeEnd = user['createTimeEnd'], lastUpdateTimeBegin = user['lastUpdateTimeBegin'], lastUpdateTimeEnd = user['lastUpdateTimeEnd'])
+
+        userRoles =  role_logic.query_user_role(id = user['id'],
+                    name = user['name'], realName = user['realName'], departmentID = user['departmentID'],
+                     tel = user['tel'], mobile = user['mobile'], email = user['email'], 
+                     status = user['status'], createTimeBegin = user['createTimeBegin'], createTimeEnd = user['createTimeEnd'], lastUpdateTimeBegin = user['lastUpdateTimeBegin'], lastUpdateTimeEnd = user['lastUpdateTimeEnd'])
+
+        userGroupRolesMap = {}
+        userGroupMap = {}
+        rolesMap = {}
+
+        for user in users:
+            break
+
+
+
         #生成excel文件
         info = u'''<table><tr><td>用户ID</td><td>用户名</td><td>姓名</td><td>部门</td><td>状态</td><td>锁定时间</td>
-                    <td>最后登录时间</td><td>创建人</td><td>创建时间</td><td>最后更新人</td><td>最后更新时间</td></tr>'''
+                    <td>最后登录时间</td><td>创建人</td><td>创建时间</td><td>最后更新人</td><td>最后更新时间</td><td>绑定用户组</td><td>绑定角色</td></tr>'''
 
         for user in users:
             u = u'''<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>
-                    <td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>''' % (str(user['id']), user['name'], user['realName'], 
+                    <td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>''' % (str(user['id']), user['name'], user['realName'], 
                         user['departmentName'], user['statusname'], str(user['lockTime'])[0:-3], user['lastLoginTime'], user['creater'], str(user['createTime'])[0:-3], 
                         user['lastUpdater'], str(user['lastUpdateTime'])[0:-3] )
             info = info + u

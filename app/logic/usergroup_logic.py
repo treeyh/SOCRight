@@ -298,4 +298,70 @@ def _del_user_group_cache( userGroupID):
     redis_cache.delete(key = key)
 
 
-    
+
+
+
+
+
+
+
+_query_user_user_group_sql1 = '''  select ugu.id, ugu.userGroupID, ugu.userID, ug.`name` as userGroupName 
+                    from sso_user_group_user as ugu 
+                    LEFT JOIN sso_user_group ug on ug.id = ugu.userGroupID 
+                    where  ugu.userID in (select u.id 
+                    from sso_user as u 
+                    where u.isDelete = %s  '''
+_query_user_user_group_sql2 = ''' ) and  ugu.isDelete = %s and ug.status = %s order by ugu.userID desc   '''                    
+_query_user_user_group_col = str_helper.format_str_to_list_filter_empty('id , userGroupID, userID, userGroupName', ',')
+''' 分页查询用户所属的用户组信息 '''
+def query_user_user_group( id = '', name = '', realName = '', departmentID = 0, 
+                    tel = '', mobile = '', email = '', status = 0, createTimeBegin = '', createTimeEnd = '', lastUpdateTimeBegin = '', lastUpdateTimeEnd = ''):
+    sql = _query_user_user_group_sql1
+    isdelete = state.Boole['false']
+    ps = [isdelete]
+    if '' != id:
+        sql = sql + ' and u.id = %s '
+        ps.append(id)
+    if 0 != status:
+        sql = sql + ' and u.status = %s '
+        ps.append(status)
+    if 0 != departmentID:
+        sql = sql + ' and u.departmentID = %s '
+        ps.append(departmentID)
+    if '' != name:
+        sql = sql + ' and u.name like %s '
+        ps.append('%'+name+'%')
+    if '' != realName:
+        sql = sql + ' and u.realName like %s '
+        ps.append('%'+realName+'%')
+    if '' != tel:
+        sql = sql + ' and u.tel like %s '
+        ps.append('%'+tel+'%')
+    if '' != email:
+        sql = sql + ' and u.email like %s '
+        ps.append('%'+email+'%')
+    if '' != mobile:
+        sql = sql + ' and u.mobile like %s '
+        ps.append('%'+mobile+'%')
+    if None != createTimeBegin and '' != createTimeBegin:
+        sql = sql + ' and u.createTime >= %s '
+        ps.append(createTimeBegin)
+    if None != createTimeEnd and '' != createTimeEnd:
+        sql = sql + ' and u.createTime <= %s '
+        ps.append(createTimeEnd)
+    if None != lastUpdateTimeBegin and '' != lastUpdateTimeBegin:
+        sql = sql + ' and u.lastUpdateTime >= %s '
+        ps.append(lastUpdateTimeBegin)
+    if None != lastUpdateTimeEnd and '' != lastUpdateTimeEnd:
+        sql = sql + ' and u.lastUpdateTime <= %s '
+        ps.append(lastUpdateTimeEnd)
+
+    sql = sql + _query_user_user_group_sql2
+    ps.append(isdelete)
+    ps.append(state.statusActive)
+
+    yz = tuple(ps)
+    userGroups = mysql.find_all(sql, yz, _query_user_user_group_col)    
+    return userGroups
+
+
