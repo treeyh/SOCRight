@@ -229,7 +229,7 @@ def query_page_role_groups( roleID, page = 1, size = 12):
 
 
 
-_query_user_user_group_role_sql1 = '''  select ugr.roleID, ugr.userGroupID, r.`name` as 'roleName'  from sso_user_group_role as ugr 
+_query_user_user_group_role_sql1 = '''  select ugr.roleID, ugr.userGroupID, r.`name` as roleName  from sso_user_group_role as ugr 
                     LEFT JOIN sso_role AS r on r.id = ugr.roleID 
                     WHERE ugr.userGroupID in ( select ugu.userGroupID from sso_user_group_user as ugu 
                     LEFT JOIN sso_user_group as ug on ug.id = ugu.userGroupID 
@@ -292,7 +292,7 @@ def query_user_user_group_role( id = '', name = '', realName = '', departmentID 
     return roles
 
 
-_query_user_role_sql1 = '''  select ur.roleID, ur.userID, r.`name` as 'roleName'  from sso_user_role as ur 
+_query_user_role_sql1 = '''  select ur.roleID, ur.userID, r.`name` as roleName  from sso_user_role as ur 
                     LEFT JOIN sso_role AS r on r.id = ur.roleID 
                     WHERE ur.userID in ( select u.id 
                     from sso_user as u 
