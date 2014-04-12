@@ -1,6 +1,6 @@
 #-*- encoding: utf-8 -*-
 
-from helper import str_helper
+from helper import str_helper, file_helper
 from common import mysql, state, redis_cache, error
 
 import config
@@ -97,7 +97,8 @@ def get_goto_user_url( userID, appCode, ip, backUrl = ''):
             right['customRight'] = cr
             rights.append(right)
     
-    user['rights'] = rights 
+    user['rights'] = rights
+    file_helper.write_file('/opt/web/ssoservice.tv189.net/logs/test.log', rights)
     uuid = str_helper.get_uuid()            
     redis_cache.setObj(uuid, user, config.cache['userRightTimeOut'])
     params = {'token':uuid}
