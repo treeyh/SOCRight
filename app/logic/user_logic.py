@@ -97,8 +97,7 @@ def get_goto_user_url( userID, appCode, ip, backUrl = ''):
             right['customRight'] = cr
             rights.append(right)
     
-    user['rights'] = rights
-    file_helper.write_file('/opt/web/ssoservice.tv189.net/logs/test.log', rights)
+    user['rights'] = rights    
     uuid = str_helper.get_uuid()            
     redis_cache.setObj(uuid, user, config.cache['userRightTimeOut'])
     params = {'token':uuid}

@@ -10,7 +10,7 @@
 可以去网上搜索安装教程，不再累述，理论上也支持redis2.8.x版本，但未实验过，部署目录自定义，Tree部署在/opt/soft/redis/目录下
 
 ### 1.1.3 安装Python 2.7.x版本
-可以去网上搜索安装教程，不再累述，理论上不支持python 3.x版本（:-)），但未实验过，部署目录自定义，Tree部署在/opt/soft/python/目录下
+可以去网上搜索安装教程，不再累述，理论上不支持python 3.x版本（:-)），部署目录自定义，Tree部署在/opt/soft/python/目录下
 
 ### 1.1.4 安装Mysql 5.1.x版本
 可以去网上搜索安装教程，不再累述，注意mysql-server和mysql-devel都需要装，Tree的CentOS系统使用yum进行安装
