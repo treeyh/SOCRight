@@ -2,7 +2,7 @@
 
 import os
 from handler import login_handler, test_handler
-from handler.api import user_api_handler
+from handler.api import user_api_handler, func_api_handler
 from handler.admin import main_handler, department_handler, application_handler, func_handler, user_handler, role_handler, usergroup_handler, oper_log_handler
 
 
@@ -26,6 +26,8 @@ route.append((r'^/Api/User/Get', user_api_handler.UserGetInfoHandler))
 route.append((r'^/Api/User/GetByUserGroup', user_api_handler.UserByUserGroupHandler))
 route.append((r'^/Api/User/GetByUserName', user_api_handler.UserByUserNameHandler))
 route.append((r'^/Api/User/GetByUserNames', user_api_handler.UsersByUserNamesHandler))
+
+route.append((r'^/Api/Func/GetByAppCode', func_api_handler.FuncGetByAppCodeHandler))
 
 
 

@@ -49,7 +49,7 @@ _add_sql = '''   INSERT INTO sso_func(appCode, name, code, parentID, path, custo
                     lastUpdater, lastUpdateTime)  
                     VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s, now())  '''
 ''' 创建功能 '''
-def add( appCode, name, code, parentID, path, customJson,
+def add(appCode, name, code, parentID, path, customJson,
                     sort, status, remark, user):
     if not _check_customJson(customJson):
         raise error.RightError(code = 102001)
