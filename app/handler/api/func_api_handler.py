@@ -9,10 +9,13 @@ import config
 from common import state, redis_cache
 from helper import str_helper
 from handler import base_handler
-from logic import func_logic, user_logic
+import api_base_handler
+from logic import func_logic, user_logic, oper_log_logic
 
 
-class FuncAddHandler(base_handler.BaseHandler):
+class FuncAddHandler(api_base_handler.ApiBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.FuncManager'
+
     def get(self):
         params = self.get_args(['appCode', 'name', 'code', 'parentPath', 'customJson', 'remark', 'user'], '')
         params['sort'] = int(self.get_arg('sort', '0'))
@@ -40,15 +43,20 @@ class FuncAddHandler(base_handler.BaseHandler):
             return
 
         user = user_logic.query_one_by_name(params['user'])
+        if None == user:
+            self.out_fail(code = 103002)
 
-        func = func_logic.add(appCode = params['appCode'], name = params['name'], 
+        result = func_logic.add(appCode = params['appCode'], name = params['name'], 
             code = params['code'], parentID = parent['id'], path = path, 
             customJson = params['customJson'], sort = params['sort'], 
             status = params['status'], remark = params['remark'], user = params['user'])
 
-        self.out_ok(func)
-        # self.write_oper_log(action = 'funcCreateInterface', targetType = 3, targetID = str(nf['id']), targetName = nf['name'], startStatus = '', endStatus= str_helper.json_encode(nf))
+        self.out_ok()
+        
+        self.write_oper_log(action = 'funcCreateInterface', targetType = 3, targetID = str(result), targetName = params['name'], startStatus = '', endStatus= str_helper.json_encode(params), user = user)
         return
+
+    
 
 
 class FuncGetByAppCodeHandler(base_handler.BaseHandler):
@@ -59,7 +67,7 @@ class FuncGetByAppCodeHandler(base_handler.BaseHandler):
         if str_helper.is_null_or_empty(msg) == False:
             self.out_fail(code = 1001, msg = msg)
             return
-        funcs = func_logic.query_all_by_app(appCode = params['appCode'])        
+        funcs = func_logic.query_all_by_app(appCode = params['appCode'])
         self.out_ok(funcs)
         return
 

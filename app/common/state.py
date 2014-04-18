@@ -163,6 +163,7 @@ logAction2=[
     {'k' : 'appEdit' , 'v' : u'应用管理_编辑'},
     #'appDelete' : u'应用管理_删除',
     {'k' : 'funcCreate' , 'v' : u'功能管理_创建'},#3
+    {'k' : 'funcCreateInterface' , 'v' : u'功能管理_通过接口创建'},#3
     {'k' : 'funcEdit' , 'v' : u'功能管理_编辑'},
     {'k' : 'funcDelete' , 'v' : u'功能管理_删除'},
     {'k' : 'roleCreate' , 'v' : u'角色管理_创建'},#5
