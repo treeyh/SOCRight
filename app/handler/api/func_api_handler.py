@@ -13,10 +13,26 @@ import api_base_handler
 from logic import func_logic, user_logic, oper_log_logic
 
 
+
+class FuncGetByAppCodeHandler(api_base_handler.ApiBaseHandler):
+    def get(self):
+        params = self.get_args(['appCode'], '')
+
+        msg = self.check_str_empty_input(params, ['appCode'])
+        if str_helper.is_null_or_empty(msg) == False:
+            self.out_fail(code = 1001, msg = msg)
+            return
+        funcs = func_logic.query_all_by_app(appCode = params['appCode'])
+        self.out_ok(funcs)
+        return
+
 class FuncAddHandler(api_base_handler.ApiBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.FuncManager'
 
     def get(self):
+        self.post()
+
+    def post(self):
         params = self.get_args(['appCode', 'name', 'code', 'parentPath', 'customJson', 'remark', 'user'], '')
         params['sort'] = int(self.get_arg('sort', '0'))
         params['status'] = int(self.get_arg('status', '0'))
@@ -55,36 +71,42 @@ class FuncAddHandler(api_base_handler.ApiBaseHandler):
         
         self.write_oper_log(action = 'funcCreateInterface', targetType = 3, targetID = str(result), targetName = params['name'], startStatus = '', endStatus= str_helper.json_encode(params), user = user)
         return
-
-    
-
-
-class FuncGetByAppCodeHandler(base_handler.BaseHandler):
-    def get(self):
-        params = self.get_args(['appCode'], '')
-
-        msg = self.check_str_empty_input(params, ['appCode'])
-        if str_helper.is_null_or_empty(msg) == False:
-            self.out_fail(code = 1001, msg = msg)
-            return
-        funcs = func_logic.query_all_by_app(appCode = params['appCode'])
-        self.out_ok(funcs)
-        return
-
-
-class FuncEditHandler(base_handler.BaseHandler):
-    def post(self):
-        func = self.get_args(['appCode', 'name', 'code', 'customJson', 'remark', 'user'], '')
-        func['id'] = int(self.get_arg('id', '0'))
-        func['parentID'] = int(self.get_arg('parentID', '0'))
-        func['sort'] = int(self.get_arg('sort', '0'))
         
-        msg = self.check_str_empty_input(func, ['code', 'name', 'appCode', 'user'])
+
+class FuncEditHandler(api_base_handler.ApiBaseHandler):
+    _rightKey = config.SOCRightConfig['appCode'] + '.FuncManager'
+
+    def get(self):
+        self.post()
+
+    def post(self):
+        params = self.get_args(['name', 'path', 'customJson', 'remark', 'user'], '')
+        params['sort'] = int(self.get_arg('sort', '0'))
+        params['status'] = int(self.get_arg('status', '0'))
+
+        msg = self.check_str_empty_input(params, ['name', 'path', 'user'])
         if str_helper.is_null_or_empty(msg) == False:
             self.out_fail(code = 1001, msg = msg)
             return
 
-        user = func_logic.update(id = id, name = func['name'], sort = func['sort'], customJson = func['sort'], remark = func['sort'], user = func['user'])
-        self.out_ok(user)
+        func = func_logic.query_one_by_path(path = params['path'])
+        if None == func:
+            self.out_fail(code = 102004)
+            return
+
+        user = user_logic.query_one_by_name(params['user'])
+        if None == user:
+            self.out_fail(code = 103002)
+
+        result = func_logic.update(id = func['id'], name = params['name'], sort = params['sort'], 
+            customJson = params['customJson'], remark = params['remark'], user = params['user'])
+
+        if True == result:
+            self.out_ok()
+        else:
+            self.out_fail(code = 101)
+        
+        self.write_oper_log(action = 'funcEditInterface', targetType = 3, targetID = str(func['id']), 
+            targetName = params['name'], startStatus = '', endStatus= str_helper.json_encode(params), user = user)
         return
         

@@ -29,6 +29,7 @@ route.append((r'^/Api/User/GetByUserNames', user_api_handler.UsersByUserNamesHan
 
 route.append((r'^/Api/Func/GetByAppCode', func_api_handler.FuncGetByAppCodeHandler))
 route.append((r'^/Api/Func/Add', func_api_handler.FuncAddHandler))
+route.append((r'^/Api/Func/Edit', func_api_handler.FuncEditHandler))
 
 
 
