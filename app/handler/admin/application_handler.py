@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import admin_base_handler
 from common import redis_cache, state, error, log
 from helper import str_helper, http_helper
-from logic import application_logic
+from logic import application_logic, func_logic
 
 class ApplicationListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.AppManager'
@@ -73,7 +73,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 oa = application_logic.query_one(app['code'])
                 info = application_logic.update(name = app['name'], code = app['code'], 
                         developer = app['developer'], url = app['url'], status = app['status'], remark = app['remark'], user = app['user'])
-                if info:
+                if info:                    
                     na = application_logic.query_one(app['code'])
                     self.write_oper_log(action = 'appEdit', targetType = 2, targetID = oa['code'], targetName = oa['name'], startStatus = str_helper.json_encode(oa), endStatus= str_helper.json_encode(na))
                     ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
@@ -87,6 +87,8 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 info = application_logic.add(name = app['name'], code = app['code'], 
                     developer = app['developer'], url = app['url'], status = app['status'], remark = app['remark'], user = app['user'])
                 if info:
+                    funcname = app['name'] + '管理'
+                    self._add_app_func(name = funcname, code= app['code'], user = app['user'])
                     na = application_logic.query_one(app['code'])
                     self.write_oper_log(action = 'appCreate', targetType = 2, targetID = na['code'], targetName = na['name'], startStatus = '', endStatus= str_helper.json_encode(na))
                     ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])
@@ -96,6 +98,22 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 ps['msg'] = e.msg
         ps = self.format_none_to_empty(ps)
         self.render('admin/application/add_or_edit_bs.html', **ps)
+
+    def _add_app_func(self, name, code, user):
+        url = config.urls['socRightApi'] + 'Func/Add'
+        params = {
+            'appCode' : config.SOCRightConfig['appCode'],
+            'name' : name,
+            'code' : code,
+            'parentPath' : self._rightKey,
+            'customJson' : '',
+            'remark' : '',
+            'sort' : 0,
+            'status' : state.statusActive,
+            'user' : user
+        }
+        http_helper.get(url = url, params = params)
+
 
 
 
