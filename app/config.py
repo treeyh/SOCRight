@@ -5,7 +5,7 @@ import os
 SOCRightConfig = {
 
     #系统版本号，可以通过该参数reload，js，css资源文件
-    'version':'0.9.0',
+    'version':'0.9.1',
     #站点名称
     'siteName' : '云海统一权限管理平台',
     #js域名前缀，不需要修改

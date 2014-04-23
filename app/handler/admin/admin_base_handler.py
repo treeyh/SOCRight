@@ -48,36 +48,16 @@ class AdminBaseHandler(base_handler.BaseHandler):
 
 
 
-class AdminRightBaseHandler(AdminBaseHandler):
-    
-    _rightKey = ''
-    _right = 0
-
-    _resetPwKey = 'ResetPassword'
-    _exportUserKey = 'Export'
-    _lockUserKey = 'Lock'
-
-    def prepare(self):
-        super(AdminRightBaseHandler, self).prepare()
-        user = self.current_user
-        if None == user:
-            ''' 判断用户是否存在,如果不存在,重新登录 '''
-            params = {'backUrl':config.urls['adminBackUrl'], 'appCode': config.SOCRightConfig['appCode']}
-            url = self.format_url(config.urls['loginUrl'] , params)
-            self.redirect(url)
-            return
-        self.check_oper_right()
-
-
-    def check_oper_right(self, right = None):
+    def check_oper_right(self, right = None, user = None):
         '''    判断用户权限  '''
         if right == None:
             right = self._right
 
         if None == self._rightKey or '' == self._rightKey or None == right or 0 == right:
             return
-        
-        user = self.current_user
+        if None == user:
+            user = self.current_user
+
         rights = user.get('rights', [])
         type = False
         for r in rights:
@@ -106,6 +86,29 @@ class AdminRightBaseHandler(AdminBaseHandler):
                     return True
             return False
         return False
+
+
+
+class AdminRightBaseHandler(AdminBaseHandler):
+    
+    _rightKey = ''
+    _right = 0
+
+    _resetPwKey = 'ResetPassword'
+    _exportUserKey = 'Export'
+    _lockUserKey = 'Lock'
+
+    def prepare(self):
+        super(AdminRightBaseHandler, self).prepare()
+        user = self.current_user
+        if None == user:
+            ''' 判断用户是否存在,如果不存在,重新登录 '''
+            params = {'backUrl':config.urls['adminBackUrl'], 'appCode': config.SOCRightConfig['appCode']}
+            url = self.format_url(config.urls['loginUrl'] , params)
+            self.redirect(url)
+            return
+        self.check_oper_right()
+
 
     def write_oper_log(self, action, targetType = 0, targetID = '', targetName = '', startStatus = '', endStatus= ''):
         u = self.current_user

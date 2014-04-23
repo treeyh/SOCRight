@@ -57,28 +57,6 @@ class MainHandler(admin_base_handler.AdminBaseHandler):
         self.set_cookie(name = config.SOCRightConfig['adminCookieName'], value=uuid, expires=ex)
         return user
 
-    def check_oper_right(self, user):
-        '''    判断用户权限  '''
-        right = self._right
-
-        if None == self._rightKey or '' == self._rightKey or None == right or 0 == right:
-            return
-        
-        rights = user.get('rights', [])
-        type = False
-        for r in rights:
-            if r.get('path', '') == self._rightKey:                
-                if r.get('right', 0) & right == right:
-                    type = True
-                break
-        if not type:
-            if self.get_arg('ajax', '') == 'ajax':
-                self.out_fail(code = 1004)
-                self.finish()
-            else:
-                self.redirect(config.SOCRightConfig['siteDomain']+'Admin/NotRight')
-            return
-
 
 
 
@@ -94,11 +72,10 @@ class NotRightHandler(admin_base_handler.AdminBaseHandler):
         self.render('admin/not_right_bs.html', **ps)
 
 
-class IndexHandler(admin_base_handler.AdminBaseHandler):
+class IndexHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.Login'
     _right = state.operView
 
     def get(self):
         ps = self.get_page_config(title = '欢迎访问')
-        ps['user'] = self.current_user
         self.render('admin/index_bs.html', **ps)

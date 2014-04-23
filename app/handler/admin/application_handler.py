@@ -99,6 +99,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         ps = self.format_none_to_empty(ps)
         self.render('admin/application/add_or_edit_bs.html', **ps)
 
+
     def _add_app_func(self, name, code, user):
         url = config.urls['socRightApi'] + 'Func/Add'
         params = {
@@ -112,7 +113,7 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             'status' : state.statusActive,
             'user' : user
         }
-        http_helper.get(url = url, params = params)
+        http_helper.http(url = url, params = params, method = 'POST')
 
 
 
