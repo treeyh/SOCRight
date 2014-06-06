@@ -27,7 +27,7 @@ class MainHandler(admin_base_handler.AdminBaseHandler):
         if None == user:
             ''' 判断用户是否存在，如果不存在，判断token重新登录 '''
             if '' == ps['token']:
-                params = {'backUrl':config.urls['adminBackUrl'], 'appCode': ps['appCode']}
+                params = {'backUrl':config.urls['adminBackUrl'], 'appCode': config.SOCRightConfig['appCode']}                
                 url = self.format_url(config.urls['loginUrl'] , params)
                 self.redirect(url)
                 return
@@ -78,4 +78,6 @@ class IndexHandler(admin_base_handler.AdminRightBaseHandler):
 
     def get(self):
         ps = self.get_page_config(title = '欢迎访问')
+        user = self.get_current_user()
+        ps['user'] = user
         self.render('admin/index_bs.html', **ps)

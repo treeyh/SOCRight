@@ -11,6 +11,7 @@ from common import redis_cache, state, error, log
 from helper import str_helper, http_helper
 from logic import application_logic, func_logic
 
+
 class ApplicationListHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.AppManager'
     _right = state.operView
@@ -25,6 +26,7 @@ class ApplicationListHandler(admin_base_handler.AdminRightBaseHandler):
         ps['app'] = app
         ps['pager'] = self.build_page_html_bs(page = ps['page'], size = ps['size'], total = ps['pagedata']['total'], pageTotal = ps['pagedata']['pagetotal'])        
         self.render('admin/application/list_bs.html', **ps)
+
 
 class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
     _rightKey = config.SOCRightConfig['appCode'] + '.AppManager'
@@ -87,8 +89,8 @@ class ApplicationAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 info = application_logic.add(name = app['name'], code = app['code'], 
                     developer = app['developer'], url = app['url'], status = app['status'], remark = app['remark'], user = app['user'])
                 if info:
-                    funcname = app['name'] + '管理'
-                    self._add_app_func(name = funcname, code= app['code'], user = app['user'])
+                    # funcname = app['name'] + '管理'
+                    # self._add_app_func(name = funcname, code= app['code'], user = app['user'])
                     na = application_logic.query_one(app['code'])
                     self.write_oper_log(action = 'appCreate', targetType = 2, targetID = na['code'], targetName = na['name'], startStatus = '', endStatus= str_helper.json_encode(na))
                     ps = self.get_ok_and_back_params(ps = ps, refUrl = ps['refUrl'])

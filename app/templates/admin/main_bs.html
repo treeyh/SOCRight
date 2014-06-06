@@ -99,8 +99,13 @@
 </div>
 <div class="row">
     <div id="wrap">
-        <iframe name="content" id="content" src="{{siteDomain}}Admin/Index" height="100%" width="100%"
+        <iframe name="content" id="content" src="" height="100%" width="100%"
                 border="0" frameborder="0">浏览器不支持嵌入式框架，或被配置为不显示嵌入式框架。</iframe>
     </div>
 </div>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#content')[0].src = '{{siteDomain}}Admin/Index';
+});
+</script>
 {% end %}

@@ -16,6 +16,11 @@ class LoginHandler(base_handler.BaseHandler):
 
     def get(self):
         ps = self.get_page_config('用户登录')
+
+        host = self.request.host
+        if host not in ps['serviceSiteDomain']:
+            self.redirect(ps['siteDomain'] + 'Admin')
+
         ps = self.get_args(ls=['backUrl', 'appCode'], default='', map=ps)
         user = self.current_user
         if None != user:
@@ -30,13 +35,17 @@ class LoginHandler(base_handler.BaseHandler):
 
     def post(self):
         ps = self.get_page_config('登录')
+
+        host = self.request.host
+        if host not in ps['serviceSiteDomain']:
+            self.redirect(ps['siteDomain'] + 'Admin')
+
         ps = self.get_args(
             ls=['backUrl', 'appCode', 'userName', 'passWord'], default='', map=ps)
         if ps['userName'] == '' or ps['passWord'] == '':
             self.redirect(ps['serviceSiteDomain'] + 'Login?msg=100001')
             return
-        user = user_logic.login(
-            ps['userName'], ps['passWord'])
+        user = user_logic.login(ps['userName'], ps['passWord'])
         if None == user:
             self.redirect(ps['serviceSiteDomain'] + 'Login?msg=100002')
             return
@@ -67,8 +76,7 @@ class LoginHandler(base_handler.BaseHandler):
             if None == user['loginCount'] or 0 == user['loginCount']:
                 self.redirect(ps['serviceSiteDomain'] + 'PassWordEdit?msg=100003&appCode=' +
                               str_helper.url_escape(ps['appCode']) + '&backUrl=' + 
-                              str_helper.url_escape(ps['backUrl']))
-            return
+                              str_helper.url_escape(ps['backUrl']))            
 
             backUrl = user_logic.get_goto_user_url(
                 userID=user['id'], appCode=ps['appCode'], ip=self.get_user_ip(), backUrl=ps['backUrl'])

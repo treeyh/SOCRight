@@ -8,7 +8,7 @@ from datetime import datetime
 import config
 from common import state, redis_cache
 from helper import str_helper
-
+import copy
 
 class BaseHandler(tornado.web.RequestHandler):    
     def get_current_user(self):
@@ -31,7 +31,7 @@ class BaseHandler(tornado.web.RequestHandler):
         return '%s -- %s' % (title, config.SOCRightConfig['siteName'])
 
     def get_page_config(self, title):
-        ps = config.SOCRightConfig
+        ps = copy.deepcopy(config.SOCRightConfig)
         ps['title'] = self.get_page_title(title)
         ps['now'] = datetime.now()
         code = int(self.get_arg('msg', '0'))
