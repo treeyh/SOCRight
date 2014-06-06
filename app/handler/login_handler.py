@@ -16,6 +16,9 @@ class LoginHandler(base_handler.BaseHandler):
 
     def get(self):
         ps = self.get_page_config('用户登录')
+        host = self.request.host
+        if host not in ps['serviceSiteDomain']:
+            self.redirect(ps['siteDomain'] + 'Admin')        
         ps = self.get_args(ls=['backUrl', 'appCode'], default='', map=ps)
         user = self.current_user
         if None != user:
@@ -30,6 +33,9 @@ class LoginHandler(base_handler.BaseHandler):
 
     def post(self):
         ps = self.get_page_config('登录')
+        host = self.request.host
+        if host not in ps['serviceSiteDomain']:
+            self.redirect(ps['siteDomain'] + 'Admin')        
         ps = self.get_args(
             ls=['backUrl', 'appCode', 'userName', 'passWord'], default='', map=ps)
         if ps['userName'] == '' or ps['passWord'] == '':
@@ -68,7 +74,6 @@ class LoginHandler(base_handler.BaseHandler):
                 self.redirect(ps['serviceSiteDomain'] + 'PassWordEdit?msg=100003&appCode=' +
                               str_helper.url_escape(ps['appCode']) + '&backUrl=' + 
                               str_helper.url_escape(ps['backUrl']))
-            return
 
             backUrl = user_logic.get_goto_user_url(
                 userID=user['id'], appCode=ps['appCode'], ip=self.get_user_ip(), backUrl=ps['backUrl'])
@@ -104,10 +109,8 @@ class AppGotoHandler(base_handler.BaseRightHandler):
         if '' == ps['appCode'] or None == user:
             self.redirect(ps['serviceSiteDomain'] + 'AppList')
             return
-        print user
         gotoUrl = user_logic.get_goto_user_url(
-            userID=user['id'], appCode=ps['appCode'], ip=self.get_user_ip(), backUrl='')
-        print gotoUrl
+            userID=user['id'], appCode=ps['appCode'], ip=self.get_user_ip(), backUrl='')        
         oper_log_logic.add(operID=user['id'], operUserName=user['name'], operRealName=user[
                                                    'realName'], appCode=ps['appCode'], funcPath='', action='userLogin', targetType=0, targetID='', targetName='', startStatus='', endStatus='', operIp=self.get_user_ip())
         self.redirect(gotoUrl)
