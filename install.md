@@ -4,16 +4,16 @@
 ## 1.1 安装步骤
 
 ### 1.1.1 安装Nginx 1.2.9版本
-可以去网上搜索安装教程，不再累述，理论上也支持nginx1.5.x版本，但未实验过，部署目录自定义，Tree部署在/opt/soft/nginx/目录下
+可以去网上搜索安装教程，不再累述，理论上也支持nginx1.5.x版本，但未实验过，部署目录自定义
 
 ### 1.1.2 安装Redis 2.6.16版本
-可以去网上搜索安装教程，不再累述，理论上也支持redis2.8.x版本，但未实验过，部署目录自定义，Tree部署在/opt/soft/redis/目录下
+可以去网上搜索安装教程，不再累述，理论上也支持redis2.8.x版本，但未实验过，部署目录自定义
 
 ### 1.1.3 安装Python 2.7.x版本
-可以去网上搜索安装教程，不再累述，理论上不支持python 3.x版本（:-)），部署目录自定义，Tree部署在/opt/soft/python/目录下
+可以去网上搜索安装教程，不再累述，理论上不支持python 3.x版本（:-)），部署目录自定义
 
 ### 1.1.4 安装Mysql 5.1.x版本
-可以去网上搜索安装教程，不再累述，注意mysql-server和mysql-devel都需要装，Tree的CentOS系统使用yum进行安装
+可以去网上搜索安装教程，不再累述，注意mysql-server和mysql-devel都需要装，CentOS系统可以使用yum进行安装
 
 ### 1.1.5 安装Python扩展，包括：
  - setuptools-0.6c11
@@ -61,7 +61,3 @@ Sql脚本为install/db/soc_sso_right.sql,数据库名为soc_sso_right,使用UTF-
 
 
 
-# 
----数据表增加用户锁定时间字段
-ALTER TABLE `sso_user`
-ADD COLUMN `lockTime`  datetime NULL COMMENT '锁定时间' AFTER `remark`;
