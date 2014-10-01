@@ -52,9 +52,9 @@
                     </td>
                     <td>
                         权限
-                        <label>功能权限</label><label class="checkbox-inline"><input type="checkbox" id="selectAllView" />浏览全选</label>
-                    <label class="checkbox-inline"><input type="checkbox" id="selectAllAdd" />新增全选</label><label class="checkbox-inline"><input type="checkbox" id="selectAllEdit" />编辑全选</label>
-                    <label class="checkbox-inline"><input type="checkbox" id="selectAllDel" />删除全选</label><label class="checkbox-inline"><input type="checkbox" id="selectall" />全选</label>
+                        <label>功能权限</label><label class="checkbox-inline"><input type="checkbox" id="selectAllView" />"1"全选</label>
+                    <label class="checkbox-inline"><input type="checkbox" id="selectAllAdd" />"2"全选</label><label class="checkbox-inline"><input type="checkbox" id="selectAllEdit" />"4"全选</label>
+                    <label class="checkbox-inline"><input type="checkbox" id="selectAllDel" />"8"全选</label><label class="checkbox-inline"><input type="checkbox" id="selectall" />全选</label>
                     <label id="fanxuan" class="checkbox-inline" style="cursor:pointer;">反选</label> 
                 <input type="hidden" id="roleID" name="roleID" value="{{roleID}}" />
                 <input type="hidden" id="appCode" name="appCode" value="{{appCode}}" />
@@ -71,11 +71,13 @@
                         <table class="table table-bordered table-striped table-hover m-0">
                             <tr>
                                 <td>
-                        <label class="checkbox-inline"><input type="checkbox" value="1" id="right_{{func['id']}}_1" {% if func['right'] & 1 == 1 %} checked {% end %} name="right_{{func['id']}}_1" />浏览</label>
-                        <label class="checkbox-inline"><input type="checkbox" value="2" id="right_{{func['id']}}_2" {% if func['right'] & 2 == 2 %} checked {% end %} name="right_{{func['id']}}_2" />新增</label>
-                        <label class="checkbox-inline"><input type="checkbox" value="4" id="right_{{func['id']}}_4" {% if func['right'] & 4 == 4 %} checked {% end %} name="right_{{func['id']}}_4" />编辑</label>
-                        <label class="checkbox-inline"><input type="checkbox" value="8" id="right_{{func['id']}}_8" {% if func['right'] & 8 == 8 %} checked {% end %} name="right_{{func['id']}}_8" />删除</label>
-                        </td>
+                                    {% set rs = func['rights'].split(';') %}
+                                    {% for r in rs %}
+                                        {% set rss = r.split(':') %}
+                                        {% set rcode = int(rss[0]) %}
+                                        <label class="checkbox-inline"><input type="checkbox" value="{{rss[0]}}" id="right_{{func['id']}}_{{rss[0]}}" {% if func['right'] & rcode == rcode %} checked {% end %} name="right_{{func['id']}}_{{rss[0]}}" />{{rss[1]}}</label>
+                                    {% end %}
+                                </td>
                             </tr>
                         </table>
                     </td>
@@ -84,10 +86,12 @@
                         <table class="table table-bordered table-striped table-hover m-0">
                             <tr>
                                 <td>
-                                    <label class="checkbox-inline"><input type="checkbox" value="1" id="right_{{func['id']}}_1" {% if func['right'] & 1 == 1 %} checked {% end %} name="right_{{func['id']}}_1" />浏览</label>
-                                    <label class="checkbox-inline"><input type="checkbox" value="2" id="right_{{func['id']}}_2" {% if func['right'] & 2 == 2 %} checked {% end %} name="right_{{func['id']}}_2" />新增</label>
-                                    <label class="checkbox-inline"><input type="checkbox" value="4" id="right_{{func['id']}}_4" {% if func['right'] & 4 == 4 %} checked {% end %} name="right_{{func['id']}}_4" />编辑</label>
-                                    <label class="checkbox-inline"><input type="checkbox" value="8" id="right_{{func['id']}}_8" {% if func['right'] & 8 == 8 %} checked {% end %} name="right_{{func['id']}}_8" />删除</label>
+                                    {% set rs = func['rights'].split(';') %}
+                                    {% for r in rs %}
+                                        {% set rss = r.split(':') %}
+                                        {% set rcode = int(rss[0]) %}
+                                        <label class="checkbox-inline"><input type="checkbox" value="{{rss[0]}}" id="right_{{func['id']}}_{{rss[0]}}" {% if func['right'] & rcode == rcode %} checked {% end %} name="right_{{func['id']}}_{{rss[0]}}" />{{rss[1]}}</label>
+                                    {% end %}
                                 </td>
                             </tr>
                             <tr>

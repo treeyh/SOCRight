@@ -109,6 +109,13 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label for="rights" class="col-sm-2 control-label">功能权限</label>
+                            <div class="col-sm-5">
+                                <textarea rows="6" cols="50" id="rights" name="rights" class="form-control"></textarea>
+                                <span class="help-block">例如：“1:浏览;2:新增;4:编辑;8:删除”,以半角“;”分隔节点，以半角“:”分隔子节点，前面必须是2的平方数且不能重复（1-536870912即2^0-2^29），后面是该的名称，</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="customJson" class="col-sm-2 control-label">自定义json配置</label>
                             <div class="col-sm-5">
                                 <textarea rows="6" cols="50" id="customJson" name="customJson" class="form-control"></textarea>
@@ -174,6 +181,7 @@
             $('#code')[0].disabled = false;
             $('#path').val('');
             $('#basePath').val('');
+            $('#rights').val('');
             $('#customJson').val('');
             $('#remark').val('');
             $('#creater').text('');
@@ -191,12 +199,13 @@
             var name = $('#name').val();
             var id = $('#id').val();
             var parentID = $('#parentID').val();
+            var rights = $('#rights').val();
             var sort = $('#sort').val();
             var code = $('#code').val();
             var path = $('#path').val();
             var customJson = $('#customJson').val();
             var remark = $('#remark').val();
-            $.post('/Admin/Func/AddOrUpdate', { 'appCode': appCode, 'code': code, 'name': name, 'id': id, 'parentID': parentID, 'sort': sort, 'path': path, 'customJson': customJson, 'remark': remark , 'ajax': 'ajax'},
+            $.post('/Admin/Func/AddOrUpdate', { 'appCode': appCode, 'code': code, 'name': name, 'id': id, 'parentID': parentID, 'sort': sort, 'path': path, 'rights' : rights, 'customJson': customJson, 'remark': remark , 'ajax': 'ajax'},
                  function (data) {
                      if (0 == data.code) {
                          Common.alert('操作成功', '/Admin/Func/Edit?appCode=' + appCode);
@@ -237,6 +246,7 @@
                         $('#code')[0].disabled = true;
                         $('#path').val(data.data.path);
                         //$('#basePath').val(data.data.path.substr(0,data.data.path.lastIndexOf('.')));
+                        $('#rights').val(data.data.rights);
                         $('#customJson').val(data.data.customJson);
                         $('#remark').val(data.data.remark);
                         $('#creater').text(data.data.creater);
@@ -256,6 +266,7 @@
             }
             Func.clearFuncInfo();
             var pid = zTree.getSelectedNodes()[0].pId;
+            $('#rights').val('1:浏览;2:新增;4:编辑;8:删除');
             $('#func_oper').html('创建同级功能 -- '+zTree.getSelectedNodes()[0].name);
             if(pid != null) {
                 if(pid > 0) {
@@ -271,6 +282,7 @@
             }
             Func.clearFuncInfo();
             $('#func_oper').html('创建子功能 -- '+zTree.getSelectedNodes()[0].name);
+            $('#rights').val('1:浏览;2:新增;4:编辑;8:删除');
             var id = zTree.getSelectedNodes()[0].id;
             if(id > 0) {
                 Func.setAddFuncInfo(id);    

@@ -91,6 +91,7 @@ def find_one(sql, params= (), mapcol=None):
 def find_all(sql, params=(), mapcol=None):
     conn=_getConnection()
     c = None
+    result = []
     try:
         c=conn.cursor()
         c.execute(sql, params)
@@ -99,7 +100,6 @@ def find_all(sql, params=(), mapcol=None):
             return None
         if mapcol == None:
             return yz
-        result = []
         for y in yz:
             result.append( _result_to_map(y, mapcol))
         return result

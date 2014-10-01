@@ -4,9 +4,9 @@ from helper import str_helper
 from common import mysql, state, error
 
 
-_query_all_by_app_sql = '''  select id, name, code, parentID, path, 
+_query_all_by_app_sql = '''  select id, name, code, parentID, path, rights, 
                     sort, customJson from sso_func  where  isDelete = %s   '''    
-_query_all_by_app_col = str_helper.format_str_to_list_filter_empty('id, name, code, parentID, path, sort, customJson', ',')
+_query_all_by_app_col = str_helper.format_str_to_list_filter_empty('id, name, code, parentID, path, rights, sort, customJson', ',')
 ''' 根据appcode查询应用的功能信息 '''
 def query_all_by_app(appCode):
     sql = _query_all_by_app_sql
@@ -19,10 +19,10 @@ def query_all_by_app(appCode):
     return _func_tree(funcs)
 
 
-_query_sql = '''  select id, appCode, name, code, parentID, path, customJson, 
+_query_sql = '''  select id, appCode, name, code, parentID, path, rights, customJson, 
                     sort, status, remark, isDelete, creater, createTime, 
                     lastUpdater, lastUpdateTime from sso_func  where  isDelete = %s   '''    
-_query_col = str_helper.format_str_to_list_filter_empty('id, appCode, name, code, parentID, path, customJson, sort, status, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
+_query_col = str_helper.format_str_to_list_filter_empty('id, appCode, name, code, parentID, path, rights, customJson, sort, status, remark, isDelete, creater, createTime, lastUpdater, lastUpdateTime', ',')
 ''' 根据path获取功能信息 '''
 def query_one_by_path( path):
     sql = _query_sql
@@ -44,30 +44,38 @@ def query_one_by_id( id):
 
 
 
-_add_sql = '''   INSERT INTO sso_func(appCode, name, code, parentID, path, customJson, 
+_add_sql = '''   INSERT INTO sso_func(appCode, name, code, parentID, path, rights, customJson, 
                     sort, status, remark, isDelete, creater, createTime, 
                     lastUpdater, lastUpdateTime)  
-                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s, now())  '''
+                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s, now())  '''
 ''' 创建功能 '''
-def add(appCode, name, code, parentID, path, customJson,
+def add(appCode, name, code, parentID, path, rights, customJson,
                     sort, status, remark, user):
     if not _check_customJson(customJson):
         raise error.RightError(code = 102001)
+    rr = _check_and_format_rights(rights)
+    if False == rr[0]:
+        raise error.RightError(code = rr[1])
+    rights2 = rr[1]
     isdelete = state.Boole['false']
-    yz = (appCode, name, code, parentID, path, customJson,
+    yz = (appCode, name, code, parentID, path, rights2, customJson,
                     sort, status, remark, isdelete, user, user)
     result = mysql.insert_or_update_or_delete(_add_sql, yz, True)
     return result
 
 
-_update_sql = '''   update sso_func set name = %s, sort = %s, customJson = %s,
+_update_sql = '''   update sso_func set name = %s, sort = %s, rights = %s, customJson = %s,
                         remark = %s, lastUpdater = %s, 
                         lastUpdateTime = now() where id = %s  '''
 ''' 更新功能 '''
-def update( id, name, sort, customJson, remark, user):
+def update( id, name, sort, rights, customJson, remark, user):
     if not _check_customJson(customJson):
         raise error.RightError(code = 102001)
-    yz = (name, sort, customJson, remark, user, id)
+    rr = _check_and_format_rights(rights)
+    if False == rr[0]:
+        raise error.RightError(code = rr[1])
+    rights2 = rr[1]
+    yz = (name, sort, rights2, customJson, remark, user, id)
     result = mysql.insert_or_update_or_delete(_update_sql, yz)
     return 0 == result
 
@@ -86,7 +94,7 @@ def delete( id, user):
     return 0 == result
 
 ''' 验证功能的自定义json信息 '''
-def _check_customJson( customJson):
+def _check_customJson(customJson):
     if None == customJson or '' == customJson:
         return True
     try:
@@ -98,6 +106,34 @@ def _check_customJson( customJson):
     except:
         return False
     return True
+
+
+def _check_and_format_rights(rights):
+    if None == rights or '' == rights:
+        return [False, 102005]
+    try:
+        ls = rights.strip().split(';')
+        rl = []
+        rights2 = ''
+        for l in ls:
+            lss = l.strip().split(':')
+            if 2 != len(lss):
+                continue
+            code = lss[0].strip()
+            info = lss[1].strip()
+            if code not in state.func_rights_range:
+                return [False, 102006]
+            if code in rl:
+                return [False, 102006]
+            rl.append(code)
+            rights2 = '%s;%s:%s' % (rights2, code, info)
+
+        if '' == rights2:
+            return [False, 102006]
+        return [True, rights2[1:]]
+    except:
+        return [False, 102006]
+
 
 
 ''' 获取应用的功能树 '''

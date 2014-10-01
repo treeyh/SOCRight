@@ -82,12 +82,12 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
         return tree
 
     def post(self):
-        func = self.get_args(['appCode', 'name', 'code', 'customJson', 'remark'], '')
+        func = self.get_args(['appCode', 'name', 'code', 'customJson', 'rights', 'remark'], '')
         func['id'] = int(self.get_arg('id', '0'))
         func['parentID'] = int(self.get_arg('parentID', '0'))
         func['sort'] = int(self.get_arg('sort', '0'))
         
-        msg = self.check_str_empty_input(func, ['code', 'name', 'appCode'])
+        msg = self.check_str_empty_input(func, ['code', 'name', 'rights', 'appCode'])
         if str_helper.is_null_or_empty(msg) == False:
             self.out_fail(code = 1001, msg = msg)
             return
@@ -110,7 +110,7 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
                 return
             try:
                 result = func_logic.add(appCode = func['appCode'], name = func['name'], code = func['code'], 
-                            parentID = func['parentID'], path = func['path'], customJson = func['customJson'], sort = func['sort'], 
+                            parentID = func['parentID'], path = func['path'], rights = func['rights'], customJson = func['customJson'], sort = func['sort'], 
                             status = func['status'], remark = func['remark'], user = func['user'])
                 nf = func_logic.query_one_by_path(func['path'])
                 self.write_oper_log(action = 'funcCreate', targetType = 3, targetID = str(nf['id']), targetName = nf['name'], startStatus = '', endStatus= str_helper.json_encode(nf))
@@ -121,7 +121,7 @@ class FuncAddOrEditHandler(admin_base_handler.AdminRightBaseHandler):
             self.check_oper_right(right = state.operEdit)
             try:
                 of = func_logic.query_one_by_id(func['id'])
-                func_logic.update(id = func['id'], name = func['name'], sort = func['sort'], 
+                func_logic.update(id = func['id'], name = func['name'], sort = func['sort'], rights = func['rights'], 
                                 customJson = func['customJson'], remark = func['remark'], user = func['user'])
                 nf = func_logic.query_one_by_id(func['id'])
                 self.write_oper_log(action = 'funcEdit', targetType = 3, targetID = str(nf['id']), targetName = nf['name'], startStatus = str_helper.json_encode(of), endStatus= str_helper.json_encode(nf))

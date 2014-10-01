@@ -33,6 +33,7 @@ class LoginHandler(base_handler.BaseHandler):
             return
         self.render('login_bs.html', **ps)
 
+
     def post(self):
         ps = self.get_page_config('登录')
 
