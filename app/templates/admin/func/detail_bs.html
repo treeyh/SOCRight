@@ -112,7 +112,7 @@
                             <label for="rights" class="col-sm-2 control-label">功能权限</label>
                             <div class="col-sm-5">
                                 <textarea rows="6" cols="50" id="rights" name="rights" class="form-control"></textarea>
-                                <span class="help-block">例如：“1:浏览;2:新增;4:编辑;8:删除”,以半角“;”分隔节点，以半角“:”分隔子节点，前面必须是2的平方数且不能重复（1-536870912即2^0-2^29），后面是该的名称，</span>
+                                <span class="help-block">例如：“1:浏览,2:新增,4:编辑,8:删除”,以半角“,”分隔节点，以半角“:”分隔子节点，前面必须是2的平方数且不能重复（1-536870912即2^0-2^29），后面是该的名称，</span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -266,7 +266,7 @@
             }
             Func.clearFuncInfo();
             var pid = zTree.getSelectedNodes()[0].pId;
-            $('#rights').val('1:浏览;2:新增;4:编辑;8:删除');
+            $('#rights').val('1:浏览,2:新增,4:编辑,8:删除');
             $('#func_oper').html('创建同级功能 -- '+zTree.getSelectedNodes()[0].name);
             if(pid != null) {
                 if(pid > 0) {
@@ -282,7 +282,7 @@
             }
             Func.clearFuncInfo();
             $('#func_oper').html('创建子功能 -- '+zTree.getSelectedNodes()[0].name);
-            $('#rights').val('1:浏览;2:新增;4:编辑;8:删除');
+            $('#rights').val('1:浏览,2:新增,4:编辑,8:删除');
             var id = zTree.getSelectedNodes()[0].id;
             if(id > 0) {
                 Func.setAddFuncInfo(id);    

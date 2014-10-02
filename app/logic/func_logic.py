@@ -112,7 +112,7 @@ def _check_and_format_rights(rights):
     if None == rights or '' == rights:
         return [False, 102005]
     try:
-        ls = rights.strip().split(';')
+        ls = rights.strip().split(',')
         rl = []
         rights2 = ''
         for l in ls:

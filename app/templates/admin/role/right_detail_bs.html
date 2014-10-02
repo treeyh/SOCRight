@@ -64,7 +64,7 @@
                         <table class="table table-bordered table-striped table-hover m-0">
                             <tr>
                                 <td>
-                                    {% set rs = func['rights'].split(';') %}
+                                    {% set rs = func['rights'].split(',') %}
                                     {% for r in rs %}
                                         {% set rss = r.split(':') %}
                                         {% set rcode = int(rss[0]) %}
@@ -79,7 +79,7 @@
                         <table class="table table-bordered table-striped table-hover m-0">
                             <tr>
                                 <td>
-                                    {% set rs = func['rights'].split(';') %}
+                                    {% set rs = func['rights'].split(',') %}
                                     {% for r in rs %}
                                         {% set rss = r.split(':') %}
                                         {% set rcode = int(rss[0]) %}
