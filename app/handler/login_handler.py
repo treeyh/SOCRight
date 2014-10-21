@@ -3,8 +3,9 @@
 
 import tornado.web
 from datetime import datetime, timedelta
+import time
 
-from common import redis_cache, state, error
+from common import redis_cache, state, error, log
 from helper import str_helper
 from logic import user_logic, application_logic, oper_log_logic
 import config
@@ -41,14 +42,17 @@ class LoginHandler(base_handler.BaseHandler):
         if ps['userName'] == '' or ps['passWord'] == '':
             self.redirect(ps['serviceSiteDomain'] + 'Login?msg=100001')
             return
-        user = user_logic.login(
-            ps['userName'], ps['passWord'])
+
+        
+        user = user_logic.login(ps['userName'], ps['passWord'])
+        
         if None == user:
             self.redirect(ps['serviceSiteDomain'] + 'Login?msg=100002')
             return
 
         uuid = str_helper.get_uuid()
-        redis_cache.setObj(uuid, user, config.cache['userTimeOut'])
+        redis_cache.setObj(uuid, user, config.cache['userTimeOut'])       
+
         ex = ps['now'] + timedelta(seconds=config.cache['userTimeOut'])
         self.clear_all_cookies()
         self.set_cookie(name=config.SOCRightConfig[
@@ -58,9 +62,9 @@ class LoginHandler(base_handler.BaseHandler):
         ac = ps['appCode']
         if None == ac or '' == ac:
             ac = 'SOCRight'
+
         oper_log_logic.add(operID=user['id'], operUserName=user['name'], operRealName=user[
                                                    'realName'], appCode=ac, funcPath='', action='userLogin', targetType=0, targetID='', targetName='', startStatus='', endStatus='', operIp=self.get_user_ip())
-
 
         if None != user['loginCount'] and 0 >= user['loginCount'] and 'passwordedit' not in self.request.path.lower():
             params = {'msg': '100003'}
@@ -105,14 +109,19 @@ class AppGotoHandler(base_handler.BaseRightHandler):
     def get(self):
         ps = self.get_page_config('')
         ps['appCode'] = self.get_arg('appCode', '')
+
         user = self.get_current_user()
+
         if '' == ps['appCode'] or None == user:
             self.redirect(ps['serviceSiteDomain'] + 'AppList')
             return
         gotoUrl = user_logic.get_goto_user_url(
-            userID=user['id'], appCode=ps['appCode'], ip=self.get_user_ip(), backUrl='')        
+            userID=user['id'], appCode=ps['appCode'], ip=self.get_user_ip(), backUrl='')    
+
+   
         oper_log_logic.add(operID=user['id'], operUserName=user['name'], operRealName=user[
                                                    'realName'], appCode=ps['appCode'], funcPath='', action='userLogin', targetType=0, targetID='', targetName='', startStatus='', endStatus='', operIp=self.get_user_ip())
+
         self.redirect(gotoUrl)
 
 

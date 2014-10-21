@@ -35,6 +35,8 @@ SOCRightConfig = {
     'exportUserPath' : 'app/static/export/user/',
     #导出操作日志信息目录，不需要修改
     'exportOperLogPath' : 'app/static/export/operlog/',
+    #系统日志文件路径
+    'sysLogFile' : 'logs/sys.log',
 }
 
 #系统配置目录，不需要修改

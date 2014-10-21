@@ -4,14 +4,39 @@ import tornado.web
 #import tornado.escape
 from tornado.escape import url_escape   
 from datetime import datetime
+import time
 
 import config
-from common import state, redis_cache
+from common import state, redis_cache, log
 from helper import str_helper
 import copy
 
 
 class BaseHandler(tornado.web.RequestHandler):    
+
+    def initialize(self):
+        ip = self.get_user_ip()
+        self._beginTime = time.time()
+        self._log_uuid = str_helper.get_uuid()
+        uri = self.request.uri
+        l = 'initialize    %s    %s    %s' % (self._log_uuid, ip, uri)
+        log.info(l)
+
+    def prepare(self):
+        ip = self.get_user_ip()        
+        uri = self.request.uri
+        l = 'prepare    %s    %s    %s' % (self._log_uuid, ip, uri)
+        log.info(l)
+
+    def on_finish(self):
+        ip = self.get_user_ip()
+        endTime = time.time()
+        t = endTime - self._beginTime
+        uri = self.request.uri
+        l = 'on_finish    %s    %s    %d    %s' % (self._log_uuid, ip, t, uri)
+        log.info(l)
+
+
     def get_current_user(self):
         #if not self.current_user:
         uuid = self.get_cookie(config.SOCRightConfig['rightCookieName'])
