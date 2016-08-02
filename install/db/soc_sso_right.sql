@@ -1,22 +1,22 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : 192.168.18.188
-Source Server Version : 50167
-Source Host           : 192.168.18.188:3306
+Source Server         : 192.168.36.55
+Source Server Version : 50173
+Source Host           : 192.168.36.55:3306
 Source Database       : soc_sso_right
 
 Target Server Type    : MYSQL
-Target Server Version : 50167
+Target Server Version : 50173
 File Encoding         : 65001
 
-Date: 2014-10-01 15:07:43
+Date: 2016-08-02 15:35:45
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for `sso_application`
+-- Table structure for sso_application
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_application`;
 CREATE TABLE `sso_application` (
@@ -39,11 +39,10 @@ CREATE TABLE `sso_application` (
 -- ----------------------------
 -- Records of sso_application
 -- ----------------------------
-INSERT INTO `sso_application` VALUES ('SOCProject', '123', '123', '123', '1', '123', '2', 'Tree', '2014-04-23 09:50:22', 'Tree', '2014-04-23 09:50:22');
 INSERT INTO `sso_application` VALUES ('SOCRight', 'SOC权限管理系统', 'Tree', 'http://ssoadmin.ejyi.com/Admin/Main', '1', '1234', '2', 'Tree', '2012-06-20 10:15:43', 'Tree', '2013-09-05 10:02:32');
 
 -- ----------------------------
--- Table structure for `sso_department`
+-- Table structure for sso_department
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_department`;
 CREATE TABLE `sso_department` (
@@ -65,7 +64,7 @@ CREATE TABLE `sso_department` (
 INSERT INTO `sso_department` VALUES ('1', '技术研发部', '1', '11', '2', 'Tree', '2013-05-15 15:48:22', 'Tree', '2013-05-21 17:29:15');
 
 -- ----------------------------
--- Table structure for `sso_func`
+-- Table structure for sso_func
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_func`;
 CREATE TABLE `sso_func` (
@@ -112,7 +111,7 @@ INSERT INTO `sso_func` VALUES ('193', 'SOCRight', '云海权限系统管理', 'S
 INSERT INTO `sso_func` VALUES ('194', 'SOCRight', '123管理', 'SOCProject', '9', 'SOCRight.AppManager.SOCProject', '1:浏览;2:新增;4:编辑;8:删除', '', '0', '1', '', '2', 'Tree', '2014-04-23 09:50:22', 'Tree', '2014-04-23 09:50:22');
 
 -- ----------------------------
--- Table structure for `sso_log`
+-- Table structure for sso_log
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_log`;
 CREATE TABLE `sso_log` (
@@ -138,7 +137,7 @@ CREATE TABLE `sso_log` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for `sso_oper_log`
+-- Table structure for sso_oper_log
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_oper_log`;
 CREATE TABLE `sso_oper_log` (
@@ -165,10 +164,14 @@ CREATE TABLE `sso_oper_log` (
   KEY `index_sso_oper_log_operTime` (`operTime`),
   KEY `index_sso_oper_log_targetID` (`targetID`),
   KEY `index_sso_oper_log_operIp` (`operIp`)
-) ENGINE=InnoDB AUTO_INCREMENT=246 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=263 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for `sso_role`
+-- Records of sso_oper_log
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for sso_role
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_role`;
 CREATE TABLE `sso_role` (
@@ -192,7 +195,7 @@ INSERT INTO `sso_role` VALUES ('1', '超级管理员', '1', '', '2', 'Tree', '20
 INSERT INTO `sso_role` VALUES ('2', '测试角色', '1', '', '2', 'Tree', '2014-04-23 10:50:25', 'Tree', '2014-04-23 10:50:25');
 
 -- ----------------------------
--- Table structure for `sso_role_right`
+-- Table structure for sso_role_right
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_role_right`;
 CREATE TABLE `sso_role_right` (
@@ -216,17 +219,6 @@ CREATE TABLE `sso_role_right` (
 -- ----------------------------
 -- Records of sso_role_right
 -- ----------------------------
-INSERT INTO `sso_role_right` VALUES ('1700', '18', 'SOCRight', '17', '15', ',a1,a2,', '1', 'Tree', '2013-08-26 13:16:26', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1701', '9', 'SOCRight', '17', '15', '', '1', 'Tree', '2013-08-26 13:16:26', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1702', '10', 'SOCRight', '17', '15', '', '1', 'Tree', '2013-08-26 13:16:26', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1703', '11', 'SOCRight', '17', '15', ',Export,ResetPassword,', '1', 'Tree', '2013-08-26 13:16:26', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1704', '14', 'SOCRight', '17', '15', '', '1', 'Tree', '2013-08-26 13:16:26', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1705', '12', 'SOCRight', '17', '15', '', '1', 'Tree', '2013-08-26 13:16:26', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1706', '15', 'SOCRight', '17', '15', '', '1', 'Tree', '2013-08-26 13:16:26', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1707', '16', 'SOCRight', '17', '15', '', '1', 'Tree', '2013-08-26 13:16:26', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1708', '13', 'SOCRight', '17', '15', '', '1', 'Tree', '2013-08-26 13:16:26', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1709', '17', 'SOCRight', '17', '15', '', '1', 'Tree', '2013-08-26 13:16:26', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1710', '190', 'SOCRight', '17', '15', '', '1', 'Tree', '2013-08-26 13:16:26', 'Tree', '2013-09-26 18:53:08');
 INSERT INTO `sso_role_right` VALUES ('1723', '18', 'SOCRight', '1', '15', ',a1,a2,', '2', 'Tree', '2013-08-26 16:46:47', 'Tree', '2013-08-26 16:46:47');
 INSERT INTO `sso_role_right` VALUES ('1724', '9', 'SOCRight', '1', '15', '', '2', 'Tree', '2013-08-26 16:46:47', 'Tree', '2013-08-26 16:46:47');
 INSERT INTO `sso_role_right` VALUES ('1725', '10', 'SOCRight', '1', '15', '', '2', 'Tree', '2013-08-26 16:46:47', 'Tree', '2013-08-26 16:46:47');
@@ -239,33 +231,9 @@ INSERT INTO `sso_role_right` VALUES ('1731', '13', 'SOCRight', '1', '15', '', '2
 INSERT INTO `sso_role_right` VALUES ('1732', '17', 'SOCRight', '1', '15', '', '2', 'Tree', '2013-08-26 16:46:47', 'Tree', '2013-08-26 16:46:47');
 INSERT INTO `sso_role_right` VALUES ('1733', '190', 'SOCRight', '1', '15', '', '2', 'Tree', '2013-08-26 16:46:47', 'Tree', '2013-08-26 16:46:47');
 INSERT INTO `sso_role_right` VALUES ('1734', '192', 'SOCRight', '1', '15', ',Export,', '2', 'Tree', '2013-08-26 16:46:47', 'Tree', '2013-08-26 16:46:47');
-INSERT INTO `sso_role_right` VALUES ('1735', '18', 'SOCRight', '17', '15', ',a1,a2,', '2', 'Tree', '2013-09-26 18:53:08', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1736', '9', 'SOCRight', '17', '15', '', '2', 'Tree', '2013-09-26 18:53:08', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1737', '10', 'SOCRight', '17', '15', '', '2', 'Tree', '2013-09-26 18:53:08', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1738', '11', 'SOCRight', '17', '15', ',Export,ResetPassword,', '2', 'Tree', '2013-09-26 18:53:08', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1739', '14', 'SOCRight', '17', '15', '', '2', 'Tree', '2013-09-26 18:53:08', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1740', '12', 'SOCRight', '17', '15', '', '2', 'Tree', '2013-09-26 18:53:08', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1741', '15', 'SOCRight', '17', '15', '', '2', 'Tree', '2013-09-26 18:53:08', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1742', '16', 'SOCRight', '17', '15', '', '2', 'Tree', '2013-09-26 18:53:08', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1743', '13', 'SOCRight', '17', '15', '', '2', 'Tree', '2013-09-26 18:53:08', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1744', '17', 'SOCRight', '17', '15', '', '2', 'Tree', '2013-09-26 18:53:08', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1745', '190', 'SOCRight', '17', '15', '', '2', 'Tree', '2013-09-26 18:53:08', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1746', '192', 'SOCRight', '17', '3', ',Export,', '2', 'Tree', '2013-09-26 18:53:08', 'Tree', '2013-09-26 18:53:08');
-INSERT INTO `sso_role_right` VALUES ('1747', '18', 'SOCRight', '16', '0', '', '2', 'Tree', '2013-10-10 14:50:51', 'Tree', '2013-10-10 14:50:51');
-INSERT INTO `sso_role_right` VALUES ('1748', '9', 'SOCRight', '16', '0', '', '2', 'Tree', '2013-10-10 14:50:51', 'Tree', '2013-10-10 14:50:51');
-INSERT INTO `sso_role_right` VALUES ('1749', '10', 'SOCRight', '16', '0', '', '2', 'Tree', '2013-10-10 14:50:51', 'Tree', '2013-10-10 14:50:51');
-INSERT INTO `sso_role_right` VALUES ('1750', '11', 'SOCRight', '16', '0', '', '2', 'Tree', '2013-10-10 14:50:51', 'Tree', '2013-10-10 14:50:51');
-INSERT INTO `sso_role_right` VALUES ('1751', '14', 'SOCRight', '16', '0', '', '2', 'Tree', '2013-10-10 14:50:51', 'Tree', '2013-10-10 14:50:51');
-INSERT INTO `sso_role_right` VALUES ('1752', '12', 'SOCRight', '16', '0', '', '2', 'Tree', '2013-10-10 14:50:51', 'Tree', '2013-10-10 14:50:51');
-INSERT INTO `sso_role_right` VALUES ('1753', '15', 'SOCRight', '16', '0', '', '2', 'Tree', '2013-10-10 14:50:51', 'Tree', '2013-10-10 14:50:51');
-INSERT INTO `sso_role_right` VALUES ('1754', '16', 'SOCRight', '16', '0', '', '2', 'Tree', '2013-10-10 14:50:51', 'Tree', '2013-10-10 14:50:51');
-INSERT INTO `sso_role_right` VALUES ('1755', '13', 'SOCRight', '16', '0', '', '2', 'Tree', '2013-10-10 14:50:51', 'Tree', '2013-10-10 14:50:51');
-INSERT INTO `sso_role_right` VALUES ('1756', '17', 'SOCRight', '16', '0', '', '2', 'Tree', '2013-10-10 14:50:51', 'Tree', '2013-10-10 14:50:51');
-INSERT INTO `sso_role_right` VALUES ('1757', '190', 'SOCRight', '16', '0', '', '2', 'Tree', '2013-10-10 14:50:51', 'Tree', '2013-10-10 14:50:51');
-INSERT INTO `sso_role_right` VALUES ('1758', '192', 'SOCRight', '16', '0', '', '2', 'Tree', '2013-10-10 14:50:51', 'Tree', '2013-10-10 14:50:51');
 
 -- ----------------------------
--- Table structure for `sso_user`
+-- Table structure for sso_user
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_user`;
 CREATE TABLE `sso_user` (
@@ -302,13 +270,10 @@ CREATE TABLE `sso_user` (
 -- ----------------------------
 -- Records of sso_user
 -- ----------------------------
-INSERT INTO `sso_user` VALUES ('1', 'Tree', '54a59a8ab309ec1a5d57b59b694fca33', '余海', '0', '1', '123456123333', '123456', 'treeyh@126.com', '1', '2014-10-01 10:44:24', 'SOCRight', '192.168.18.177', '74', '2013-05-20 00:00:00', '2040-05-22 23:59:59', '', null, '2', 'Tree', '2012-07-09 21:32:06', 'Tree', '2013-06-03 15:38:50');
-INSERT INTO `sso_user` VALUES ('2', '测试', '54a59a8ab309ec1a5d57b59b694fca33', '测试', '0', null, '123', '', 'yuhai717@163.com', '1', null, null, null, '0', '2013-05-20 00:00:00', '2014-05-20 00:00:00', '', null, '1', 'Tree', '2012-07-10 21:32:06', 'Tree', '2013-04-27 14:00:00');
-INSERT INTO `sso_user` VALUES ('5', 'Prince', '85eab839754dcbe976cbedcc8b805f6d', '常博', '0', null, '15000274561', '', 'changbo@tv189.com', '1', '2013-04-27 13:49:42', 'AMSManager', '192.168.99.66', '0', '2013-05-20 00:00:00', '2013-06-20 00:00:00', '', null, '1', 'Tree', '2012-07-24 13:21:47', 'Tree', '2014-04-23 10:50:04');
-INSERT INTO `sso_user` VALUES ('6', 'test', 'f98b86f187c10f0d937cf55ce2ab9e41', 'test', '0', '1', 'test', 'test', 'test@163.com', '1', '2014-04-23 10:43:21', 'SOCRight', '192.168.18.169', '4', '2014-04-15 00:00:00', '2015-04-23 23:59:59', '', null, '2', 'Tree', '2014-04-23 10:35:00', 'Tree', '2014-04-23 10:35:00');
+INSERT INTO `sso_user` VALUES ('1', 'Tree', '54a59a8ab309ec1a5d57b59b694fca33', '余海', '0', '1', '123456123333', '123456', 'tree@ejyi.com', '1', '2016-08-02 15:31:24', 'SOCRight', '192.168.103.153', '90', '2013-05-20 00:00:00', '2040-05-22 23:59:59', '', null, '2', 'Tree', '2012-07-09 21:32:06', 'Tree', '2013-06-03 15:38:50');
 
 -- ----------------------------
--- Table structure for `sso_user_group`
+-- Table structure for sso_user_group
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_user_group`;
 CREATE TABLE `sso_user_group` (
@@ -331,7 +296,7 @@ CREATE TABLE `sso_user_group` (
 INSERT INTO `sso_user_group` VALUES ('1', '超级管理员组', '1', '', '2', 'Tree', '2012-07-10 04:38:48', 'Tree', '2012-07-10 04:38:48');
 
 -- ----------------------------
--- Table structure for `sso_user_group_role`
+-- Table structure for sso_user_group_role
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_user_group_role`;
 CREATE TABLE `sso_user_group_role` (
@@ -355,7 +320,7 @@ CREATE TABLE `sso_user_group_role` (
 INSERT INTO `sso_user_group_role` VALUES ('1', '1', '1', '', '2', 'Tree', '2012-07-10 04:38:57', 'Tree', '2012-07-10 04:38:57');
 
 -- ----------------------------
--- Table structure for `sso_user_group_user`
+-- Table structure for sso_user_group_user
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_user_group_user`;
 CREATE TABLE `sso_user_group_user` (
@@ -377,10 +342,9 @@ CREATE TABLE `sso_user_group_user` (
 -- Records of sso_user_group_user
 -- ----------------------------
 INSERT INTO `sso_user_group_user` VALUES ('1', '1', '1', '', '2', 'Tree', '2012-07-10 04:39:21', 'Tree', '2012-07-10 04:39:21');
-INSERT INTO `sso_user_group_user` VALUES ('2', '1', '5', '', '2', 'Tree', '2012-07-24 13:23:04', 'Tree', '2012-07-24 13:23:04');
 
 -- ----------------------------
--- Table structure for `sso_user_role`
+-- Table structure for sso_user_role
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_user_role`;
 CREATE TABLE `sso_user_role` (
@@ -402,4 +366,3 @@ CREATE TABLE `sso_user_role` (
 -- Records of sso_user_role
 -- ----------------------------
 INSERT INTO `sso_user_role` VALUES ('1', '1', '1', '', '2', 'Tree', '2012-07-12 15:39:09', 'Tree', '2012-07-12 15:39:09');
-INSERT INTO `sso_user_role` VALUES ('2', '5', '1', '', '1', 'Tree', '2012-07-24 13:22:24', 'Tree', '2013-09-16 09:45:47');
