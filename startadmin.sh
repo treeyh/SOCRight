@@ -1,18 +1,7 @@
 #!/bin/sh
 
 
+CUR_DIR=$(cd "$(dirname "$0")"; pwd)
+PYTHON_BIN=/opt/soft/python/bin
 
-#python -u /xxx/xxx.pyo 2>&1 1>>/xxx/xxx.log &
-
-
-
-/opt/soft/python/bin/python_socssoadmin /opt/web/sso.socsoft.net/app/start.py -port=9801 -log_file_prefix=/opt/web/sso.socsoft.net/logs/ssoadmin.log >>/opt/web/sso.socsoft.net/logs/ssoadmin.log 2>&1 &
-
-#/opt/soft/python/bin/python_socssoadmin /opt/web/sso.socsoft.net/app/start.py -port=9801 -log_file_prefix=/opt/web/sso.socsoft.net/logs/ssoadmin.log >>/opt/web/sso.socsoft.net/logs/ssoadmin.log 2>&1 &
-#/opt/soft/python/bin/python_socssoadmin /opt/web/sso.socsoft.net/app/start.py -port=9802 -log_file_prefix=/opt/web/sso.socsoft.net/logs/ssoadmin.log >>/opt/web/sso.socsoft.net/logs/ssoadmin.log 2>&1 &
-#/opt/soft/python/bin/python_socssoadmin /opt/web/sso.socsoft.net/app/start.py -port=9803 -log_file_prefix=/opt/web/sso.socsoft.net/logs/ssoadmin.log >>/opt/web/sso.socsoft.net/logs/ssoadmin.log 2>&1 &
-#/opt/soft/python/bin/python_socssoadmin /opt/web/sso.socsoft.net/app/start.py -port=9804 -log_file_prefix=/opt/web/sso.socsoft.net/logs/ssoadmin.log >>/opt/web/sso.socsoft.net/logs/ssoadmin.log 2>&1 &
-#/opt/soft/python/bin/python_socssoadmin /opt/web/sso.socsoft.net/app/start.py -port=9805 -log_file_prefix=/opt/web/sso.socsoft.net/logs/ssoadmin.log >>/opt/web/sso.socsoft.net/logs/ssoadmin.log 2>&1 &
-#/opt/soft/python/bin/python_socssoadmin /opt/web/sso.socsoft.net/app/start.py -port=9806 -log_file_prefix=/opt/web/sso.socsoft.net/logs/ssoadmin.log >>/opt/web/sso.socsoft.net/logs/ssoadmin.log 2>&1 &
-#/opt/soft/python/bin/python_socssoadmin /opt/web/sso.socsoft.net/app/start.py -port=9807 -log_file_prefix=/opt/web/sso.socsoft.net/logs/ssoadmin.log >>/opt/web/sso.socsoft.net/logs/ssoadmin.log 2>&1 &
-#/opt/soft/python/bin/python_socssoadmin /opt/web/sso.socsoft.net/app/start.py -port=9808 -log_file_prefix=/opt/web/sso.socsoft.net/logs/ssoadmin.log >>/opt/web/sso.socsoft.net/logs/ssoadmin.log 2>&1 &
+$PYTHON_BIN/python-socadmin $CUR_DIR/app/start.py -port=9801 -log_file_prefix=$CUR_DIR/logs/ssoadmin.log >>$CUR_DIR/logs/ssoadminshell.log 2>&1 &

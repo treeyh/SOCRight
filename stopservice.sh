@@ -2,4 +2,4 @@
 
 #killall -9 python_sso
 
-killall -9 python_socsso
+killall -9 python-soc
