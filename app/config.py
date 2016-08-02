@@ -46,9 +46,9 @@ urls = {
 
 #系统数据库配置，根据实际情况修改
 db = {
-    'host' : '127.0.0.1',
+    'host' : '192.168.36.55',
     'user' : 'root',
-    'passwd' : 'dswybs',
+    'passwd' : 'fXL2bO$RQgaRS^lH',
     'db' : 'soc_sso_right',
     'charset':'utf8',
     'port':3306,
