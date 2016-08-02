@@ -1,8 +1,11 @@
 #-*- encoding: utf-8 -*-
 
-import logging
+
+from helper import log_helper
 import config
 
-
-logger = logging.getLogger(config.SOCRightConfig['appCode'])
-
+_logger = None
+def get_logger():
+    if None == _logger:
+        _logger = log_helper.get_logger(config.log_path)
+    return _logger

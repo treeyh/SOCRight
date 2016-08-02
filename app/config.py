@@ -37,6 +37,8 @@ SOCRightConfig = {
     'exportOperLogPath' : 'app/static/export/operlog/',
 }
 
+log_path = None
+
 #系统配置目录，不需要修改
 urls = {
     'socRightApi' : SOCRightConfig['serviceSiteDomain']+'Api/',
